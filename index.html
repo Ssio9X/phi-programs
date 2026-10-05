@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Phi 1년제 프로그램</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+<style>
+/* Layout: hero stage (1920×1077 design canvas, scaled; entrance autoplays) → white/grey/black content bands on a 1280 column → footer revealed under the rounded last band */
+@font-face {
+  font-family: "Pretendard";
+  src: url("assets/PretendardVariable.woff2") format("woff2-variations");
+  font-weight: 45 920;
+  font-display: swap;
+}
+:root {
+  color-scheme: light;
+  --ink: #0d0d0d;
+  --ink-2: #5f5f5f;
+  --mute: #8d8d8d;
+  --line: #717171;
+  --paper: #ffffff;
+  --panel: #f5f5f5;
+  --panel-2: #f2f2f2;
+  --mist: #f3f3f5;
+  --black: #000000;
+  --pink: #ffe3e3;
+  --lime: #d8ffb4;
+  --lilac: #e1daff;
+  --font: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-latin: "Inter", "Pretendard", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --col: min(1280px, calc(100vw - 32px));
+  --h1: clamp(40px, 4.17vw, 80px);
+  --lead: clamp(16px, 1.05vw, 20px);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: auto; }
+body {
+  margin: 0;
+  background: var(--panel);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+p { margin: 0; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid #4b7bff; outline-offset: 3px; }
+.col { width: var(--col); margin-inline: auto; }
+.h1 { font-size: var(--h1); font-weight: 700; line-height: 1.2; text-align: center; text-wrap: balance; }
+.lead { font-size: var(--lead); line-height: 1.6; text-align: center; color: var(--ink-2); text-wrap: pretty; }
+.crop { position: relative; overflow: hidden; }
+.crop > img { position: absolute; max-width: none; }
+
+/* ---------- Nav ---------- */
+.nav-wrap {
+  position: fixed; inset: 0 0 auto 0; z-index: 50;
+  display: flex; justify-content: center;
+  padding: calc(env(safe-area-inset-top, 0px) + clamp(16px, 2.3vw, 44px)) 16px 0;
+  pointer-events: none;
+}
+.nav {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 12px;
+  background: #fff; border-radius: 50px;
+  padding: 4px 16px 4px 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.12);
+}
+.nav .mark { display: block; width: 48px; height: 48px; }
+.nav .mark img { height: 179.02%; left: -29.25%; top: -41.92%; width: 318.26%; }
+.nav .right { display: flex; align-items: center; gap: 32px; }
+.nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; align-items: center; }
+.nav li a { display: block; width: 80px; text-align: center; color: var(--mute); font-size: 15px; text-decoration: none; transition: color .2s; }
+.nav li a:hover { color: var(--ink); }
+.nav li a.on { width: 82px; color: var(--ink); font-size: 18px; font-weight: 700; }
+.nav .cta {
+  width: 140px; height: 42px; border-radius: 26px; background: var(--ink); color: #fff;
+  font-family: var(--font-latin); font-weight: 600; font-size: 14px;
+  display: grid; place-items: center; transition: transform .2s;
+}
+.nav .cta:hover { transform: scale(1.03); }
+
+/* ---------- Hero (pinned) ---------- */
+.hero { position: relative; background: var(--black); }
+.stage { position: relative; height: 100vh; height: 100svh; overflow: hidden; z-index: 0; }
+.canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.canvas .abs { position: absolute; }
+.layer { position: absolute; inset: 0; will-change: transform, opacity; }
+.layer svg { position: absolute; left: 0; top: 0; overflow: visible; }
+.sq { position: absolute; width: 8px; height: 8px; border: .8px solid #fff; }
+.sq.f { background: #fff; }
+.sq.d { width: 4px; height: 4px; background: #fff; border: 0; }
+.lbl { position: absolute; transform: translateX(-50%); font-size: 10px; line-height: 1.6; color: #fff; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* ---------- Hero copy (Figma 5288:5123, 1920×1077 coordinates) ---------- */
+.ui { position: absolute; left: 0; top: 0; width: 1920px; height: 1077px; transform-origin: 0 0; pointer-events: none; }
+.copy { position: absolute; left: 590px; top: 365px; width: 740px; display: flex; flex-direction: column; gap: 40px; color: #fff; pointer-events: auto; }
+.copy h1 { margin: 0; align-self: center; font-size: 42px; font-weight: 700; line-height: 1.2; white-space: nowrap; opacity: 0; will-change: opacity, transform; }
+.copy .paras { display: flex; flex-direction: column; gap: 36px; }
+.copy .paras p { font-size: 20px; line-height: 1.6; color: var(--mute); opacity: 0; will-change: opacity, transform; }
+.hfacts { position: absolute; left: 637px; top: 878px; width: 646px; border-block: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; pointer-events: auto; will-change: opacity, transform; }
+.hfacts .r { display: flex; gap: 16px; height: 48px; align-items: center; }
+.fact { display: flex; align-items: center; gap: 12px; padding: 14px 0; white-space: nowrap; }
+.fact dt { color: var(--mute); font-size: 14px; font-weight: 500; }
+.fact dd { margin: 0; color: #fff; font-size: 16px; }
+.fact dd span { color: #dcdcdc; }
+.fact.wide { gap: 16px; }
+.hfacts .bar { width: 1px; height: 16px; background: var(--line); }
+dl { margin: 0; }
+/* portrait phones: copy leaves the canvas grid and reflows */
+.stage.portrait .ui { transform: none !important; width: 100%; height: 100%; }
+.stage.portrait .copy { left: 16px; right: 16px; width: auto; top: 18%; gap: 24px; }
+.stage.portrait .copy h1 { font-size: clamp(24px, 7vw, 34px); white-space: normal; text-wrap: balance; }
+.stage.portrait .copy .paras { gap: 14px; }
+.stage.portrait .copy .paras p { font-size: 14.5px; }
+.stage.portrait .hfacts { left: 16px; right: 16px; width: auto; top: auto; bottom: 5%; align-items: flex-start; padding: 6px 0; }
+.stage.portrait .hfacts .r { flex-wrap: wrap; height: auto; gap: 0 12px; }
+.stage.portrait .hfacts .bar { display: none; }
+.stage.portrait .fact { padding: 5px 0; }
+.stage.portrait [data-cl="FRAME"] { display: none; }
+
+/* ---------- Bands ---------- */
+.band { position: relative; z-index: 1; }
+.white { background: var(--paper); }
+.mist { background: var(--mist); }
+.dark { background: var(--black); color: #fff; }
+
+/* Pill tabs */
+.pills { display: flex; justify-content: center; }
+.pill-bar { display: flex; gap: 12px; height: 72px; padding: 8px; border-radius: 50px; background: var(--panel); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.pill-bar.fixed { width: min(500px, 100%); }
+.pill-bar.fixed .pill { flex: 1 1 0; }
+.pill {
+  height: 100%; padding: 4px 24px; border-radius: 50px; white-space: nowrap;
+  font-size: clamp(16px, 1.05vw, 20px); color: var(--mute); transition: background .25s, color .25s;
+}
+.pill[aria-selected="true"] { background: var(--ink); color: #fff; font-weight: 700; }
+.pill:not([aria-selected="true"]):hover { color: var(--ink); }
+.mist .pill-bar { background: #fff; }
+
+/* Competency */
+.cap-head { padding-top: 120px; }
+.cap-head .lead { padding-top: 20px; }
+.cap-head .pills { padding-top: 52px; }
+.struct-title { padding-top: 52px; }
+.struct { display: flex; gap: 52px; padding: 48px 0 120px; align-items: flex-start; }
+.struct-art { flex: 1 1 0; min-width: 0; height: 600px; border-radius: 24px; background: var(--panel-2); position: relative; display: grid; place-items: center; overflow: hidden; }
+.struct-art .atlas { width: 328px; height: 552px; }
+.struct-art .atlas img { height: 100%; left: -2.01%; top: 0; width: 100.01%; }
+.struct-art .rule { position: absolute; left: 50%; transform: translateX(-50%); }
+.struct-art .v { position: absolute; width: 0; border-left: .8px dashed rgba(71,71,71,.2); }
+.struct-art .h { position: absolute; height: 0; border-top: .8px dashed rgba(71,71,71,.2); }
+.struct-art .s { position: absolute; width: 10px; height: 10px; border: .8px solid rgba(71,71,71,.2); }
+.struct-list { width: 580px; flex: 0 0 auto; display: flex; flex-direction: column; gap: 20px; }
+.struct-list .item { font-size: clamp(32px, 2.7vw, 52px); font-weight: 700; line-height: 1.2; color: var(--mute); }
+.struct-list .item.on { color: var(--ink); }
+.struct-list .detail { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; }
+.struct-list .detail strong { font-size: 24px; }
+.struct-list .detail p { font-size: 18px; line-height: 1.6; color: var(--ink-2); }
+
+/* Program components */
+.comp-lead { padding-top: 20px; }
+.comp { display: flex; flex-direction: column; gap: 16px; padding: 60px 0 160px; }
+.card { background: var(--panel); border-radius: 24px; }
+.card-h { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.card-h small { font-size: 24px; font-weight: 500; color: var(--ink-2); line-height: 1.2; }
+.card-h b { font-size: clamp(30px, 2.1vw, 40px); line-height: 1.2; }
+.card-t { display: flex; flex-direction: column; gap: 12px; }
+.card-t > p { font-size: 18px; line-height: 1.6; color: var(--ink-2); }
+.course { display: flex; gap: 32px; padding: 32px; }
+.course > .card-t { width: 320px; flex: 0 0 auto; }
+.course .dash { border-left: .8px dashed var(--ink); align-self: stretch; }
+.course .cols { flex: 1 1 0; min-width: 0; display: flex; gap: 20px; }
+.course .c { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.course .c h3 { margin: 0; font-size: 28px; font-weight: 400; line-height: 1.2; }
+.course .c p { font-size: 18px; line-height: 1.6; color: var(--ink-2); flex: 1; }
+.course .vr { width: 1px; background: #dedede; align-self: stretch; }
+.course .ill { width: 100%; max-width: 250px; aspect-ratio: 250 / 170; margin-inline: auto; }
+.ill-fund img { height: 260.53%; left: -20.68%; top: -52.88%; width: 141.5%; }
+.ill-dom img { height: 202.94%; left: -4.98%; top: -53.22%; width: 109.96%; }
+.ill-rit img { height: 220.71%; left: -9.96%; top: -42.1%; width: 119.79%; }
+.comp-row { display: flex; gap: 16px; }
+.comp-left { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.split { display: flex; padding: 32px; gap: 24px; justify-content: space-between; }
+.split > .card-t { max-width: 320px; flex: 1 1 320px; }
+.split .pic { width: 428px; max-width: 100%; aspect-ratio: 428 / 436; flex: 0 1 428px; }
+.ill-study img { height: 145.06%; left: -9.17%; top: -23.68%; width: 118.2%; }
+.ill-event img { height: 148.42%; left: -6.77%; top: -22.82%; width: 113.42%; }
+.workshop { width: 412px; flex: 0 0 auto; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; padding: 32px 32px 52px; }
+.workshop .pic { width: 100%; aspect-ratio: 348 / 563; }
+.ill-ws img { height: 116.64%; left: -25.45%; top: 5.42%; width: 150.91%; }
+
+/* Approach */
+.appr-head { padding-top: 160px; }
+.appr-sub { padding-top: 32px; display: flex; flex-direction: column; gap: 20px; text-align: center; }
+.appr-sub h3 { margin: 0; font-size: clamp(28px, 2.1vw, 40px); line-height: 1.2; }
+.media { margin: 32px auto; height: clamp(220px, 26vw, 500px); border-radius: 24px; background: #e2e2e2; }
+.appr-tabs { padding-top: 0; }
+.appr-desc { padding: 32px 0 160px; }
+.appr-desc b { color: var(--ink); }
+
+/* Courses */
+.courses-head { padding-top: 120px; }
+.courses-head .lead { color: var(--mute); padding-top: 20px; }
+.courses-head .lead a { color: inherit; }
+.courses { display: flex; flex-direction: column; gap: 24px; padding: 60px 0 200px; }
+.row { display: flex; gap: 24px; }
+.cc {
+  position: relative; height: 302px; border-radius: 24px; background: #fff; color: var(--ink);
+  padding: 32px 24px 32px 32px; display: flex; gap: 24px; overflow: hidden; text-align: left;
+  flex: 1 1 0; min-width: 0;
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s;
+}
+.cc.sq302 { flex: 0 0 302px; }
+.cc .t { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-width: 0; }
+.cc h3 { margin: 0; font-size: clamp(24px, 1.67vw, 32px); line-height: 1.2; }
+.cc p { font-size: 18px; line-height: 1.6; color: var(--ink-2); }
+.cc .art { flex: 0 0 auto; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+.cc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255,255,255,.08); }
+.cc:hover .art { transform: scale(1.04); }
+button.cc { cursor: pointer; }
+button.cc::after { content: "자세히 보기"; position: absolute; right: 24px; bottom: 24px; font-size: 14px; color: var(--ink-2); opacity: 0; transform: translateY(6px); transition: .3s; }
+button.cc:hover::after, button.cc:focus-visible::after { opacity: 1; transform: none; }
+.cc.pink { background: var(--pink); }
+.cc.lime { background: var(--lime); }
+.cc.lilac { background: var(--lilac); }
+.cc.grey { background: var(--panel-2); }
+.cc.profile { background: #ededed; align-items: center; justify-content: center; }
+.profile-btn { display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 8px 12px 8px 16px; border-radius: 8px; background: var(--ink); border: 1px solid #fff; color: #fff; font-size: 20px; font-weight: 500; white-space: nowrap; }
+.profile-btn img { width: 24px; height: 24px; padding: 4.87px 3.11px; }
+.art-aes { width: 292px; height: 238px; }
+.art-aes img { height: 173.4%; left: -4.95%; top: -66.5%; width: 113.11%; }
+.art-int { width: 259px; height: 238px; }
+.art-int img { height: 228.38%; left: -34.14%; top: -45.92%; width: 168.33%; }
+.art-read { width: 301px; height: 247px; }
+.art-read img { height: 269.54%; left: -63.93%; top: -157.09%; width: 176.95%; }
+
+/* Curriculum */
+.cur-head { padding-top: 120px; }
+.cur-head .pills { padding-top: 52px; }
+.cur-cap { padding-top: 20px; }
+.year { display: flex; flex-direction: column; gap: 16px; padding: 36px 0 52px; }
+.year .row { gap: 16px; }
+.term { flex: 1 1 0; min-width: 0; padding: 52px; display: flex; flex-direction: column; gap: 32px; }
+.term-top { display: flex; gap: 32px; justify-content: space-between; align-items: flex-start; }
+.term-name { display: flex; flex-direction: column; gap: 12px; }
+.term-name .n { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.term-name h3 { margin: 0; font-size: 32px; line-height: 1.2; }
+.term-name .date { font-size: 20px; font-weight: 500; line-height: 1.2; }
+.tag { padding: 8px 16px; border-radius: 8px; background: var(--ink); color: #fff; font-size: 20px; font-weight: 500; }
+.term > p { font-size: 18px; line-height: 1.6; color: var(--ink-2); min-height: 88px; }
+.plus { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 52px; background: #000; display: grid; place-items: center; transition: transform .3s; }
+.plus:hover { transform: rotate(90deg); }
+.plus i { position: relative; width: 17px; height: 17px; }
+.plus i::before, .plus i::after { content: ""; position: absolute; left: 50%; top: 50%; background: #fff; border-radius: 39px; transform: translate(-50%, -50%); }
+.plus i::before { width: 3.4px; height: 17px; }
+.plus i::after { width: 17px; height: 3.4px; }
+.week { padding: 36px 0 52px; }
+.week-card { border-radius: 24px; background: var(--panel); padding: 32px; overflow-x: auto; }
+.tt { position: relative; min-width: 1100px; height: 414px; }
+.tt .days { position: absolute; left: 62px; right: 0; top: 0; display: grid; grid-template-columns: repeat(5, 200px); justify-content: center; gap: 24px; }
+.tt .days span { text-align: center; font-weight: 700; font-size: 17.3px; }
+.tt .hr { position: absolute; left: 62px; right: 0; height: 1px; background: #d6d6d6; }
+.tt .hr.b { height: 2px; background: #d7d7d7; }
+.tt .hl { position: absolute; left: 0; font-family: var(--font-latin); font-size: 13.6px; color: #d6d6d6; transform: translateY(-50%); }
+.tt .slots { position: absolute; left: 62px; right: 0; top: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, 200px); justify-content: center; gap: 24px; }
+.tt .day { position: relative; }
+.ses { position: absolute; left: 0; width: 200px; border-radius: 16px; background: var(--ink); color: #fff; padding: 16px 0 0 20px; display: flex; flex-direction: column; gap: 4px; }
+.ses span { font-size: 14px; color: #b8b8b8; }
+.ses b { font-size: 20px; }
+.lunch { position: absolute; left: 62px; right: 0; margin-inline: auto; width: 1096px; height: 78px; top: 188px; border-radius: 16px; background: rgba(217,217,217,.5); display: grid; place-items: center; color: var(--ink-2); font-size: 24px; font-weight: 500; }
+
+/* Hiring */
+.hire-wrap { border-radius: 0 0 52px 52px; filter: drop-shadow(0 29px 8px rgba(0,0,0,.04)); }
+.hire-head { padding-top: 20px; display: flex; flex-direction: column; gap: 20px; }
+.hire { display: flex; gap: 20px; justify-content: center; padding: 36px 0 160px; }
+.hire-card { position: relative; flex: 0 1 632px; aspect-ratio: 1; border-radius: 24px; overflow: hidden; padding: 52px; color: #fff; }
+.hire-card > img { position: absolute; left: 0; top: 0; width: 100%; height: 119.32%; max-width: none; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
+.hire-card:hover > img { transform: scale(1.04); }
+.hire-card .shade { position: absolute; inset: 0; background: linear-gradient(to bottom, #0d0d0d 0%, rgba(13,13,13,.59) 35.087%, rgba(13,13,13,0) 70.174%); }
+.hire-card.b .shade { background: linear-gradient(to bottom, rgba(13,13,13,.8) 0%, rgba(13,13,13,.59) 32.611%, rgba(13,13,13,0) 72.468%); }
+.hire-card .tx { position: relative; display: flex; flex-direction: column; gap: 20px; max-width: 510px; }
+.hire-card h3 { margin: 0; font-size: clamp(28px, 2.1vw, 40px); line-height: 1.2; }
+.hire-card p { font-size: var(--lead); line-height: 1.6; color: #f5f5f5; }
+
+/* Footer (revealed) */
+.content { position: relative; z-index: 1; }
+footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padding: 120px 0 calc(80px + env(safe-area-inset-bottom, 0px)); }
+.foot { display: flex; justify-content: space-between; gap: 32px; padding: 40px 0; flex-wrap: wrap; }
+.foot .l { display: flex; flex-direction: column; gap: 20px; }
+.foot .logo { width: 200px; height: 72px; }
+.foot .logo img { height: 205.37%; left: -20.6%; top: -56.4%; width: 140.7%; }
+.foot .name { font-family: var(--font-latin); font-weight: 600; font-size: 24px; color: var(--ink); }
+.foot .info { display: flex; flex-direction: column; gap: 6px; font-family: var(--font-latin); font-size: 12px; color: #737373; white-space: pre; }
+.foot .copy { font-family: var(--font-latin); font-size: 11px; color: #737373; }
+.foot nav { display: flex; gap: 24px; font-family: var(--font-latin); font-size: 12px; }
+.foot nav a { color: #4e4949; text-decoration: none; }
+.foot nav a:hover { text-decoration: underline; }
+
+/* Modal */
+.modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px 16px; background: rgba(0,0,0,.36); opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
+.modal.open { opacity: 1; visibility: visible; transition: opacity .3s; }
+.sheet { width: min(1184px, 100%); max-height: min(845px, calc(100svh - 48px)); display: flex; flex-direction: column; background: #fff; border-radius: 16px; filter: drop-shadow(0 0 12px rgba(0,0,0,.27)); transform: translateY(24px) scale(.98); transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+.modal.open .sheet { transform: none; }
+.sheet-top { display: flex; justify-content: flex-end; padding: 32px 32px 8px; }
+.x { position: relative; width: 24px; height: 24px; }
+.x::before, .x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 21.6px; height: 2px; background: var(--ink); }
+.x::before { transform: translate(-50%, -50%) rotate(45deg); }
+.x::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.sheet-body { overflow-y: auto; padding: 32px clamp(20px, 10.4vw, 200px) 80px; scrollbar-width: thin; scrollbar-color: #d9d9d9 transparent; }
+.sheet-in { max-width: 784px; margin-inline: auto; display: flex; flex-direction: column; gap: 52px; color: var(--ink); }
+.sheet h2 { margin: 0; font-family: var(--font-latin); font-weight: 700; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.15; }
+.sheet .sub { font-family: var(--font-latin); font-weight: 600; font-size: 26px; padding-top: 16px; }
+.sheet .intro-p { font-size: 20px; line-height: 1.6; color: var(--ink-2); padding-top: 16px; }
+.sheet section { display: flex; flex-direction: column; gap: 16px; }
+.sheet h4 { margin: 0; font-family: var(--font-latin); font-weight: 600; font-size: 26px; }
+.sheet .blk { border-top: 1px solid rgba(0,0,0,.6); padding-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+.sheet .blk strong { font-family: var(--font-latin); font-weight: 600; font-size: 18px; }
+.sheet .blk p { font-family: var(--font-latin); font-size: 14px; line-height: 1.55; }
+
+
+/* motion helpers */
+.layer { transform-origin: 960px 540px; }
+.stage .canvas { height: 1077px; }
+.nav-wrap { transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s; }
+.nav-wrap.tuck { transform: translateY(-140%); opacity: 0; }
+.rv { transform: translateY(48px) scale(.97); opacity: .25; transition: transform 1s cubic-bezier(.16,1,.3,1), opacity .9s ease; }
+.rv.in { transform: none; opacity: 1; }
+.cc.rv.in:hover { transform: translateY(-6px); transition-delay: 0s !important; }
+
+/* ---------- 주요 수업들: tabbed accordion carousel (Figma 5288:596) ---------- */
+.mc-head { padding-top: clamp(96px, 9.3vw, 178px); }
+.mc-head h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); line-height: 1.2; color: #fff; }
+.mc-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 40px; flex-wrap: wrap; }
+.mc-tabs { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+.mc-tab { flex: 0 0 auto; height: 56px; min-width: 190px; padding: 4px 24px; border-radius: 12px; border: 1px solid #fff; color: #b9b9b9; font-size: 20px; transition: background .3s, color .3s; }
+.mc-tab[aria-selected="true"] { background: #fff; color: #000; font-weight: 700; }
+.mc-tab:not([aria-selected="true"]):hover { color: #fff; }
+.mc-arrows { display: flex; gap: 16px; }
+.mc-arrow { width: 52px; height: 52px; border-radius: 12px; }
+.mc-arrow path { fill: #000; transition: fill .2s; }
+.mc-arrow:disabled { cursor: default; }
+.mc-arrow:disabled path { fill: #dadada; }
+.mc-wrap { width: min(1440px, calc(100vw - 32px)); margin-inline: auto; padding: 52px 0 170px; }
+.mc-track { display: flex; gap: 16px; height: 520px; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
+.mc-track::-webkit-scrollbar { display: none; }
+.mc-card {
+  position: relative; flex: 0 0 300px; height: 100%; border-radius: 24px; background: #f2f3f5; color: #111214;
+  padding: 24px 24px 32px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; overflow: hidden;
+  transition: flex-basis .6s cubic-bezier(.65,0,.35,1), background .4s, padding .4s;
+}
+.mc-card.on { flex-basis: min(808px, 82vw); background: #fff; padding: 24px 32px 32px; cursor: default; }
+.mc-card:not(.on):hover { background: #e7e9ec; }
+.mc-top { display: flex; flex-direction: column; gap: 32px; }
+.mc-name { display: flex; flex-direction: column; gap: 12px; }
+.mc-name h3 { margin: 0; font-size: 42px; line-height: 1.1; font-weight: 700; }
+.mc-name span { font-size: 16px; font-weight: 600; line-height: 1.6; color: var(--ink-2); }
+.mc-card.on .mc-name span { font-size: 20px; font-weight: 700; }
+.mc-desc { width: min(744px, 76vw); font-size: 20px; line-height: 1.6; color: var(--ink-2); opacity: 0; transform: translateY(10px); transition: opacity .35s, transform .35s; pointer-events: none; }
+.mc-card.on .mc-desc { opacity: 1; transform: none; transition-delay: .35s; pointer-events: auto; }
+.mc-plus { align-self: flex-end; width: 36px; height: 36px; border-radius: 52px; background: #a9a9a9; display: grid; place-items: center; transition: background .3s, transform .3s; }
+.mc-card.on .mc-plus { background: #000; }
+.mc-plus:hover { transform: rotate(90deg); }
+.mc-plus i { position: relative; width: 17px; height: 17px; }
+.mc-plus i::before, .mc-plus i::after { content: ""; position: absolute; left: 50%; top: 50%; background: #fff; border-radius: 39px; transform: translate(-50%, -50%); }
+.mc-plus i::before { width: 3.4px; height: 17px; }
+.mc-plus i::after { width: 17px; height: 3.4px; }
+
+/* ---------- 역량과 태도 (left-aligned, Figma 5288:468) ---------- */
+.cap-head h2 { margin: 0; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; color: var(--ink); }
+.cap-head .lead { text-align: left; }
+.cap-head .pills { justify-content: flex-start; }
+.struct { padding-top: 48px; }
+
+/* ---------- 프로그램 구조 (Figma 5435:15133) ---------- */
+.ps { background: #f2f3f5; color: #111214; padding-block: 160px; display: flex; flex-direction: column; gap: 80px; }
+.ps-title { margin: 0; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; }
+.ps-group { display: flex; flex-direction: column; gap: 32px; }
+.ps-group h3 { margin: 0 auto; font-size: clamp(28px, 2.1vw, 40px); line-height: 1.2; }
+.ps-grid { width: min(1440px, calc(100vw - 32px)); margin-inline: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.ps-card { background: rgba(255,255,255,.9); border-radius: 40px; padding: 20px 20px 40px; display: flex; flex-direction: column; gap: 32px; }
+.ps-card.white { background: #fff; }
+.ps-box { position: relative; aspect-ratio: 424 / 426.67; border-radius: 20px; background: #edeef0; overflow: hidden; }
+.ps-box .pic { position: absolute; }
+.ps-t { padding-inline: 20px; display: flex; flex-direction: column; gap: 12px; }
+.ps-t h4 { margin: 0; font-size: 24px; line-height: 1.2; }
+.ps-t p { font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+
+/* ---------- 수업을 관통하는 접근 (pinned, Figma 5288:5770) ---------- */
+.ap { position: relative; background: #000; }
+.ap-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff; }
+.ap-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; transform: scale(1.04); transition: transform 1.2s cubic-bezier(.2,.8,.2,1), filter 1s; }
+.ap.item .ap-bg { transform: scale(1.1); filter: blur(6px) grayscale(1); }
+.ap-shade { position: absolute; inset: 0; background: rgba(43,43,43,.52); }
+.ap-shade::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 68.5%; background: linear-gradient(to bottom, rgba(44,44,46,0) 31%, rgba(0,0,0,.32)); }
+.ap-dim { position: absolute; inset: 0; background: linear-gradient(to bottom, #a9a9a9 0%, #9d9d9d 55%, #6f6f6f 100%); opacity: 0; transition: opacity .8s ease; }
+.ap.item .ap-dim { opacity: .92; }
+.ap-copy { position: absolute; left: 0; right: 0; top: clamp(96px, 11.1vh, 120px); }
+.ap-state { position: absolute; left: 0; top: 0; width: 100%; display: flex; flex-direction: column; gap: 16px; opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .7s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.ap-state.on { opacity: 1; transform: none; pointer-events: auto; }
+.ap-state h2 { margin: 0 0 16px; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; }
+.ap-state h3 { margin: 0; font-size: clamp(28px, 2.1vw, 40px); line-height: 1.2; }
+.ap-state p { max-width: 740px; font-size: var(--lead); line-height: 1.6; color: #d5d5d5; }
+.ap-list { position: absolute; left: 0; right: 0; bottom: clamp(48px, 11.6vh, 120px); list-style: none; margin: 0 auto; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ap-list button { display: flex; align-items: center; gap: 12px; padding: 4px 24px 4px 36px; position: relative; color: #fff; font-size: clamp(18px, 1.25vw, 24px); opacity: .6; transition: opacity .3s, padding .3s; text-align: left; }
+.ap-list button img { position: absolute; left: 4px; width: 15px; height: 15px; transform: rotate(-90deg); opacity: 0; transition: opacity .3s; }
+.ap-list button[aria-current="true"] { opacity: 1; font-weight: 700; }
+.ap-list button[aria-current="true"] img { opacity: 1; }
+.ap-list button:hover { opacity: 1; }
+
+@media (max-width: 1180px) {
+  .ps-grid { grid-template-columns: 1fr; max-width: 560px; }
+  .mc-track { height: 460px; }
+  .mc-name h3 { font-size: 32px; }
+  .mc-card { flex-basis: 220px; }
+}
+@media (max-width: 760px) {
+  .mc-tab { min-width: 0; font-size: 16px; height: 48px; padding: 4px 16px; }
+  .mc-desc { font-size: 16px; }
+  .ps { padding-block: 96px; gap: 56px; }
+  .ps-card { border-radius: 28px; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1180px) {
+  .struct { flex-direction: column; align-items: stretch; }
+  .struct-list { width: auto; }
+  .course { flex-direction: column; }
+  .course > .card-t { width: auto; }
+  .course .dash { border-left: 0; border-top: .8px dashed var(--ink); }
+  .comp-row { flex-direction: column; }
+  .workshop { width: auto; }
+  .workshop .pic { max-width: 348px; margin-inline: auto; }
+  .row { flex-wrap: wrap; }
+  .cc, .cc.sq302 { flex: 1 1 calc(50% - 12px); }
+  .cc .art { position: absolute; right: 16px; bottom: 0; opacity: .9; transform-origin: bottom right; scale: .8; }
+  .hire { flex-direction: column; align-items: center; }
+  .hire-card { width: 100%; flex: none; max-width: 632px; }
+}
+@media (max-width: 760px) {
+  .nav ul { display: none; }
+  .nav .right { gap: 12px; }
+  .course .cols { flex-direction: column; }
+  .course .vr { width: auto; height: 1px; }
+  .split { flex-direction: column; }
+  .split > .card-t { max-width: none; flex: none; }
+  .split .pic { margin-inline: auto; }
+  .cc, .cc.sq302 { flex: 1 1 100%; height: 240px; }
+  .cc .art { scale: .6; }
+  .term { padding: 32px; }
+  .facts { flex-direction: column; align-items: flex-start; padding: 8px 0; }
+  .fact + .fact::before { display: none; }
+  .fact { padding: 8px 0; white-space: normal; }
+  .hire-card { padding: 32px; }
+  .struct-art { height: 460px; }
+  .struct-art .atlas { transform: scale(.75); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01ms !important; }
+}
+</style>
+
+<div class="nav-wrap">
+  <nav class="nav" aria-label="주요 메뉴">
+    <a class="mark crop" href="#top" aria-label="Phi Institute of Design"><img src="assets/logo-mark.webp" alt=""></a>
+    <div class="right">
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a class="on" href="#top" aria-current="page">Programs</a></li>
+        <li><a href="#">Experts</a></li>
+        <li><a href="#">Admissions</a></li>
+      </ul>
+      <button class="cta" type="button">오픈 알림 신청</button>
+    </div>
+  </nav>
+</div>
+
+<main class="content" id="top">
+  <!-- Hero: Figma 5288:5123. Plays its own entrance on load: edge reliefs settle in, frame draws, copy reveals -->
+  <section class="hero" id="hero" aria-label="Phi의 1년제 프로그램">
+    <div class="stage" id="stage">
+      <div class="canvas" id="canvas">
+        <div class="layer" data-cl="N_L"></div>
+        <div class="layer" data-cl="N_TL"></div>
+        <div class="layer" data-cl="N_R"></div>
+        <div class="layer" data-cl="N_BR"></div>
+        <div class="layer" data-cl="FRAME"></div>
+      </div>
+      <div class="ui" id="ui">
+        <div class="copy">
+          <h1 id="heroTitle">Phi의 1년제 프로그램을 소개합니다.</h1>
+          <div class="paras" id="heroBody">
+            <p>도구는 빠르게 바뀝니다. Phi는 도구보다 사고방식에 집중합니다. 탁월한 인재는 어떤 조건에도 적용할 수 있는 자신만의 성공 방정식을 갖고 있고, 이 인재를 벡터형 인재라 부릅니다. 1년제 프로그램은 벡터형 인재가 가진 역량과 태도를 학습하고, 나아가 주체적으로 자신만의 역량과 태도를 만들어갑니다.</p>
+            <p>이 과정은 연령, 직군, 경력을 제한하지 않습니다. 디자인을 더 깊이 이해하고 싶은 사람, 방향을 다시 잡고 싶은 사람, 스스로 만들고 출시할 수 있는 기반을 갖추고 싶은 사람. 어느 지점에서 출발하든, 디자인에 진지한 태도를 가진 분이라면 지원할 수 있습니다.</p>
+          </div>
+        </div>
+        <dl class="hfacts" id="heroFacts">
+          <div class="r">
+            <div class="fact" style="width:160px"><dt style="width:56px">과정 기간</dt><dd>1년 (2학기)</dd></div><span class="bar"></span>
+            <div class="fact" style="width:180px"><dt style="width:56px">총 시수</dt><dd>약 1,000시간+</dd></div><span class="bar"></span>
+            <div class="fact" style="width:240px"><dt style="width:66px">수업 방식</dt><dd>월-금, 전일제 오프라인</dd></div>
+          </div>
+          <div class="r">
+            <div class="fact wide"><dt style="width:66px">학습자 규모</dt><dd>60명<span> (30명씩, 2개 클래스로 운영)</span></dd></div><span class="bar"></span>
+            <div class="fact" style="width:200px"><dt style="width:56px;font-size:16px;font-weight:400">개강</dt><dd>2026년 8월 24일</dd></div>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 주요 수업들 — Figma 5288:592 / 5402:12816 / 5288:596. Course grouping and copy from phi.design/programs -->
+  <section class="band dark mc" id="courses">
+    <div class="col mc-head"><h2>주요 수업들</h2></div>
+    <div class="col mc-bar">
+      <div class="mc-tabs" role="tablist" aria-label="수업 분류">
+        <button class="mc-tab" role="tab" aria-selected="true" data-tab="0">Fundamentals</button>
+        <button class="mc-tab" role="tab" aria-selected="false" data-tab="1">Domain</button>
+        <button class="mc-tab" role="tab" aria-selected="false" data-tab="2">Ritual(LD)</button>
+      </div>
+      <div class="mc-arrows">
+        <button class="mc-arrow" type="button" id="mcPrev" aria-label="이전 수업"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="12" fill="#fff"/><path d="M18.2 23.5751C16.3333 24.6529 16.3333 27.3472 18.2 28.4249L27.8 33.9674C29.6667 35.0452 32 33.698 32 31.5426L32 20.4574C32 18.302 29.6667 16.9548 27.8 18.0326L18.2 23.5751Z"/></svg></button>
+        <button class="mc-arrow" type="button" id="mcNext" aria-label="다음 수업"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="12" fill="#fff"/><path d="M33.8 23.5751C35.6667 24.6529 35.6667 27.3472 33.8 28.4249L24.2 33.9674C22.3333 35.0452 20 33.698 20 31.5426L20 20.4574C20 18.302 22.3333 16.9548 24.2 18.0326L33.8 23.5751Z"/></svg></button>
+      </div>
+    </div>
+    <div class="mc-wrap"><div class="mc-track" id="mcTrack" role="tabpanel"></div></div>
+  </section>
+
+  <!-- 역량과 태도 — Figma 5288:468 (left-aligned); content below kept from the previous version -->
+  <section class="band white" id="competencies">
+    <div class="col cap-head">
+      <h2>역량과 태도</h2>
+      <p class="lead">어떤 환경에서도 스스로 답을 찾을 수 있는 사고방식을 만들기 위해,<br>Phi는 아래 역량과 태도를 중요시합니다.</p>
+      <div class="pills"><div class="pill-bar fixed" role="tablist"><button class="pill" role="tab" aria-selected="true">역량 Competency</button><button class="pill" role="tab" aria-selected="false">태도 Phi OS</button></div></div>
+    </div>
+    <div class="col struct">
+      <div class="struct-art" aria-hidden="true">
+        <img class="rule" src="assets/struct-top.svg" alt="" style="top:34px;width:436px;height:10px">
+        <img class="rule" src="assets/struct-bottom.svg" alt="" style="top:556px;width:438px;height:10px">
+        <span class="v" style="left:calc(50% - 213px);top:57px;height:226px"></span>
+        <span class="v" style="left:calc(50% + 213px);top:58px;height:222px"></span>
+        <span class="v" style="left:calc(50% - 213px);top:319px;height:222px"></span>
+        <span class="v" style="left:calc(50% + 213px);top:319px;height:222px"></span>
+        <span class="s" style="left:calc(50% - 219px);top:295px"></span>
+        <span class="s" style="left:calc(50% + 207px);top:295px"></span>
+        <div class="crop atlas"><img src="assets/atlas.webp" alt=""></div>
+      </div>
+      <div class="struct-list">
+        <p class="item">Aesthetic Sense</p>
+        <p class="item">Articulation</p>
+        <div><p class="item on">Structural Thinking</p>
+          <div class="detail"><strong>구조화</strong><p>나무를 보는 것만큼 숲을 보는 일도 중요하다. 구체와 추상을 오가며 현재 다루고 있는 문제가 전체 그림에서 어느 위치성을 지니는지 이해하고, 파편화된 분야들을 하나로 엮어내는 구조적 사고를 훈련한다.</p></div>
+        </div>
+        <p class="item">Problem Definition</p>
+        <p class="item">Reframing</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 프로그램 구조 — Figma 5435:15133 -->
+  <section class="band ps" id="structure">
+    <div class="col"><h2 class="ps-title">프로그램 구조</h2></div>
+    <div class="ps-group">
+      <h3 class="col">Course</h3>
+      <div class="ps-grid">
+        <article class="ps-card"><div class="ps-box"><div class="pic crop ill-fund" style="left:-2.83%;top:15.7%;width:108.49%;height:73.36%"><img src="assets/ill-fundamental.webp" alt=""></div></div>
+          <div class="ps-t"><h4>Fundamental</h4><p>4개월 동안 매주 이어지며, 한 분야의 핵심 원리를 전문가와 함께 오래 다지는 수업입니다. 사고방식 위주의 기본기를 학습할 때는 지식을 습득하는 것은 물론, 다양한 맥락에서의 적용이 필요하기 때문에 긴 호흡으로 진행합니다.</p></div></article>
+        <article class="ps-card"><div class="ps-box"><div class="pic crop ill-dom" style="left:-5.58%;top:11.95%;width:111.56%;height:75%"><img src="assets/ill-domain.webp" alt=""></div></div>
+          <div class="ps-t"><h4>Domain</h4><p>1-2개월 단위로 구성되며, 기본기를 단기간에 습득할 수 있는 단위로 쪼개어서 경험하는 수업입니다. 여러 주제를 들어보면서 나에게 더 맞는 주제가 있다면 이후에 심화하여 학습할 수 있습니다.</p></div></article>
+        <article class="ps-card"><div class="ps-box"><div class="pic crop ill-rit" style="left:-7.63%;top:9.37%;width:119.81%;height:81.09%"><img src="assets/ill-ritual.webp" alt=""></div></div>
+          <div class="ps-t"><h4>Ritual</h4><p>한 달에 한 번, 하루 여섯 시간을 통째로 쓰는 수업입니다. 학습 목표에 따라 단기간에 집중적인 학습이 필요한 코스가 있고, 간격을 두고(spaced repetition) 다른 일과를 수행하면서 배우면 효과적인 코스가 있습니다. Ritual은 후자의 수업으로, 반복적인 훈련과 습관화가 필요한 종류의 내용을 배웁니다.</p></div></article>
+      </div>
+    </div>
+    <div class="ps-group">
+      <h3 class="col">Other Programs</h3>
+      <div class="ps-grid">
+        <article class="ps-card white"><div class="ps-box"><div class="pic crop ill-study" style="left:6.6%;top:5.7%;width:87.5%;height:88.59%"><img src="assets/ill-study.webp" alt=""></div></div>
+          <div class="ps-t"><h4>Study</h4><p>전문가 없이 학습자끼리 학습하는 수업입니다. 궁극적으로 학습자들은 스스로 배울 수 있는 상태가 되어야 합니다. Phi에서는 전문가의 전문성은 물론 학습자의 자율적 학습도 배워야 할 대상으로 여기며, 이를 위해 Learning Design팀이 각종 지원을 제공합니다.</p></div></article>
+        <article class="ps-card white"><div class="ps-box"><div class="pic crop ill-ws" style="left:17.77%;top:-15.16%;width:65.09%;height:104.77%"><img src="assets/ill-workshop.webp" alt=""></div></div>
+          <div class="ps-t"><h4>Workshop</h4><p>학기 중 코스 외 시간에 학습 능력 증진을 위해 제공되는 워크숍입니다.</p></div></article>
+        <article class="ps-card white"><div class="ps-box"><div class="pic crop ill-event" style="left:5.58%;top:6.64%;width:89.15%;height:90%"><img src="assets/ill-event.webp" alt=""></div></div>
+          <div class="ps-t"><h4>Event</h4><p>OT나 클로징 파티 등 코스를 시작하거나 끝맺음할 때, 혹은 특별한 이벤트가 있을 때 열리는 행사입니다.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 수업을 관통하는 접근 — Figma 5288:5770 + state frame (Frame 2147234671). Screen stays pinned; scrolling steps through the list. Copy from phi.design/programs -->
+  <section class="ap" id="approach">
+    <div class="ap-stage">
+      <img class="ap-bg" src="assets/classroom.webp" alt="">
+      <div class="ap-shade"></div>
+      <div class="ap-dim" id="apDim"></div>
+      <div class="col ap-copy" id="apCopy">
+        <div class="ap-state on">
+          <h2>수업을 관통하는 접근</h2>
+          <h3>핵심 수업 장치</h3>
+          <p>Phi의 교육은 인지적 도제(Cognitive Apprenticeship)를 토대로 설계되었습니다.<br>전문가의 사고 과정을 학습자가 능동적으로 관찰할 수 있도록 다양한 장치가 준비되어있습니다.</p>
+        </div>
+      </div>
+      <ol class="col ap-list" id="apList"></ol>
+    </div>
+  </section>
+
+  <!-- 커리큘럼 + 채용 연계 -->
+  <div class="band white hire-wrap">
+    <section id="curriculum">
+      <div class="col cur-head"><h2 class="h1">커리큘럼</h2>
+        <div class="pills"><div class="pill-bar fixed" role="tablist" id="curTabs"><button class="pill" role="tab" aria-selected="true" aria-controls="pYear" id="tYear">연간 구조</button><button class="pill" role="tab" aria-selected="false" aria-controls="pWeek" id="tWeek">주간 시간표</button></div></div>
+      </div>
+      <p class="col lead cur-cap" id="curCap">1년제 프로그램은 아래 요소들로 구성되어있습니다.</p>
+      <div class="col year" id="pYear" role="tabpanel" aria-labelledby="tYear">
+        <div class="row">
+          <article class="card term"><div class="term-top"><div class="term-name"><div class="n"><h3>1학기</h3><span class="tag">개강 8/24</span></div><span class="date">2026년 8월 24일 - 12월 24일</span></div></div><p>Warm-up Week(B/24-8/28)를 시작으로 개강. 매주 월-금 수업이 진행되며, 오전/오후 각 세션으로 나뉘어 전문가 수업이 이어집니다</p></article>
+          <article class="card term"><div class="term-top"><div class="term-name"><div class="n"><h3>방학+캠프</h3></div><span class="date">2027년 1월 - 2월</span></div><button class="plus" type="button" data-open="m-camp" aria-label="방학+캠프 자세히 보기"><i></i></button></div><p>4개월의 루틴에서 벗어나 휴식과 함께 복수의 워크숍 프로그램이 진행됩니다. Practical Camp(토스), 디지털 타이포그래피 워크숍, Skills Boost 등이 예정되어 있습니다</p></article>
+        </div>
+        <div class="row">
+          <article class="card term"><div class="term-top"><div class="term-name"><div class="n"><h3>2학기</h3></div><span class="date">2027년 3월 2일 - 6월 24일</span></div></div><p>1학기에서 쌓은 역량을 심화하고 통합하는 시간.<br>전문가 라인업이 일부 교체되며, 학습자가 자신만의 방향을 구체화합니다</p></article>
+          <article class="card term"><div class="term-top"><div class="term-name"><div class="n"><h3>수료 &amp; 졸업</h3><span class="tag">졸업</span></div><span class="date">2027년 7월 - 8월</span></div><button class="plus" type="button" data-open="m-grad" aria-label="수료와 졸업 자세히 보기"><i></i></button></div><p>수료(전 과정 이수) 후 졸업 프로젝트를 완성합니다. 졸업 프로젝트는 외부에 실제 발표 또는 출시되어야 합니다.</p></article>
+        </div>
+      </div>
+      <div class="col week" id="pWeek" role="tabpanel" aria-labelledby="tWeek" hidden>
+        <div class="week-card"><div class="tt" id="tt"></div></div>
+      </div>
+    </section>
+
+    <section id="hiring">
+      <div class="col hire-head"><h2 class="h1">채용 연계</h2><p class="lead">Phi의 1년제 프로그램 졸업자들은 토스의 별도 채용 전형에 지원할 수 있습니다.</p></div>
+      <div class="col hire">
+        <article class="hire-card"><img src="assets/hire-1.webp" alt=""><div class="shade"></div><div class="tx"><h3>토스 별도 채용 전형</h3><p>2027년 8월, Phi 1년제 1기 졸업자를 위한<br>토스의 별도 채용 전형이 마련됩니다.</p></div></article>
+        <article class="hire-card b"><img src="assets/hire-2.webp" alt=""><div class="shade"></div><div class="tx"><h3>우수 졸업자 입사 특전</h3><p>우수 졸업자에게는 채용 전형에 더해<br>별도의 입사 특전*이 제공됩니다.<br>*채용 특전의 세부 내용은 현재 검토 중입니다.</p></div></article>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="col foot">
+    <div class="l">
+      <div class="crop logo"><img src="assets/logo-full.webp" alt="Phi Institute of Design"></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <p class="name">파이 인스티튜트 오브 디자인</p>
+        <div class="info"><p>02-556-8681   contact@phi.design</p><p>서울 성동구  ·  사업자등록번호 안내</p></div>
+      </div>
+      <p class="copy">© 2026 Phi Institute of Design. All rights reserved.</p>
+    </div>
+    <nav aria-label="정책"><a href="#">개인정보처리방침</a><a href="#">이용약관</a><a href="#">채용</a></nav>
+  </div>
+</footer>
+
+<!-- Modals (BTN → Modal) -->
+<div class="modal" id="m-course" role="dialog" aria-modal="true" aria-labelledby="m-course-t">
+  <div class="sheet"><div class="sheet-top"><button class="x" type="button" data-close aria-label="닫기"></button></div>
+    <div class="sheet-body"><div class="sheet-in">
+      <div><h2 id="m-course-t"></h2><p class="sub" id="m-course-s"></p></div>
+      <section><h4>수업 목표</h4><div class="blk"><p id="m-course-d"></p></div></section>
+    </div></div>
+  </div>
+</div>
+<div class="modal" id="m-ips" role="dialog" aria-modal="true" aria-labelledby="m-ips-t">
+  <div class="sheet"><div class="sheet-top"><button class="x" type="button" data-close aria-label="닫기"></button></div>
+    <div class="sheet-body"><div class="sheet-in">
+      <div><h2 id="m-ips-t">Iterative Problem Solving</h2><p class="sub">파고드는 문제 해결</p></div>
+      <section><h4>A. 전문가 소개</h4>
+        <div class="blk"><strong>박종민</strong><p>디자이너에게 가장 중요한 역량을 고르라면 아름다움을 인식하는 능력 아닐까? 대상을 보았을 때 구체적으로 부분을 인식하고, 미추를 판단하며, 그 미추의 정도를 가늠할 수 있는 예리한 감각을 훈련한다.</p></div>
+        <div class="blk"><strong>정신재</strong><p>대기업과 유니콘 스타트업을 오가며 빅테크부터 커머스, 콘텐츠까지 다양한 영역의 프로덕트를 런칭해왔다. 디자이너는 화면을 구현하는 사람 그 이상이라는 신념을 바탕으로, 디자이너들이 디자인의 실천적 가치를 통해 비즈니스와 세상에 실질적 임팩트를 만들어낼 수 있도록 교육에 매진하고 있다.</p></div>
+      </section>
+      <section><h4>B. 수업 개요</h4>
+        <div class="blk"><p>처음 발견한 문제의 해결책은 사용자의 문제를 해소하지 못할 때가 많다. 이 수업에서는 표면적인 현상 너머의 근본 원인을 집요하게 파고들어, 해결책을 만들어 검증할 때마다 문제를 더 깊이 다시 정의한다. 문제의 해상도를 높여가며 가치 있는 문제에 도달하고, 그것을 디자인으로 해결하는 법을 체화하게 된다.<br>수업 전체는 하나의 사이클을 반복하는 것으로 이루어진다. 사용자의 불편함을 포착해 문제를 정의하고, 가능한 해결책을 폭넓게 탐색해 그중 문제와 정확히 맞물린 것을 프로토타입으로 만들고, 문제가 실제로 해결되는지 검증한다. 그리고 여기서 멈추지 않는다. 검증 결과에서 더 근본적인 원인이 드러나면 문제를 다시 정의하고, 사이클을 처음부터 다시 돈다. 해결책을 한 번 만들어 보는 것이 아니라, 하나의 문제를 여러 바퀴에 걸쳐 파고드는 것이 이 수업의 기본 단위다.</p></div>
+      </section>
+    </div></div>
+  </div>
+</div>
+<div class="modal" id="m-camp" role="dialog" aria-modal="true" aria-labelledby="m-camp-t">
+  <div class="sheet"><div class="sheet-top"><button class="x" type="button" data-close aria-label="닫기"></button></div>
+    <div class="sheet-body"><div class="sheet-in">
+      <div><h2 id="m-camp-t">방학 + 캠프</h2><p class="intro-p">4개월의 학기 루틴에서 벗어나 휴식과 함께 진행되는 워크숍 프로그램. 각 학습자의 성취와 보완이 필요한 부분을 바탕으로 구성됩니다. 캠프는 별도 비용 없이 희망자 모두 참석할 수 있습니다.</p></div>
+      <section><h4>A. 전문가 소개</h4>
+        <div class="blk"><strong>박종민</strong><p>디자이너에게 가장 중요한 역량을 고르라면 아름다움을 인식하는 능력 아닐까? 대상을 보았을 때 구체적으로 부분을 인식하고, 미추를 판단하며, 그 미추의 정도를 가늠할 수 있는 예리한 감각을 훈련한다.</p></div>
+        <div class="blk"><strong>정신재</strong><p>대기업과 유니콘 스타트업을 오가며 빅테크부터 커머스, 콘텐츠까지 다양한 영역의 프로덕트를 런칭해왔다. 디자이너는 화면을 구현하는 사람 그 이상이라는 신념을 바탕으로, 디자이너들이 디자인의 실천적 가치를 통해 비즈니스와 세상에 실질적 임팩트를 만들어낼 수 있도록 교육에 매진하고 있다.</p></div>
+      </section>
+      <section><h4>B. 수업 개요</h4>
+        <div class="blk"><p>처음 발견한 문제의 해결책은 사용자의 문제를 해소하지 못할 때가 많다. 이 수업에서는 표면적인 현상 너머의 근본 원인을 집요하게 파고들어, 해결책을 만들어 검증할 때마다 문제를 더 깊이 다시 정의한다. 문제의 해상도를 높여가며 가치 있는 문제에 도달하고, 그것을 디자인으로 해결하는 법을 체화하게 된다.<br>수업 전체는 하나의 사이클을 반복하는 것으로 이루어진다. 사용자의 불편함을 포착해 문제를 정의하고, 가능한 해결책을 폭넓게 탐색해 그중 문제와 정확히 맞물린 것을 프로토타입으로 만들고, 문제가 실제로 해결되는지 검증한다. 그리고 여기서 멈추지 않는다. 검증 결과에서 더 근본적인 원인이 드러나면 문제를 다시 정의하고, 사이클을 처음부터 다시 돈다. 해결책을 한 번 만들어 보는 것이 아니라, 하나의 문제를 여러 바퀴에 걸쳐 파고드는 것이 이 수업의 기본 단위다.</p></div>
+      </section>
+    </div></div>
+  </div>
+</div>
+<div class="modal" id="m-grad" role="dialog" aria-modal="true" aria-labelledby="m-grad-t">
+  <div class="sheet"><div class="sheet-top"><button class="x" type="button" data-close aria-label="닫기"></button></div>
+    <div class="sheet-body"><div class="sheet-in">
+      <h2 id="m-grad-t">수료 &amp; 졸업</h2>
+      <section><h4>A. 수료</h4><div class="blk"><p>2026년 8월부터 2027년 6월까지<br>예정된 모든 수업을 이수한 상태.</p></div></section>
+      <section><h4>B. 졸업</h4><div class="blk"><p>수료 조건 달성 후, 2027년 7–8월에<br>본인의 목표에 따른 프로젝트를 완성합니다.<br>해당 프로젝트는 외부에 실제로 발표 또는 출시되어야 합니다.</p></div></section>
+    </div></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  /* ---------- Hero elements (1920×1080 design coordinates) ----------
+     Lines: [x1,y1,x2,y2, stops|null, dashed, opacity, gradFrac]
+     Gradients follow the Figma SVGs: stop 0 sits at the line's END and runs back to its start. */
+  const S0 = {
+    out: [[0,1],[1,0]], inn: [[0,0],[1,1]], mid: [[0,1],[.5,.1],[1,1]],
+    l20: [[.35,0],[1,1]], l21: [[0,0],[.26,.06],[1,1]], l40: [[0,0],[.44,.56],[1,1]],
+    l42: [[0,1],[.43,.5],[.63,0],[.81,.45],[1,1]], l43: [[0,0],[.49,.43],[1,1]],
+    l46: [[0,.1],[.52,.47],[1,1]], l49: [[0,0],[.4,.08],[1,1]],
+    fr: [[0,1],[.5,.4],[1,1]], tri: [[0,1],[.5,.1],[1,.4]], l60: [[0,.81],[1,0]]
+  };
+  const D = (x1,y1,x2,y2,g,op=1,frac=1) => [x1,y1,x2,y2,S0[g],true,op,frac];
+  const P = (x1,y1,x2,y2,op=1,g=null) => [x1,y1,x2,y2,g?S0[g]:null,false,op,1];
+  const LINES = {
+    N_L: [D(180,541,180,450,'out',.4),D(-106,605,419,605,'l46',.5),D(184,446,464,446,'l40',.4),P(176,446,-242,446,.4),P(180,442,180,-102,.4),
+          D(315,363,315,750,'out',.4),P(311,754,-249,754,.4),P(315,1226,315,758,.4)],
+    N_TL: [P(442,-28,259,-28),P(442,158,259,158,.2),P(255,154,255,-24,.2),D(446,236,446,162,'out',.5),D(255,-32,255,-217,'inn'),
+           D(251,-28,-53,-28,'l20'),D(251,158,179,158,'l21',.2),D(450,158,778,158,'inn',.2),P(446,154,446,-24,.2)],
+    N_R: [D(1917.5,333,1917.5,549,'out'),D(1627.4,457.1,1626.9,222.2,'out',.4),D(1622.6,218,1502,218.3,'inn',.4),P(2029,217,1631.1,218,.4),P(1626.9,213.7,1626,-128.1,.4)],
+    N_BR: [D(1921,1029.4,2203,1029.4,'inn'),D(1921,553.4,2249,553.4,'inn'),P(1913,553.4,1537,553.4,.4),P(1913,1029.4,1537,1029.4,.4),
+           P(1917,1025.4,1917,557.4,.4),P(1533,1025.4,1533,557.4,.4),D(1917,1033.4,1917,1157.4,'inn',1,33.5/124)],
+    FRAME: [P(1383,817,1383,284,.5,'fr'),P(533,794,533,284,.4,'fr'),D(1383,1010,1383,802,'out',.5),D(1383,68,1383,276,'out',.5),D(533,68,533,276,'out',.5),
+            D(533,1010,533,802,'out',.4),D(294,798,529,798,'out',.5),D(322,758,529,794,'tri',.5),D(322,280,529,280,'out',.5),D(1594,280,1387,280,'out',.5),
+            D(1505,798,1387,798,'l60',.5),P(1379,798,537,798,.5,'fr'),P(1379,280,537,280,.5,'fr'),D(184,442,528,284,'tri',.5),D(450,162,529,276,'mid',.5),
+            D(1623,221,1387,276,'tri',.5),D(1529,557,1387,794,'tri',.5)]
+  };
+  const SQ = { // [x, y, kind, opacity]  o=outline f=filled d=4px dot
+    N_L: [[176,443,'o',.4],[311,751,'o',.4],[313,604,'d',.4],[313,445,'d',.4]],
+    N_TL: [[442,-31,'o'],[442,155,'o',.2],[251,-31,'o'],[251,155,'f',.2]],
+    N_R: [[1622.6,214.7,'o'],[1625,355.5,'d']],
+    N_BR: [[1913,550.4,'o',.4],[1913,1026.4,'o',.4],[1529,550.4,'f',.4],[1529,1026.4,'o',.4]],
+    FRAME: [[1379,795,'f',.5],[529,795,'f',.4],[1379,277,'f',.5],[529,277,'f',.4]]
+  };
+  const LBL = { // [centerX, top, text, opacity]
+    N_L: [[310.5,269,'238,256',.2],[208.5,453,'456,398',.2],[342.5,731,'684,234',.4],[532.5,1011,'8 (14.581)',.2]],
+    N_BR: [[1508.5,1005.4,'92.156',1],[1553,528.4,'538,511',1]],
+    FRAME: [[1353.5,810,'152.156',.5],[1359.5,257,'456,398',.5],[507.5,805,'92.156',.5]]
+  };
+  const COIN = 'height:266.8%;left:-83.33%;top:-83.4%;width:266.67%';
+  const IMG = { // [src, x, y, w, h, opacity, crop]
+    N_L: [['relief-left',-219,-67,391,498,.2],['frieze',-447,767,751,320,.6]],
+    N_TL: [['relief-small',266,-16,169,163,.2]],
+    N_R: [['coin',1644,-167,312,389,.2,COIN]],
+    N_BR: [['relief-right',1553,570.4,343,436,.4]]
+  };
+  // Settled-hero groups fly in from outside the frame
+  const ENTER_FROM = { N_L: [-220,60], N_TL: [-150,-150], N_R: [190,-150], N_BR: [210,190] };
+
+  const NS = 'http://www.w3.org/2000/svg';
+  let gid = 0;
+  const layers = {}, frameLines = [];
+  document.querySelectorAll('.layer').forEach(el => {
+    const c = el.dataset.cl; layers[c] = el;
+    (IMG[c] || []).forEach(([src,x,y,w,h,op=1,crop]) => {
+      const d = document.createElement('div');
+      d.className = 'abs crop'; d.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;opacity:${op}`;
+      const im = document.createElement('img'); im.src = `assets/${src}.webp`; im.alt = '';
+      im.style.cssText = crop || 'inset:0;width:100%;height:100%;object-position:bottom';
+      d.appendChild(im); el.appendChild(d);
+    });
+    if (LINES[c]) {
+      const svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('width', 1920); svg.setAttribute('height', 1080);
+      const defs = document.createElementNS(NS, 'defs'); svg.appendChild(defs);
+      LINES[c].forEach(([x1,y1,x2,y2,stops,dashed,op,frac]) => {
+        const ln = document.createElementNS(NS, 'line');
+        Object.entries({x1,y1,x2,y2,'stroke-width':.8,opacity:op}).forEach(([k,v]) => ln.setAttribute(k, v));
+        if (stops) {
+          const id = 'g' + (gid++);
+          const lg = document.createElementNS(NS, 'linearGradient');
+          const gx = x1 + (x2 - x1) * frac, gy = y1 + (y2 - y1) * frac;
+          Object.entries({id, gradientUnits:'userSpaceOnUse', x1:gx, y1:gy, x2:x1, y2:y1}).forEach(([k,v]) => lg.setAttribute(k, v));
+          stops.forEach(([o,a]) => { const s = document.createElementNS(NS, 'stop'); s.setAttribute('offset', o); s.setAttribute('stop-color', '#fff'); s.setAttribute('stop-opacity', a); lg.appendChild(s); });
+          defs.appendChild(lg);
+          ln.setAttribute('stroke', `url(#${id})`);
+        } else ln.setAttribute('stroke', '#fff');
+        if (dashed) ln.setAttribute('stroke-dasharray', '2.4 2.4');
+        svg.appendChild(ln);
+        if (c === 'FRAME') frameLines.push({ ln, x1, y1, x2, y2 });
+      });
+      el.appendChild(svg);
+    }
+    (SQ[c] || []).forEach(([x,y,k,op=1]) => { const s = document.createElement('span'); s.className = 'sq ' + k; s.style.cssText = `left:${x}px;top:${y}px;opacity:${op}`; el.appendChild(s); });
+    (LBL[c] || []).forEach(([x,y,t,o]) => { const s = document.createElement('span'); s.className = 'lbl'; s.style.cssText = `left:${x}px;top:${y}px;opacity:${o}`; s.textContent = t; el.appendChild(s); });
+  });
+
+  /* ---------- Hero entrance (autoplays on load) ---------- */
+  const hero = document.getElementById('hero'), stage = document.getElementById('stage');
+  const canvas = document.getElementById('canvas'), ui = document.getElementById('ui');
+  const facts = document.getElementById('heroFacts'), navWrap = document.querySelector('.nav-wrap');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a=0, b=1) => Math.min(b, Math.max(a, v));
+  const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  const easeOut = t => 1 - Math.pow(1 - t, 4);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const seg = (p, a, b) => clamp((p - a) / (b - a));
+  // depth: >1 reads as closer to camera (travels, grows and blurs more)
+  const DEPTH = { N_L: .8, N_TL: .6, N_R: .7, N_BR: .9, FRAME: .15 };
+  let S = 1, vh = innerHeight, cur = 0;
+  const t0 = performance.now();
+  let mx = 0, my = 0, smx = 0, smy = 0;
+  addEventListener('pointermove', e => { mx = e.clientX / innerWidth * 2 - 1; my = e.clientY / innerHeight * 2 - 1; }, { passive: true });
+
+  const heroTitle = document.getElementById('heroTitle');
+  const bodyParas = [...document.querySelectorAll('#heroBody p')];
+
+  function layout() {
+    const vw = document.documentElement.clientWidth; vh = innerHeight;
+    const portrait = vw / vh < .9;
+    stage.classList.toggle('portrait', portrait);
+    S = portrait ? (vh * .62) / 1080 : Math.min(vw / 1920, vh / 1077);
+    const left = (vw - 1920 * S) / 2, top = (vh - 1077 * S) / 2;
+    canvas.style.transform = ui.style.transform = `translate(${left}px, ${top}px) scale(${S})`;
+    hero.style.height = vh + 'px';
+  }
+  const HOLD = .25, PLAY = 2.9;
+  let clock = 0, lastNow = null;
+
+  /* Timeline along p (0 → 1 over PLAY seconds, starting HOLD s after load):
+     0–.5    edge reliefs fly in and sharpen      .08–.5  frame nodes appear, lines draw out
+     Copy uses seconds (quarter speed): title (block) .93–2.79s, body paragraphs 1.4–3.4s / 2.6–4.6s, facts 2.09–4.17s */
+  function setLayer(L, x, y, sc, o, blur, dim) {
+    if (o <= .002) { if (L.style.visibility !== 'hidden') L.style.visibility = 'hidden'; return; }
+    L.style.visibility = '';
+    L.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
+    L.style.opacity = o.toFixed(3);
+    L.style.filter = blur > .15 ? `blur(${blur.toFixed(2)}px) brightness(${dim.toFixed(3)})` : 'none';
+  }
+  function render(p, time, ts) {
+    smx += (mx - smx) * .05; smy += (my - smy) * .05;
+    const idle = (z, k=1) => reduce ? [0, 0] : [
+      (Math.sin(time * .5 + z * 3) * 5 * z - smx * 18 * z) * k,
+      (Math.cos(time * .42 + z * 2) * 7 * z - smy * 12 * z) * k];
+
+    // edge reliefs fly in from outside, sharpen as they land
+    const order = ['N_L', 'N_TL', 'N_R', 'N_BR'];
+    order.forEach((c, i) => {
+      const t = easeOut(seg(p, i * .05, .42 + i * .03));
+      const [fx, fy2] = ENTER_FROM[c];
+      const [ix, iy] = idle(DEPTH[c], t);
+      setLayer(layers[c], fx * (1 - t) + ix, fy2 * (1 - t) + iy, 1 + .08 * (1 - t), t, reduce ? 0 : 6 * (1 - t), 1);
+    });
+    // frame: corner nodes first, then lines draw out from them
+    const ft = seg(p, .08, .5);
+    setLayer(layers.FRAME, 0, 0, 1, Math.min(1, ft * 4), 0, 1);
+    const g = ease(ft);
+    frameLines.forEach(({ ln, x1, y1, x2, y2 }) => {
+      ln.setAttribute('x1', lerp(x2, x1, g)); ln.setAttribute('y1', lerp(y2, y1, g));
+    });
+
+    // copy: title then body light up word by word, facts rise last
+    // text runs on its own clock at quarter speed (seconds since the entrance started)
+    // title fades in as one block
+    const ta = reduce ? 1 : ease(seg(ts, .93, 2.79));
+    heroTitle.style.opacity = ta.toFixed(3);
+    heroTitle.style.transform = `translateY(${((1 - ta) * 18).toFixed(2)}px)`;
+    // body paragraphs fade in as whole blocks, one after the other
+    bodyParas.forEach((el, i) => {
+      const a = reduce ? 1 : ease(seg(ts, 1.4 + i * 1.2, 3.4 + i * 1.2));
+      el.style.opacity = a.toFixed(3);
+      el.style.transform = `translateY(${((1 - a) * 14).toFixed(2)}px)`;
+    });
+    const fa = reduce ? 1 : ease(seg(ts, 2.09, 4.17));
+    facts.style.opacity = fa.toFixed(3);
+    facts.style.transform = `translateY(${((1 - fa) * 24).toFixed(2)}px)`;
+  }
+  let lastY = scrollY;
+  function tick(now) {
+    const time = (now - t0) / 1000;
+    // scrolling during the entrance fast-forwards it rather than leaving it half-played
+    const dt = lastNow == null ? 0 : Math.min(.1, (now - lastNow) / 1000); lastNow = now;
+    clock += dt * (scrollY > 10 ? 4 : 1);
+    cur = reduce ? 1 : clamp((clock - HOLD) / PLAY);
+    render(cur, time, clock - HOLD);
+    const y = scrollY;
+    if (Math.abs(y - lastY) > 6) { navWrap.classList.toggle('tuck', y > lastY && y > vh * .6); lastY = y; }
+    requestAnimationFrame(tick);
+  }
+  addEventListener('resize', layout);
+  addEventListener('load', layout);
+  layout(); requestAnimationFrame(tick);
+
+  /* ---------- Content reveal (cards rise in as their band enters) ---------- */
+  const rv = document.querySelectorAll('.term, .hire-card, .struct-art, .struct-list .item, .ps-card');
+  if (!reduce && 'IntersectionObserver' in window) {
+    rv.forEach(el => {
+      el.classList.add('rv');
+      const sib = [...el.parentElement.children].filter(n => n.classList.contains('rv'));
+      el.style.transitionDelay = (sib.indexOf(el) * 70) + 'ms';
+    });
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    rv.forEach(el => io.observe(el));
+  }
+
+  /* ---------- 주요 수업들: tabs + accordion carousel ----------
+     Grouping per the course map (Fundamentals / Domain / Ritual(LD)); copy from phi.design/programs */
+  const COURSES = [
+    [ ['Iterative<br>Problem Solving', '파고드는 문제 해결', '처음 발견한 문제의 해결책은 사용자의 문제를 해소하지 못할 때가 많다. 이 수업에서는 표면적인 현상 너머의 근본 원인을 집요하게 파고들어, 해결책을 만들어 검증할 때마다 문제를 더 깊이 다시 정의한다. 문제의 해상도를 높여가며 가치 있는 문제에 도달하고, 그것을 디자인으로 해결하는 법을 체화하게 된다.', 'm-ips'],
+      ['Typography<br>as Foundation', '기본기로서의 타이포그래피', '많은 디자이너들이 디자인의 기본으로 타이포그래피를 손꼽는 이유는 무얼까. 이 수업에서는 스타일을 만드는 조형 원리를 그래픽의 1차 언어인 글자를 가지고 학습한다. 흑과 백을 구사하여 공간을 창출하는 원리와 감각을 익히고, 보이지 않던 것을 보는 눈을 기른다.'],
+      ['Visual<br>Translation', '시각적 번역', '언어와 생각은 어떻게 시각적 형태가 될 수 있을까? 이 수업에서는 텍스트에 담긴 의미와 감정, 맥락을 읽고, 이를 자신만의 시각언어로 해석하고 재구성하는 과정을 훈련한다. 다양한 매체와 상황을 오가며 의미와 조형 사이의 연결을 탐색하고, 기획을 설득력 있고 고유한 시각적 결과로 발전시키는 역량을 기른다.'] ],
+    [ ['Art of Reading', '읽기의 기술', '우리는 정말 읽고 있을까? 보는 것과 읽는 것은 다르고, 우리는 자주 오독한다. 넘겨짚고, 보고 싶은 것만 보고, 아는 분야 안에서만 읽는다. 이 수업에서는 내가 무엇을 읽었는가가 아니라 그가 무엇을 썼는가를 묻는다.'],
+      ['Beautiful<br>Interface', '아름다운 인터페이스 디자인', '완성도 120%의 인터페이스란 어떤 것일까? 이 수업에서는 다양한 인터페이스 요소들을 끝까지 파고들었을 때 어떤 결과물을 만들어낼 수 있는지 실험해본다. 집착적으로 높은 완성도를 추구하는 경험을 해본 후, 일상에서도 높은 기준으로 아름다움을 인지하게 된다.'],
+      ['Interviewing<br>as exploration', '탐험으로서의 인터뷰', '답은 타인의 세계 안에 있다. 이 수업에서는 질문의 각을 날카롭게 다듬고, 상대의 말과 침묵 속에서 단서를 발견하며, 대화의 결을 따라 그 세계 깊숙이 들어가는 연습을 반복한다. 낯선 문제 앞에서도 대화로 핵심 단서를 찾아 들어가는 감각, 그리고 그 과정에서 말의 아름다움을 알아보는 안목을 훈련한다.'] ],
+    [ ['Engaging<br>with AI', '생산적 마찰이 있는 AI', 'AI를 쓸수록 탐구는 넓어지지만, 마찰 없이 얻은 것은 좀처럼 내 것이 되지 않는다. 이 수업에서는 AI와, 그리고 사람들과 마찰 있게 탐구하기를 반복한다. 학습자는 결과물만 만들지 않고, AI와 맞붙은 시간을 자신의 학습 경험으로 펼쳐낸다.'],
+      ['Peer<br>coaching', '상호 코칭', '누군가 고민을 털어놓으면 우리는 충고하고, 평가하고, 대신 풀어주려 한다. 하지만 그 문제를 가장 잘 아는 사람은 언제나 문제의 당사자이다. 이 수업에서는 동료의 말 너머까지 듣고, 결정적인 것을 묻고, 스스로 전략을 세우도록 안내하는 대화를 반복하여 훈련한다.'],
+      ['Readable<br>Writing', '읽음직한 글쓰기', '읽기 쉽고 읽고 싶은, 즉 읽음직한 글을 쓰는 일은 중요하다. 이 수업에서는 내 글을 읽을 독자가 누구인지 설정하고, 그 독자에게 유용하고 흥미로운 메시지를 설계하고, 그 메시지가 잘 전달되도록 표현하는 훈련을 한다.'],
+      ['Self-<br>Introduction', '자기소개', '우리가 만든 결과물은 물론, 행동, 생각, 발언... 무엇이든 자기소개의 재료가 될 수 있다. 이 수업에서는 익숙한 방식이 금지된 조건 속에서 매주 다른 제약으로 자기소개에 접근한다. 주어진 자기소개 방식 중 하나를 채택하는 것이 아닌, 스스로를 가장 잘 설명할 수 있는 자기소개 방식을 설계한다.'],
+      ['What If?', '만약에 ~라면?', '창의성은 훈련 가능한 역량일까? 가장 처음 떠올린 해결책이 너무나도 자명해 보여서 다른 해결책은 절대 없을 것 같은 느낌이 들 때, 어떻게 접근해볼 수 있을까. 이 수업에서는 동일한 문제를 다양한 분야의 전문가들이 어떻게 풀어나가는지를 비교 분석하면서 그들의 전문성을 추출하고, 내 작업에 이식해보는 방법을 배운다.'] ]
+  ];
+  const mcTrack = document.getElementById('mcTrack'), mcTabs = [...document.querySelectorAll('.mc-tab')];
+  const mcPrev = document.getElementById('mcPrev'), mcNext = document.getElementById('mcNext');
+  let mcTab = 0, mcIdx = 0;
+  function mcRender() {
+    mcTabs.forEach((t, i) => t.setAttribute('aria-selected', i === mcTab));
+    mcTrack.innerHTML = COURSES[mcTab].map(([title, , desc], i) => `
+      <div class="mc-card${i === mcIdx ? ' on' : ''}" data-i="${i}" tabindex="${i === mcIdx ? -1 : 0}" role="button" aria-expanded="${i === mcIdx}">
+        <div class="mc-top">
+          <div class="mc-name"><h3>${title}</h3><span>/ ${String(i + 1).padStart(2, '0')}</span></div>
+          <p class="mc-desc">${desc}</p>
+        </div>
+        <button class="mc-plus" type="button" aria-label="${title.replace(/<br>/g, ' ')} 자세히 보기"><i></i></button>
+      </div>`).join('');
+    mcSync();
+  }
+  function mcSync() {
+    [...mcTrack.children].forEach((c, i) => { const on = i === mcIdx; c.classList.toggle('on', on); c.setAttribute('aria-expanded', on); c.tabIndex = on ? -1 : 0; });
+    mcPrev.disabled = mcTab === 0 && mcIdx === 0;
+    mcNext.disabled = mcTab === COURSES.length - 1 && mcIdx === COURSES[mcTab].length - 1;
+    const card = mcTrack.children[mcIdx];
+    // after the width transition, scroll only as far as needed to show the open card whole
+    if (card) setTimeout(() => {
+      const l = card.offsetLeft - mcTrack.offsetLeft, r = l + card.offsetWidth, v = mcTrack.scrollLeft, w = mcTrack.clientWidth;
+      if (l < v) mcTrack.scrollTo({ left: l, behavior: 'smooth' });
+      else if (r > v + w) mcTrack.scrollTo({ left: r - w, behavior: 'smooth' });
+    }, 640);
+  }
+  function mcGo(tab, idx) {
+    if (tab !== mcTab) { mcTab = tab; mcIdx = idx; mcRender(); mcTrack.scrollLeft = 0; }
+    else { mcIdx = idx; mcSync(); }
+  }
+  function mcOpen(i) {
+    const [title, sub, desc, modal] = COURSES[mcTab][i];
+    if (modal) return openModal(modal);
+    document.getElementById('m-course-t').innerHTML = title.replace('<br>', ' ');
+    document.getElementById('m-course-s').textContent = sub;
+    document.getElementById('m-course-d').textContent = desc;
+    openModal('m-course');
+  }
+  mcTabs.forEach((t, i) => t.addEventListener('click', () => mcGo(i, 0)));
+  mcTrack.addEventListener('click', e => {
+    const card = e.target.closest('.mc-card'); if (!card) return;
+    const i = +card.dataset.i;
+    if (e.target.closest('.mc-plus') && i === mcIdx) return mcOpen(i);
+    if (i !== mcIdx) mcGo(mcTab, i);
+  });
+  mcTrack.addEventListener('keydown', e => {
+    const card = e.target.closest('.mc-card');
+    if (card && (e.key === 'Enter' || e.key === ' ') && e.target === card) { e.preventDefault(); mcGo(mcTab, +card.dataset.i); }
+  });
+  mcPrev.addEventListener('click', () => mcIdx > 0 ? mcGo(mcTab, mcIdx - 1) : mcTab > 0 && mcGo(mcTab - 1, COURSES[mcTab - 1].length - 1));
+  mcNext.addEventListener('click', () => mcIdx < COURSES[mcTab].length - 1 ? mcGo(mcTab, mcIdx + 1) : mcTab < COURSES.length - 1 && mcGo(mcTab + 1, 0));
+  mcRender();
+
+  /* ---------- 수업을 관통하는 접근: pinned screen, scroll steps through the list ----------
+     Item copy from the accordion on phi.design/programs */
+  const AP = [
+    ['라이브데모', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는<br>문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다."],
+    ['피어크리틱', '모든 코스에는 관찰 가능한 평가 기준, 즉 루브릭이 있습니다. 전문가는 매주 Learning Design팀과 학습자의 결과물을 리뷰하고, 루브릭 기반으로 주로 하는 실수 패턴을 정의합니다. 학습자는 매 세션 이 패턴을 기준으로 구체적인 피드백을 주고받습니다.'],
+    ['셀프피드백', 'Phi에는 별도의 평가 시스템이 없습니다. 하지만, 학습자 역시 전문가와 동일한 기준으로 자신의 작업을 판단할 수 있도록, 모든 코스에는 정교하게 설계된 루브릭이 있습니다. 시작 전과 진행 중 매주, 학습 목표를 어느 정도 달성했고 그 이유가 무엇인지 루브릭 기반으로 작성합니다. 코스가 끝난 뒤에는 시작 전과 후의 자신을 현재의 언어로 다시 평가합니다.'],
+    ['워크숍', '정해진 코스 외에도, 학기 중 학습자의 이해도를 높이는 워크숍이 열립니다. 주제는 다양하고, 매 기수 학습자들의 상태를 반영합니다. 예를 들어 Phi의 세션은 시연 위주라 능동적 관찰이 중요한데, 전문가의 암묵지를 분석하고 분해하는 법은 코스 밖 워크숍에서 따로 배웁니다.'],
+    ['공유회', '가장 잘 배우는 방법은 남에게 가르쳐보는 것입니다. 워크숍은 매회 정해진 인원만 들을 수 있습니다. 서로 다른 주제의 워크숍을 들은 동기들은 자연스럽게 배운 것을 나눕니다. 설명하는 사람은 자신이 이해하지 못한 부분을 발견하고, 듣는 사람은 놓친 주제를 얻으면서 자발적인 공유회가 일상적으로 일어납니다.'],
+    ['저널링', '매주 혹은 매일 배운 점이나 느낀 점 등을 4F(Fact/Feeling/Finding/Future Item)양식으로 회고합니다. 스스로 수업을 정리해보기도 하고, 동기의 저널링을 보면서 깨달음이나 동기를 얻기도 합니다. 쌓인 저널링은 학기별로 Phi만의 회고 방식을 담은 러닝 리포트로 정리해 드립니다.']
+  ];
+  const ap = document.getElementById('approach'), apCopy = document.getElementById('apCopy'), apList = document.getElementById('apList');
+  AP.forEach(([t, d]) => apCopy.insertAdjacentHTML('beforeend', `<div class="ap-state"><h3>${t}</h3><p>${d}</p></div>`));
+  apList.innerHTML = ['수업을 관통하는 접근', ...AP.map(a => a[0])].map((t, i) =>
+    `<li><button type="button" data-i="${i}"${i === 0 ? ' aria-current="true"' : ''}><img src="assets/arrow-right.svg" alt="">${t}</button></li>`).join('');
+  const apStates = [...apCopy.children], apBtns = [...apList.querySelectorAll('button')];
+  const AP_STEP = .75; // viewport heights of scroll per list item
+  let apIdx = 0;
+  function apLayout() { ap.style.height = (innerHeight * (1 + AP_STEP * AP.length)) + 'px'; }
+  function apSet(i) {
+    if (i === apIdx) return; apIdx = i;
+    apStates.forEach((s, k) => s.classList.toggle('on', k === i));
+    apBtns.forEach((b, k) => k === i ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'));
+    ap.classList.toggle('item', i > 0);
+  }
+  function apScroll() {
+    const y = scrollY - ap.offsetTop, step = innerHeight * AP_STEP;
+    apSet(Math.max(0, Math.min(AP.length, Math.floor((y + step * .5) / step))));
+  }
+  apBtns.forEach((b, i) => b.addEventListener('click', () => scrollTo({ top: ap.offsetTop + i * innerHeight * AP_STEP, behavior: 'smooth' })));
+  addEventListener('scroll', apScroll, { passive: true });
+  addEventListener('resize', () => { apLayout(); apScroll(); });
+  apLayout(); apScroll();
+
+  /* ---------- Curriculum tabs (연간 구조 ↔ 주간 시간표) ---------- */
+  const tY = document.getElementById('tYear'), tW = document.getElementById('tWeek');
+  const pY = document.getElementById('pYear'), pW = document.getElementById('pWeek'), cap = document.getElementById('curCap');
+  const CAP = { y: '1년제 프로그램은 아래 요소들로 구성되어있습니다.', w: '매주 월-금 수업이 진행됩니다. 화, 수, 목은 오전-오후 풀타임으로 진행되며 월, 금은 학기 수업 스케줄에 따라 유동적으로 진행됩니다.' };
+  function setCur(week) {
+    tY.setAttribute('aria-selected', !week); tW.setAttribute('aria-selected', week);
+    pY.hidden = week; pW.hidden = !week; cap.textContent = week ? CAP.w : CAP.y;
+  }
+  tY.onclick = () => setCur(false); tW.onclick = () => setCur(true);
+
+  // weekly grid: 10:00–18:00, 44.5px per hour
+  const tt = document.getElementById('tt'), Y0 = 49.26, PH = 44.5;
+  for (let h = 10; h <= 18; h++) {
+    const y = Y0 + (h - 10) * PH;
+    tt.insertAdjacentHTML('beforeend', `<span class="hl" style="top:${y}px">${h}</span><span class="hr${h % 2 === 0 ? ' b' : ''}" style="top:${y}px"></span>`);
+  }
+  const DAYS = ['월','화','수','목','금'];
+  const SES = [[['10:00 – 13:00','세션 1']],[['10:00 – 13:00','세션 2'],['15:00 – 18:00','세션 3']],[['10:00 – 13:00','세션 4'],['15:00 – 18:00','세션 5']],[['10:00 – 13:00','세션 6'],['15:00 – 18:00','세션 7']],[['10:00 – 13:00','세션 8']]];
+  tt.insertAdjacentHTML('beforeend', `<div class="days">${DAYS.map(d => `<span>${d}</span>`).join('')}</div>`);
+  tt.insertAdjacentHTML('beforeend', `<div class="slots">${SES.map(day => `<div class="day">${day.map(([t,n]) => {
+    const start = parseInt(t); const top = Y0 + (start - 10) * PH;
+    return `<div class="ses" style="top:${top}px;height:${3 * PH}px"><span>${t}</span><b>${n}</b></div>`;
+  }).join('')}</div>`).join('')}</div><div class="lunch">점심시간</div>`);
+
+  /* ---------- Modals ---------- */
+  let lastFocus = null;
+  function openModal(id) {
+    const m = document.getElementById(id); if (!m) return;
+    lastFocus = document.activeElement; m.classList.add('open');
+    document.documentElement.style.overflow = 'hidden';
+    m.querySelector('[data-close]').focus();
+  }
+  function closeModal(m) {
+    m.classList.remove('open'); document.documentElement.style.overflow = '';
+    lastFocus && lastFocus.focus();
+  }
+  document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openModal(b.dataset.open)));
+  document.querySelectorAll('.modal').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-close]')) closeModal(m); });
+  });
+  addEventListener('keydown', e => { if (e.key === 'Escape') { const m = document.querySelector('.modal.open'); m && closeModal(m); } });
+})();
+</script>
+
+</body></html>
