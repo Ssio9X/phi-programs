@@ -139,26 +139,6 @@ dl { margin: 0; }
 .pill:not([aria-selected="true"]):hover { color: var(--ink); }
 .mist .pill-bar { background: #fff; }
 
-/* Competency */
-.cap-head { padding-top: 120px; }
-.cap-head .lead { padding-top: 20px; }
-.cap-head .pills { padding-top: 52px; }
-.struct-title { padding-top: 52px; }
-.struct { display: flex; gap: 52px; padding: 48px 0 120px; align-items: flex-start; }
-.struct-art { flex: 1 1 0; min-width: 0; height: 600px; border-radius: 24px; background: var(--panel-2); position: relative; display: grid; place-items: center; overflow: hidden; }
-.struct-art .atlas { width: 328px; height: 552px; }
-.struct-art .atlas img { height: 100%; left: -2.01%; top: 0; width: 100.01%; }
-.struct-art .rule { position: absolute; left: 50%; transform: translateX(-50%); }
-.struct-art .v { position: absolute; width: 0; border-left: .8px dashed rgba(71,71,71,.2); }
-.struct-art .h { position: absolute; height: 0; border-top: .8px dashed rgba(71,71,71,.2); }
-.struct-art .s { position: absolute; width: 10px; height: 10px; border: .8px solid rgba(71,71,71,.2); }
-.struct-list { width: 580px; flex: 0 0 auto; display: flex; flex-direction: column; gap: 20px; }
-.struct-list .item { font-size: clamp(32px, 2.7vw, 52px); font-weight: 700; line-height: 1.2; color: var(--mute); }
-.struct-list .item.on { color: var(--ink); }
-.struct-list .detail { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; }
-.struct-list .detail strong { font-size: 24px; }
-.struct-list .detail p { font-size: 18px; line-height: 1.6; color: var(--ink-2); }
-
 /* Program components */
 .comp-lead { padding-top: 20px; }
 .comp { display: flex; flex-direction: column; gap: 16px; padding: 60px 0 160px; }
@@ -329,103 +309,114 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
 .rv.in { transform: none; opacity: 1; }
 .cc.rv.in:hover { transform: translateY(-6px); transition-delay: 0s !important; }
 
-/* ---------- 주요 수업들: tabbed accordion carousel (Figma 5288:596) ---------- */
-.mc-head { padding-top: clamp(96px, 9.3vw, 178px); }
-.mc-head h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); line-height: 1.2; color: #fff; }
-.mc-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 40px; flex-wrap: wrap; }
-.mc-tabs { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
-.mc-tab { flex: 0 0 auto; height: 56px; min-width: 190px; padding: 4px 24px; border-radius: 12px; border: 1px solid #fff; color: #b9b9b9; font-size: 20px; transition: background .3s, color .3s; }
-.mc-tab[aria-selected="true"] { background: #fff; color: #000; font-weight: 700; }
-.mc-tab:not([aria-selected="true"]):hover { color: #fff; }
-.mc-arrows { display: flex; gap: 16px; }
-.mc-arrow { width: 52px; height: 52px; border-radius: 12px; }
-.mc-arrow path { fill: #000; transition: fill .2s; }
-.mc-arrow:disabled { cursor: default; }
-.mc-arrow:disabled path { fill: #dadada; }
-.mc-wrap { width: min(1440px, calc(100vw - 32px)); margin-inline: auto; padding: 52px 0 170px; }
-.mc-track { display: flex; gap: 16px; height: 520px; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
-.mc-track::-webkit-scrollbar { display: none; }
-.mc-card {
-  position: relative; flex: 0 0 300px; height: 100%; border-radius: 24px; background: #f2f3f5; color: #111214;
-  padding: 24px 24px 32px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; overflow: hidden;
-  transition: flex-basis .6s cubic-bezier(.65,0,.35,1), background .4s, padding .4s;
+/* ---------- 주요 수업들: card grid, cards flip to course summary (Figma 6493:460 / 6561:4467, back face 6559:1297) ---------- */
+.col2 { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
+.mc { background: linear-gradient(to bottom, #000 0, #000 calc(100% - 420px), #8c8c8c 100%); }
+.mc-head { padding-top: 120px; display: flex; flex-direction: column; gap: 24px; }
+.mc-head h2 { margin: 0; font-size: clamp(36px, 2.7vw, 52px); line-height: 1.2; color: #fff; }
+.mc-head p { max-width: 800px; font-size: var(--lead); line-height: 1.6; color: var(--mute); }
+.mc-head a { color: inherit; text-underline-offset: 3px; }
+.mc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; padding: 52px 0 520px; }
+.cf { position: relative; height: 376px; perspective: 1400px; }
+.cf-in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+.cf:hover .cf-in, .cf.flip .cf-in, .cf:focus-within .cf-in { transform: rotateY(180deg); }
+.cf-face { position: absolute; inset: 0; border-radius: 24px; background: #fff; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+.cf-front { display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: center; padding: 36px; text-align: center; cursor: pointer; }
+.cf-front h3 { margin: 0; font-size: clamp(26px, 1.67vw, 32px); font-weight: 860; line-height: 1.2; color: var(--ink); }
+.cf-front div { display: flex; flex-direction: column; gap: 6px; font-size: clamp(18px, 1.15vw, 22px); line-height: 1.6; color: var(--ink-2); }
+.cf-front span { font-weight: 300; }
+.cf-front b { font-weight: 700; }
+.cf-back { transform: rotateY(180deg); display: flex; flex-direction: column; gap: 8px; padding: 32px 36px 36px; }
+.cf-back .t { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.cf-back small { font-size: 16px; font-weight: 500; line-height: 1.6; color: var(--ink-2); }
+.cf-back p { font-size: 17px; line-height: 1.5; color: #131313; }
+.cf-back button { flex: 0 0 56px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 20px; font-weight: 700; transition: background .2s; }
+.cf-back button:hover { background: #333; }
+
+/* ---------- 역량과 태도: horizontal card track (Figma 6561:4605 / 6493:347 / 6561:4923) ---------- */
+.cap-head { padding-top: 120px; }
+.cap-head h2 { margin: 0; font-size: clamp(36px, 2.7vw, 52px); line-height: 1.2; color: var(--ink); }
+.cap-head .lead { text-align: left; color: var(--mute); padding-top: 20px; }
+.cap-head .pills { justify-content: flex-start; padding-top: 52px; }
+.cap-track {
+  display: flex; gap: 32px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none;
+  padding: 32px max(16px, calc((100vw - 1200px) / 2)) 40px; scroll-padding-inline: max(16px, calc((100vw - 1200px) / 2));
 }
-.mc-card.on { flex-basis: min(808px, 82vw); background: #fff; padding: 24px 32px 32px; cursor: default; }
-.mc-card:not(.on):hover { background: #e7e9ec; }
-.mc-top { display: flex; flex-direction: column; gap: 32px; }
-.mc-name { display: flex; flex-direction: column; gap: 12px; }
-.mc-name h3 { margin: 0; font-size: 42px; line-height: 1.1; font-weight: 700; }
-.mc-name span { font-size: 16px; font-weight: 600; line-height: 1.6; color: var(--ink-2); }
-.mc-card.on .mc-name span { font-size: 20px; font-weight: 700; }
-.mc-desc { width: min(744px, 76vw); font-size: 20px; line-height: 1.6; color: var(--ink-2); opacity: 0; transform: translateY(10px); transition: opacity .35s, transform .35s; pointer-events: none; }
-.mc-card.on .mc-desc { opacity: 1; transform: none; transition-delay: .35s; pointer-events: auto; }
-.mc-plus { align-self: flex-end; width: 36px; height: 36px; border-radius: 52px; background: #a9a9a9; display: grid; place-items: center; transition: background .3s, transform .3s; }
-.mc-card.on .mc-plus { background: #000; }
-.mc-plus:hover { transform: rotate(90deg); }
-.mc-plus i { position: relative; width: 17px; height: 17px; }
-.mc-plus i::before, .mc-plus i::after { content: ""; position: absolute; left: 50%; top: 50%; background: #fff; border-radius: 39px; transform: translate(-50%, -50%); }
-.mc-plus i::before { width: 3.4px; height: 17px; }
-.mc-plus i::after { width: 17px; height: 3.4px; }
+.cap-track::-webkit-scrollbar { display: none; }
+.cap-card { flex: 0 0 min(400px, 82vw); scroll-snap-align: start; display: flex; flex-direction: column; gap: 24px; }
+.cap-card.w { flex-basis: min(820px, 82vw); }
+.cap-pic { height: clamp(300px, 24vw, 460px); border-radius: 24px; background: var(--panel-2); }
+.cap-t { display: flex; flex-direction: column; gap: 16px; }
+.cap-t small { font-size: 20px; font-weight: 500; line-height: 1; color: #828282; }
+.cap-t h3 { margin: 8px 0 0; font-size: clamp(26px, 1.67vw, 32px); line-height: 1; color: var(--ink); }
+.cap-t p { font-size: 17px; font-weight: 700; line-height: 1.6; color: var(--mute); }
+.cap-nav { display: flex; justify-content: flex-end; gap: 18px; padding-bottom: 120px; }
+.cap-nav button { width: 52px; height: 52px; border-radius: 50%; }
+.cap-nav path { fill: #000; transition: fill .2s; }
+.cap-nav button:disabled { cursor: default; }
+.cap-nav button:disabled path { fill: #dadada; }
 
-/* ---------- 역량과 태도 (left-aligned, Figma 5288:468) ---------- */
-.cap-head h2 { margin: 0; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; color: var(--ink); }
-.cap-head .lead { text-align: left; }
-.cap-head .pills { justify-content: flex-start; }
-.struct { padding-top: 48px; }
+/* ---------- 프로그램 구조 (Figma 6561:6755 / 6561:6766 / 6561:6807) ---------- */
+.ps-hero { position: relative; height: clamp(420px, 46.9vw, 900px); background: var(--ink); overflow: hidden; color: #fff; text-align: center; }
+.ps-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; }
+.ps-hero::after { content: ""; position: absolute; inset: 0; backdrop-filter: blur(1.5px); background: linear-gradient(to bottom, rgba(13,13,13,.94) .6%, rgba(13,13,13,.57) 22.3%, rgba(13,13,13,.05) 52.7%, rgba(13,13,13,0) 89.2%); }
+.ps-hero .t { position: relative; z-index: 1; padding-top: clamp(64px, 5.2vw, 100px); display: flex; flex-direction: column; gap: 16px; }
+.ps-hero h2 { margin: 0; font-size: clamp(36px, 2.7vw, 52px); line-height: 1; }
+.ps-hero p { font-size: 18px; font-weight: 700; line-height: 1.6; text-wrap: balance; }
+.ps-course { padding-top: 80px; display: flex; flex-direction: column; gap: 24px; }
+.ps-course h3 { margin: 0; font-size: 27px; line-height: 1; }
+.ps-course h3 small, .ps-other b small { font-size: 17px; }
+.ps-cols { display: flex; gap: 20px; }
+.ps-cols > div { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.ps-cols > i { flex: 0 0 .8px; height: 218px; background: #d9d9d9; }
+.ps-cols h4 { margin: 0; font-size: 21px; line-height: 1.2; }
+.ps-cols p, .ps-other p { font-size: 17px; font-weight: 700; line-height: 1.6; color: var(--mute); }
+.ps-other { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 80px 0 100px; align-items: start; }
+.ps-other article { display: flex; flex-direction: column; gap: 12px; }
+.ps-other .pic { height: 384px; border-radius: 24px; background: var(--panel); opacity: .9; }
+.ps-other b { font-size: 21px; line-height: 1.2; color: var(--ink); }
 
-/* ---------- 프로그램 구조 (Figma 5435:15133) ---------- */
-.ps { background: #f2f3f5; color: #111214; padding-block: 160px; display: flex; flex-direction: column; gap: 80px; }
-.ps-title { margin: 0; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; }
-.ps-group { display: flex; flex-direction: column; gap: 32px; }
-.ps-group h3 { margin: 0 auto; font-size: clamp(28px, 2.1vw, 40px); line-height: 1.2; }
-.ps-grid { width: min(1440px, calc(100vw - 32px)); margin-inline: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-.ps-card { background: rgba(255,255,255,.9); border-radius: 40px; padding: 20px 20px 40px; display: flex; flex-direction: column; gap: 32px; }
-.ps-card.white { background: #fff; }
-.ps-box { position: relative; aspect-ratio: 424 / 426.67; border-radius: 20px; background: #edeef0; overflow: hidden; }
-.ps-box .pic { position: absolute; }
-.ps-t { padding-inline: 20px; display: flex; flex-direction: column; gap: 12px; }
-.ps-t h4 { margin: 0; font-size: 24px; line-height: 1.2; }
-.ps-t p { font-size: 16px; line-height: 1.6; color: var(--ink-2); }
-
-/* ---------- 수업을 관통하는 접근 (pinned, Figma 5288:5770) ---------- */
-.ap { position: relative; background: #000; }
+/* ---------- 수업을 관통하는 접근: header + pinned photo slides (Figma 6561:7117–7079, 6561:7155, 6561:7675–7828, nav 6561:7585) ---------- */
+.ap-head { background: #f6f6f6; padding: 180px 0 100px; text-align: center; color: #000; display: flex; flex-direction: column; gap: 32px; }
+.ap-head small { font-size: 21px; font-weight: 700; line-height: 1.2; }
+.ap-head h2 { margin: 0; font-size: clamp(44px, 4.17vw, 80px); line-height: 1.2; }
+.ap-head p { width: min(740px, calc(100vw - 32px)); margin-inline: auto; font-size: 18px; font-weight: 700; line-height: 1.6; }
+.ap { position: relative; background: var(--ink); }
 .ap-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff; }
-.ap-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; transform: scale(1.04); transition: transform 1.2s cubic-bezier(.2,.8,.2,1), filter 1s; }
-.ap.item .ap-bg { transform: scale(1.1); filter: blur(6px) grayscale(1); }
-.ap-shade { position: absolute; inset: 0; background: rgba(43,43,43,.52); }
-.ap-shade::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 68.5%; background: linear-gradient(to bottom, rgba(44,44,46,0) 31%, rgba(0,0,0,.32)); }
-.ap-dim { position: absolute; inset: 0; background: linear-gradient(to bottom, #a9a9a9 0%, #9d9d9d 55%, #6f6f6f 100%); opacity: 0; transition: opacity .8s ease; }
-.ap.item .ap-dim { opacity: .92; }
-.ap-copy { position: absolute; left: 0; right: 0; top: clamp(96px, 11.1vh, 120px); }
-.ap-state { position: absolute; left: 0; top: 0; width: 100%; display: flex; flex-direction: column; gap: 16px; opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .7s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
-.ap-state.on { opacity: 1; transform: none; pointer-events: auto; }
-.ap-state h2 { margin: 0 0 16px; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; }
-.ap-state h3 { margin: 0; font-size: clamp(28px, 2.1vw, 40px); line-height: 1.2; }
-.ap-state p { max-width: 740px; font-size: var(--lead); line-height: 1.6; color: #d5d5d5; }
-.ap-list { position: absolute; left: 0; right: 0; bottom: clamp(48px, 11.6vh, 120px); list-style: none; margin: 0 auto; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.ap-list button { display: flex; align-items: center; gap: 12px; padding: 4px 24px 4px 36px; position: relative; color: #fff; font-size: clamp(18px, 1.25vw, 24px); opacity: .6; transition: opacity .3s, padding .3s; text-align: left; }
-.ap-list button img { position: absolute; left: 4px; width: 15px; height: 15px; transform: rotate(-90deg); opacity: 0; transition: opacity .3s; }
-.ap-list button[aria-current="true"] { opacity: 1; font-weight: 700; }
-.ap-list button[aria-current="true"] img { opacity: 1; }
-.ap-list button:hover { opacity: 1; }
+.ap-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
+.ap-slide.on { opacity: 1; }
+.ap-slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; transform: scale(1.06); transition: transform 1.6s cubic-bezier(.2,.8,.2,1); }
+.ap-slide.on img { transform: none; }
+.ap-slide::after { content: ""; position: absolute; inset: 0; background: linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(0,0,0,var(--side, .58)) 100%), linear-gradient(180deg, rgba(197,196,194,0) 0%, rgba(179,176,176,.27) 52.3%, rgba(112,112,112,.67) 74.9%, #444 100%); }
+.ap-cap { position: absolute; z-index: 1; left: max(24px, 8.33vw); bottom: clamp(48px, 9.26vh, 100px); width: min(817px, calc(100vw - 48px)); display: flex; flex-direction: column; gap: 12px; font-size: clamp(16px, 1.1vw, 21px); font-weight: 700; opacity: 0; transform: translateY(16px); transition: opacity .6s ease .15s, transform .7s cubic-bezier(.2,.8,.2,1) .15s; }
+.ap-slide.on .ap-cap { opacity: 1; transform: none; }
+.ap-cap span { display: flex; gap: 8px; line-height: 1; }
+.ap-cap p { line-height: 1.6; }
+.ap-nav { position: absolute; z-index: 2; left: max(24px, 8.33vw); top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ap-nav button { display: flex; align-items: center; gap: 16px; height: 16px; padding-right: 24px; color: #fff; font-size: 18px; font-weight: 700; white-space: nowrap; transition: height .3s; }
+.ap-nav i { width: 25.6px; height: 3.2px; border-radius: 2px; background: rgba(255,255,255,.55); transition: width .35s cubic-bezier(.2,.8,.2,1), background .3s; }
+.ap-nav button[aria-current="true"] i { width: 41.6px; background: #fff; }
+.ap-nav span { opacity: 0; transform: translateX(-6px); transition: opacity .25s, transform .3s; pointer-events: none; }
+.ap-nav button:hover, .ap-nav button:focus-visible { height: 24px; }
+.ap-nav button:hover i, .ap-nav button:focus-visible i { width: 61.6px; background: #fff; }
+.ap-nav button:hover span, .ap-nav button:focus-visible span { opacity: 1; transform: none; }
 
 @media (max-width: 1180px) {
-  .ps-grid { grid-template-columns: 1fr; max-width: 560px; }
-  .mc-track { height: 460px; }
-  .mc-name h3 { font-size: 32px; }
-  .mc-card { flex-basis: 220px; }
+  .mc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-bottom: 320px; }
+  .ps-other { grid-template-columns: 1fr; max-width: 560px; margin-inline: auto; }
 }
 @media (max-width: 760px) {
-  .mc-tab { min-width: 0; font-size: 16px; height: 48px; padding: 4px 16px; }
-  .mc-desc { font-size: 16px; }
-  .ps { padding-block: 96px; gap: 56px; }
-  .ps-card { border-radius: 28px; }
+  .mc-grid { grid-template-columns: 1fr; }
+  .cf { height: 340px; }
+  .ps-cols { flex-direction: column; }
+  .ps-cols > i { height: .8px; flex-basis: auto; }
+  .ps-hero p br { display: none; }
+  .ap-head { padding: 120px 0 72px; }
+  .ap-cap p { font-size: 15px; }
 }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1180px) {
-  .struct { flex-direction: column; align-items: stretch; }
-  .struct-list { width: auto; }
   .course { flex-direction: column; }
   .course > .card-t { width: auto; }
   .course .dash { border-left: 0; border-top: .8px dashed var(--ink); }
@@ -453,8 +444,6 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   .fact + .fact::before { display: none; }
   .fact { padding: 8px 0; white-space: normal; }
   .hire-card { padding: 32px; }
-  .struct-art { height: 460px; }
-  .struct-art .atlas { transform: scale(.75); }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition-duration: .01ms !important; }
@@ -510,95 +499,67 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
     </div>
   </section>
 
-  <!-- 주요 수업들 — Figma 5288:592 / 5402:12816 / 5288:596. Course grouping and copy from phi.design/programs -->
+  <!-- 주요 수업들 — Figma 6493:460 / 6561:4467. Cards flip (hover/tap) to the summary in 6559:1297; Course Profile opens the modal -->
   <section class="band dark mc" id="courses">
-    <div class="col mc-head"><h2>주요 수업들</h2></div>
-    <div class="col mc-bar">
-      <div class="mc-tabs" role="tablist" aria-label="수업 분류">
-        <button class="mc-tab" role="tab" aria-selected="true" data-tab="0">Fundamentals</button>
-        <button class="mc-tab" role="tab" aria-selected="false" data-tab="1">Domain</button>
-        <button class="mc-tab" role="tab" aria-selected="false" data-tab="2">Ritual(LD)</button>
-      </div>
-      <div class="mc-arrows">
-        <button class="mc-arrow" type="button" id="mcPrev" aria-label="이전 수업"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="12" fill="#fff"/><path d="M18.2 23.5751C16.3333 24.6529 16.3333 27.3472 18.2 28.4249L27.8 33.9674C29.6667 35.0452 32 33.698 32 31.5426L32 20.4574C32 18.302 29.6667 16.9548 27.8 18.0326L18.2 23.5751Z"/></svg></button>
-        <button class="mc-arrow" type="button" id="mcNext" aria-label="다음 수업"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="12" fill="#fff"/><path d="M33.8 23.5751C35.6667 24.6529 35.6667 27.3472 33.8 28.4249L24.2 33.9674C22.3333 35.0452 20 33.698 20 31.5426L20 20.4574C20 18.302 22.3333 16.9548 24.2 18.0326L33.8 23.5751Z"/></svg></button>
-      </div>
+    <div class="col2 mc-head">
+      <h2>주요 수업들</h2>
+      <p>상기된 <a href="#competencies">역량과 태도</a>를 중심으로 수업들이 설계되었습니다.<br>이를 토대로 디지털 프로덕트 디자인과 브랜딩 분야에서 자신의 가능성을 펼칠 수 있도록 합니다.<br>본 주요 수업들은 1학기에 진행되는 수업들이며, 2학기는 1학기의 성취에 따라 학습 효과를 보완, 증폭할 수 있는 방향으로 준비됩니다.</p>
     </div>
-    <div class="mc-wrap"><div class="mc-track" id="mcTrack" role="tabpanel"></div></div>
+    <div class="col2 mc-grid" id="mcGrid"></div>
   </section>
 
-  <!-- 역량과 태도 — Figma 5288:468 (left-aligned); content below kept from the previous version -->
+  <!-- 역량과 태도 — Figma 6561:4605 / 6493:338 / 6493:340 / 6493:347 / 6561:4923 -->
   <section class="band white" id="competencies">
-    <div class="col cap-head">
+    <div class="col2 cap-head">
       <h2>역량과 태도</h2>
       <p class="lead">어떤 환경에서도 스스로 답을 찾을 수 있는 사고방식을 만들기 위해,<br>Phi는 아래 역량과 태도를 중요시합니다.</p>
       <div class="pills"><div class="pill-bar fixed" role="tablist"><button class="pill" role="tab" aria-selected="true">역량 Competency</button><button class="pill" role="tab" aria-selected="false">태도 Phi OS</button></div></div>
     </div>
-    <div class="col struct">
-      <div class="struct-art" aria-hidden="true">
-        <img class="rule" src="assets/struct-top.svg" alt="" style="top:34px;width:436px;height:10px">
-        <img class="rule" src="assets/struct-bottom.svg" alt="" style="top:556px;width:438px;height:10px">
-        <span class="v" style="left:calc(50% - 213px);top:57px;height:226px"></span>
-        <span class="v" style="left:calc(50% + 213px);top:58px;height:222px"></span>
-        <span class="v" style="left:calc(50% - 213px);top:319px;height:222px"></span>
-        <span class="v" style="left:calc(50% + 213px);top:319px;height:222px"></span>
-        <span class="s" style="left:calc(50% - 219px);top:295px"></span>
-        <span class="s" style="left:calc(50% + 207px);top:295px"></span>
-        <div class="crop atlas"><img src="assets/atlas.webp" alt=""></div>
-      </div>
-      <div class="struct-list">
-        <p class="item">Aesthetic Sense</p>
-        <p class="item">Articulation</p>
-        <div><p class="item on">Structural Thinking</p>
-          <div class="detail"><strong>구조화</strong><p>나무를 보는 것만큼 숲을 보는 일도 중요하다. 구체와 추상을 오가며 현재 다루고 있는 문제가 전체 그림에서 어느 위치성을 지니는지 이해하고, 파편화된 분야들을 하나로 엮어내는 구조적 사고를 훈련한다.</p></div>
-        </div>
-        <p class="item">Problem Definition</p>
-        <p class="item">Reframing</p>
-      </div>
+    <div class="cap-track" id="capTrack">
+      <article class="cap-card w"><div class="cap-pic"></div><div class="cap-t"><div><small>심미안</small><h3>Aesthetic Sense</h3></div><p>디자이너에게 가장 중요한 역량을 고르라면 아름다움을 인식하는 능력 아닐까? 대상을 보았을 때 구체적으로 부분을 인식하고, 미추를 판단하며, 그 미추의 정도를 가늠할 수 있는 예리한 감각을 훈련한다.</p></div></article>
+      <article class="cap-card"><div class="cap-pic"></div><div class="cap-t"><div><small>언어화</small><h3>Articulation</h3></div><p>언어는 곧 사고의 천장이다. 내가 다룰 수 있는 어휘의 질과 양이 나의 사고방식의 높이를 결정한다. 타인에게 내 생각을 전달하는 것은 물론, 스스로를 설득할 수 있는 언어 체계를 갖춘다.</p></div></article>
+      <article class="cap-card"><div class="cap-pic"></div><div class="cap-t"><div><small>구조화</small><h3>Structural Thinking</h3></div><p>나무를 보는 것만큼 숲을 보는 일도 중요하다. 구체와 추상을 오가며 현재 다루고 있는 문제가 전체 그림에서 어느 위치성을 지니는지 이해하고, 파편화된 분야들을 하나로 엮어내는 구조적 사고를 훈련한다.</p></div></article>
+      <article class="cap-card w"><div class="cap-pic"></div><div class="cap-t"><div><small>관점 전환</small><h3>Reframing</h3></div><p>혁신적인 해결책은 같은 문제를 다른 관점으로 바라보았을 때 나온다. 특정 문제를 그 분야의 문법으로만 정의하는 것이 아니라, 다른 분야의 레퍼런스도 내 문제에 적용할 수 있는 관점을 지니기 위해 유연한 관점 전환을 훈련한다.</p></div></article>
+      <article class="cap-card"><div class="cap-pic"></div><div class="cap-t"><div><small>문제 정의</small><h3>Problem Definition</h3></div><p>많은 디자인이 실패하는 이유는 틀린 문제를 풀었기 때문이다. 증상을 문제로 오독하지 않고, 본질이 무엇인지 파악함으로써 정확한 문제 정의를 추구한다.</p></div></article>
+    </div>
+    <div class="col2 cap-nav">
+      <button type="button" id="capPrev" aria-label="이전 역량"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="26" fill="#EFEFEF"/><path d="M18.2 23.5751C16.3333 24.6529 16.3333 27.3472 18.2 28.4249L27.8 33.9674C29.6667 35.0452 32 33.698 32 31.5426L32 20.4574C32 18.302 29.6667 16.9548 27.8 18.0326L18.2 23.5751Z"/></svg></button>
+      <button type="button" id="capNext" aria-label="다음 역량"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="26" fill="#EFEFEF"/><path d="M33.8 23.5751C35.6667 24.6529 35.6667 27.3472 33.8 28.4249L24.2 33.9674C22.3333 35.0452 20 33.698 20 31.5426L20 20.4574C20 18.302 22.3333 16.9548 24.2 18.0326L33.8 23.5751Z"/></svg></button>
     </div>
   </section>
 
-  <!-- 프로그램 구조 — Figma 5435:15133 -->
-  <section class="band ps" id="structure">
-    <div class="col"><h2 class="ps-title">프로그램 구조</h2></div>
-    <div class="ps-group">
-      <h3 class="col">Course</h3>
-      <div class="ps-grid">
-        <article class="ps-card"><div class="ps-box"><div class="pic crop ill-fund" style="left:-2.83%;top:15.7%;width:108.49%;height:73.36%"><img src="assets/ill-fundamental.webp" alt=""></div></div>
-          <div class="ps-t"><h4>Fundamental</h4><p>4개월 동안 매주 이어지며, 한 분야의 핵심 원리를 전문가와 함께 오래 다지는 수업입니다. 사고방식 위주의 기본기를 학습할 때는 지식을 습득하는 것은 물론, 다양한 맥락에서의 적용이 필요하기 때문에 긴 호흡으로 진행합니다.</p></div></article>
-        <article class="ps-card"><div class="ps-box"><div class="pic crop ill-dom" style="left:-5.58%;top:11.95%;width:111.56%;height:75%"><img src="assets/ill-domain.webp" alt=""></div></div>
-          <div class="ps-t"><h4>Domain</h4><p>1-2개월 단위로 구성되며, 기본기를 단기간에 습득할 수 있는 단위로 쪼개어서 경험하는 수업입니다. 여러 주제를 들어보면서 나에게 더 맞는 주제가 있다면 이후에 심화하여 학습할 수 있습니다.</p></div></article>
-        <article class="ps-card"><div class="ps-box"><div class="pic crop ill-rit" style="left:-7.63%;top:9.37%;width:119.81%;height:81.09%"><img src="assets/ill-ritual.webp" alt=""></div></div>
-          <div class="ps-t"><h4>Ritual</h4><p>한 달에 한 번, 하루 여섯 시간을 통째로 쓰는 수업입니다. 학습 목표에 따라 단기간에 집중적인 학습이 필요한 코스가 있고, 간격을 두고(spaced repetition) 다른 일과를 수행하면서 배우면 효과적인 코스가 있습니다. Ritual은 후자의 수업으로, 반복적인 훈련과 습관화가 필요한 종류의 내용을 배웁니다.</p></div></article>
+  <!-- 프로그램 구조 — Figma 6561:6755 / 6561:6766 / 6561:6807 -->
+  <section class="band white" id="structure">
+    <div class="ps-hero">
+      <img src="assets/structure-bg.webp" alt="">
+      <div class="col t"><h2>프로그램 구조</h2><p>코스는 '과목'에 해당하는 개념입니다. Phi의 코스는 일관된 시수가 아니라,<br>학습 목표에 따라 각기 다른 시수와 기간으로 구성됩니다.</p></div>
+    </div>
+    <div class="col2 ps-course">
+      <h3><small>1) </small>Course</h3>
+      <div class="ps-cols">
+        <div><h4>Fundamental</h4><p>4개월 동안 매주 이어지며, 한 분야의 핵심 원리를 전문가와 함께 오래 다지는 수업입니다. 사고방식 위주의 기본기를 학습할 때는 지식을 습득하는 것은 물론, 다양한 맥락에서의 적용이 필요하기 때문에 긴 호흡으로 진행합니다.</p></div>
+        <i></i>
+        <div><h4>Domain</h4><p>1-2개월 단위로 구성되며, 기본기를 단기간에 습득할 수 있는 단위로 쪼개어서 경험하는 수업입니다. 여러 주제를 들어보면서 나에게 더 맞는 주제가 있다면 이후에 심화하여 학습할 수 있습니다.</p></div>
+        <i></i>
+        <div><h4>Ritual</h4><p>한 달에 한 번, 하루 여섯 시간을 통째로 쓰는 수업입니다. 학습 목표에 따라 단기간에 집중적인 학습이 필요한 코스가 있고, 간격을 두고(spaced repetition) 다른 일과를 수행하면서 배우면 효과적인 코스가 있습니다. Ritual은 후자의 수업으로, 반복적인 훈련과 습관화가 필요한 종류의 내용을 배웁니다.</p></div>
       </div>
     </div>
-    <div class="ps-group">
-      <h3 class="col">Other Programs</h3>
-      <div class="ps-grid">
-        <article class="ps-card white"><div class="ps-box"><div class="pic crop ill-study" style="left:6.6%;top:5.7%;width:87.5%;height:88.59%"><img src="assets/ill-study.webp" alt=""></div></div>
-          <div class="ps-t"><h4>Study</h4><p>전문가 없이 학습자끼리 학습하는 수업입니다. 궁극적으로 학습자들은 스스로 배울 수 있는 상태가 되어야 합니다. Phi에서는 전문가의 전문성은 물론 학습자의 자율적 학습도 배워야 할 대상으로 여기며, 이를 위해 Learning Design팀이 각종 지원을 제공합니다.</p></div></article>
-        <article class="ps-card white"><div class="ps-box"><div class="pic crop ill-ws" style="left:17.77%;top:-15.16%;width:65.09%;height:104.77%"><img src="assets/ill-workshop.webp" alt=""></div></div>
-          <div class="ps-t"><h4>Workshop</h4><p>학기 중 코스 외 시간에 학습 능력 증진을 위해 제공되는 워크숍입니다.</p></div></article>
-        <article class="ps-card white"><div class="ps-box"><div class="pic crop ill-event" style="left:5.58%;top:6.64%;width:89.15%;height:90%"><img src="assets/ill-event.webp" alt=""></div></div>
-          <div class="ps-t"><h4>Event</h4><p>OT나 클로징 파티 등 코스를 시작하거나 끝맺음할 때, 혹은 특별한 이벤트가 있을 때 열리는 행사입니다.</p></div></article>
-      </div>
+    <div class="col2 ps-other">
+      <article><div class="pic"></div><p><b><small>2) </small>Study.</b> 전문가 없이 학습자끼리 학습하는 수업입니다. 궁극적으로 학습자들은 스스로 배울 수 있는 상태가 되어야 합니다. Phi에서는 전문가의 전문성은 물론 학습자의 자율적 학습도 배워야 할 대상으로 여기며, 이를 위해 Learning Design팀이 각종 지원을 제공합니다.</p></article>
+      <article><div class="pic"></div><p><b><small>3) </small>Workshop.</b> 학기 중 코스 외 시간에 학습 능력 증진을 위해 제공되는 워크숍입니다.</p></article>
+      <article><div class="pic"></div><p><b><small>4) </small>Event.</b> OT나 클로징 파티 등 코스를 시작하거나 끝맺음할 때, 혹은 특별한 이벤트가 있을 때 열리는 행사입니다.</p></article>
     </div>
   </section>
 
-  <!-- 수업을 관통하는 접근 — Figma 5288:5770 + state frame (Frame 2147234671). Screen stays pinned; scrolling steps through the list. Copy from phi.design/programs -->
-  <section class="ap" id="approach">
-    <div class="ap-stage">
-      <img class="ap-bg" src="assets/classroom.webp" alt="">
-      <div class="ap-shade"></div>
-      <div class="ap-dim" id="apDim"></div>
-      <div class="col ap-copy" id="apCopy">
-        <div class="ap-state on">
-          <h2>수업을 관통하는 접근</h2>
-          <h3>핵심 수업 장치</h3>
-          <p>Phi의 교육은 인지적 도제(Cognitive Apprenticeship)를 토대로 설계되었습니다.<br>전문가의 사고 과정을 학습자가 능동적으로 관찰할 수 있도록 다양한 장치가 준비되어있습니다.</p>
-        </div>
-      </div>
-      <ol class="col ap-list" id="apList"></ol>
+  <!-- 수업을 관통하는 접근 — header Figma 6561:7117 / 7114 / 7079; slides 6561:7155, 6561:7675–7828. Screen stays pinned; scrolling steps through the slides -->
+  <section class="ap-head" aria-labelledby="apTitle">
+    <small>핵심 수업 장치</small>
+    <h2 id="apTitle">수업을 관통하는 접근</h2>
+    <p>Phi의 교육은 인지적 도제(Cognitive Apprenticeship)를 토대로 설계되었습니다.<br>전문가의 사고 과정을 학습자가 능동적으로 관찰할 수 있도록 다양한 장치가 준비되어있습니다.</p>
+  </section>
+  <section class="ap" id="approach" aria-label="핵심 수업 장치">
+    <div class="ap-stage" id="apStage">
+      <ol class="ap-nav" id="apNav"></ol>
     </div>
   </section>
 
@@ -653,7 +614,8 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   <div class="sheet"><div class="sheet-top"><button class="x" type="button" data-close aria-label="닫기"></button></div>
     <div class="sheet-body"><div class="sheet-in">
       <div><h2 id="m-course-t"></h2><p class="sub" id="m-course-s"></p></div>
-      <section><h4>수업 목표</h4><div class="blk"><p id="m-course-d"></p></div></section>
+      <section><h4>A. 전문가 소개</h4><div class="blk"><strong id="m-course-w"></strong></div></section>
+      <section><h4>B. 수업 개요</h4><div class="blk"><p id="m-course-d"></p></div></section>
     </div></div>
   </div>
 </div>
@@ -879,7 +841,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   layout(); requestAnimationFrame(tick);
 
   /* ---------- Content reveal (cards rise in as their band enters) ---------- */
-  const rv = document.querySelectorAll('.term, .hire-card, .struct-art, .struct-list .item, .ps-card');
+  const rv = document.querySelectorAll('.term, .hire-card, .cf, .cap-card, .ps-other article');
   if (!reduce && 'IntersectionObserver' in window) {
     rv.forEach(el => {
       el.classList.add('rv');
@@ -890,102 +852,95 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
     rv.forEach(el => io.observe(el));
   }
 
-  /* ---------- 주요 수업들: tabs + accordion carousel ----------
-     Grouping per the course map (Fundamentals / Domain / Ritual(LD)); copy from phi.design/programs */
+  /* ---------- 주요 수업들: flip cards → Course Profile modal ----------
+     [title, 한글명, 전문가, 수업 개요, dedicated modal id] — copy from the Figma course map (6542:191) */
   const COURSES = [
-    [ ['Iterative<br>Problem Solving', '파고드는 문제 해결', '처음 발견한 문제의 해결책은 사용자의 문제를 해소하지 못할 때가 많다. 이 수업에서는 표면적인 현상 너머의 근본 원인을 집요하게 파고들어, 해결책을 만들어 검증할 때마다 문제를 더 깊이 다시 정의한다. 문제의 해상도를 높여가며 가치 있는 문제에 도달하고, 그것을 디자인으로 해결하는 법을 체화하게 된다.', 'm-ips'],
-      ['Typography<br>as Foundation', '기본기로서의 타이포그래피', '많은 디자이너들이 디자인의 기본으로 타이포그래피를 손꼽는 이유는 무얼까. 이 수업에서는 스타일을 만드는 조형 원리를 그래픽의 1차 언어인 글자를 가지고 학습한다. 흑과 백을 구사하여 공간을 창출하는 원리와 감각을 익히고, 보이지 않던 것을 보는 눈을 기른다.'],
-      ['Visual<br>Translation', '시각적 번역', '언어와 생각은 어떻게 시각적 형태가 될 수 있을까? 이 수업에서는 텍스트에 담긴 의미와 감정, 맥락을 읽고, 이를 자신만의 시각언어로 해석하고 재구성하는 과정을 훈련한다. 다양한 매체와 상황을 오가며 의미와 조형 사이의 연결을 탐색하고, 기획을 설득력 있고 고유한 시각적 결과로 발전시키는 역량을 기른다.'] ],
-    [ ['Art of Reading', '읽기의 기술', '우리는 정말 읽고 있을까? 보는 것과 읽는 것은 다르고, 우리는 자주 오독한다. 넘겨짚고, 보고 싶은 것만 보고, 아는 분야 안에서만 읽는다. 이 수업에서는 내가 무엇을 읽었는가가 아니라 그가 무엇을 썼는가를 묻는다.'],
-      ['Beautiful<br>Interface', '아름다운 인터페이스 디자인', '완성도 120%의 인터페이스란 어떤 것일까? 이 수업에서는 다양한 인터페이스 요소들을 끝까지 파고들었을 때 어떤 결과물을 만들어낼 수 있는지 실험해본다. 집착적으로 높은 완성도를 추구하는 경험을 해본 후, 일상에서도 높은 기준으로 아름다움을 인지하게 된다.'],
-      ['Interviewing<br>as exploration', '탐험으로서의 인터뷰', '답은 타인의 세계 안에 있다. 이 수업에서는 질문의 각을 날카롭게 다듬고, 상대의 말과 침묵 속에서 단서를 발견하며, 대화의 결을 따라 그 세계 깊숙이 들어가는 연습을 반복한다. 낯선 문제 앞에서도 대화로 핵심 단서를 찾아 들어가는 감각, 그리고 그 과정에서 말의 아름다움을 알아보는 안목을 훈련한다.'] ],
-    [ ['Engaging<br>with AI', '생산적 마찰이 있는 AI', 'AI를 쓸수록 탐구는 넓어지지만, 마찰 없이 얻은 것은 좀처럼 내 것이 되지 않는다. 이 수업에서는 AI와, 그리고 사람들과 마찰 있게 탐구하기를 반복한다. 학습자는 결과물만 만들지 않고, AI와 맞붙은 시간을 자신의 학습 경험으로 펼쳐낸다.'],
-      ['Peer<br>coaching', '상호 코칭', '누군가 고민을 털어놓으면 우리는 충고하고, 평가하고, 대신 풀어주려 한다. 하지만 그 문제를 가장 잘 아는 사람은 언제나 문제의 당사자이다. 이 수업에서는 동료의 말 너머까지 듣고, 결정적인 것을 묻고, 스스로 전략을 세우도록 안내하는 대화를 반복하여 훈련한다.'],
-      ['Readable<br>Writing', '읽음직한 글쓰기', '읽기 쉽고 읽고 싶은, 즉 읽음직한 글을 쓰는 일은 중요하다. 이 수업에서는 내 글을 읽을 독자가 누구인지 설정하고, 그 독자에게 유용하고 흥미로운 메시지를 설계하고, 그 메시지가 잘 전달되도록 표현하는 훈련을 한다.'],
-      ['Self-<br>Introduction', '자기소개', '우리가 만든 결과물은 물론, 행동, 생각, 발언... 무엇이든 자기소개의 재료가 될 수 있다. 이 수업에서는 익숙한 방식이 금지된 조건 속에서 매주 다른 제약으로 자기소개에 접근한다. 주어진 자기소개 방식 중 하나를 채택하는 것이 아닌, 스스로를 가장 잘 설명할 수 있는 자기소개 방식을 설계한다.'],
-      ['What If?', '만약에 ~라면?', '창의성은 훈련 가능한 역량일까? 가장 처음 떠올린 해결책이 너무나도 자명해 보여서 다른 해결책은 절대 없을 것 같은 느낌이 들 때, 어떻게 접근해볼 수 있을까. 이 수업에서는 동일한 문제를 다양한 분야의 전문가들이 어떻게 풀어나가는지를 비교 분석하면서 그들의 전문성을 추출하고, 내 작업에 이식해보는 방법을 배운다.'] ]
+    ['Iterative<br>Problem Solving', '파고드는 문제 해결', '박종민 · 정신재', '처음 발견한 문제의 해결책은 사용자의 문제를 해소하지 못할 때가 많다. 이 수업에서는 표면적인 현상 너머의 근본 원인을 집요하게 파고들어, 해결책을 만들어 검증할 때마다 문제를 더 깊이 다시 정의한다. 문제의 해상도를 높여가며 가치 있는 문제에 도달하고, 그것을 디자인으로 해결하는 법을 체화하게 된다.', 'm-ips'],
+    ['Typography<br>as Foundation', '기본기로서의 타이포그래피', '구모아 · 심우진', '많은 디자이너들이 디자인의 기본으로 타이포그래피를 손꼽는 이유는 무얼까. 이 수업에서는 스타일을 만드는 조형 원리를 그래픽의 1차 언어인 글자를 가지고 학습한다. 흑과 백을 구사하여 공간을 창출하는 원리와 감각을 익히고, 보이지 않던 것을 보는 눈을 기른다.'],
+    ['Visual<br>Translation', '시각적 번역', '서정민 · 이주연', '언어와 생각은 어떻게 시각적 형태가 될 수 있을까? 이 수업에서는 텍스트에 담긴 의미와 감정, 맥락을 읽고, 이를 자신만의 시각언어로 해석하고 재구성하는 과정을 훈련한다. 다양한 매체와 상황을 오가며 의미와 조형 사이의 연결을 탐색하고, 기획을 설득력 있고 고유한 시각적 결과로 발전시키는 역량을 기른다.'],
+    ['Art of<br>Reading', '읽기의 기술', '이연숙(리타)', '우리는 정말 읽고 있을까? 보는 것과 읽는 것은 다르고, 우리는 자주 오독한다. 넘겨짚고, 보고 싶은 것만 보고, 아는 분야 안에서만 읽는다. 이 수업에서는 내가 무엇을 읽었는가가 아니라 그가 무엇을 썼는가를 묻는다.'],
+    ['Beautiful<br>Interface', '아름다운 인터페이스 디자인', '김영준', '완성도 120%의 인터페이스란 어떤 것일까? 이 수업에서는 다양한 인터페이스 요소들을 끝까지 파고들었을 때 어떤 결과물을 만들어낼 수 있는지 실험해본다. 집착적으로 높은 완성도를 추구하는 경험을 해본 후, 일상에서도 높은 기준으로 아름다움을 인지하게 된다.'],
+    ['Interviewing<br>as exploration', '탐험으로서의 인터뷰', '최성운', '답은 타인의 세계 안에 있다. 이 수업에서는 질문의 각을 날카롭게 다듬고, 상대의 말과 침묵 속에서 단서를 발견하며, 대화의 결을 따라 그 세계 깊숙이 들어가는 연습을 반복한다. 낯선 문제 앞에서도 대화로 핵심 단서를 찾아 들어가는 감각, 그리고 그 과정에서 말의 아름다움을 알아보는 안목을 훈련한다.'],
+    ['Engaging<br>with AI', '생산적 마찰이 있는 AI', '최승준', 'AI를 쓸수록 탐구는 넓어지지만, 마찰 없이 얻은 것은 좀처럼 내 것이 되지 않는다. 이 수업에서는 AI와, 그리고 사람들과 마찰 있게 탐구하기를 반복한다. 학습자는 결과물만 만들지 않고, AI와 맞붙은 시간을 자신의 학습 경험으로 펼쳐낸다.'],
+    ['Peer<br>coaching', '상호 코칭', 'Learning Design(LD) Team', '누군가 고민을 털어놓으면 우리는 충고하고, 평가하고, 대신 풀어주려 한다. 하지만 그 문제를 가장 잘 아는 사람은 언제나 문제의 당사자이다. 이 수업에서는 동료의 말 너머까지 듣고, 결정적인 것을 묻고, 스스로 전략을 세우도록 안내하는 대화를 반복하여 훈련한다.'],
+    ['Readable<br>Writing', '읽음직한 글쓰기', '김자유', '읽기 쉽고 읽고 싶은, 즉 읽음직한 글을 쓰는 일은 중요하다. 이 수업에서는 내 글을 읽을 독자가 누구인지 설정하고, 그 독자에게 유용하고 흥미로운 메시지를 설계하고, 그 메시지가 잘 전달되도록 표현하는 훈련을 한다.'],
+    ['Self-<br>Introduction', '자기소개', '민구홍', '우리가 만든 결과물은 물론, 행동, 생각, 발언... 무엇이든 자기소개의 재료가 될 수 있다. 이 수업에서는 익숙한 방식이 금지된 조건 속에서 매주 다른 제약으로 자기소개에 접근한다. 주어진 자기소개 방식 중 하나를 채택하는 것이 아닌, 스스로를 가장 잘 설명할 수 있는 자기소개 방식을 설계한다.'],
+    ['What If?', '만약에 ~라면?', 'Learning Design(LD) Team', '창의성은 훈련 가능한 역량일까? 가장 처음 떠올린 해결책이 너무나도 자명해 보여서 다른 해결책은 절대 없을 것 같은 느낌이 들 때, 어떻게 접근해볼 수 있을까. 이 수업에서는 동일한 문제를 다양한 분야의 전문가들이 어떻게 풀어나가는지를 비교 분석하면서 그들의 전문성을 추출하고, 내 작업에 이식해보는 방법을 배운다.'],
+    ['What If?', '미감은 타고나는 감각일까?', 'Learning Design(LD) Team', '아름다움을 알아보는 능력, 즉 미감은 타고나는 감각일까? 이 수업은 미감을 훈련 가능한 기술로 정의한다. 일상에서 아름다운 이미지를 수집하고, 그것이 왜 아름다운지 객관적인 언어로 해부한 뒤, 자신만의 취향으로 전개하는 훈련을 거친다.']
   ];
-  const mcTrack = document.getElementById('mcTrack'), mcTabs = [...document.querySelectorAll('.mc-tab')];
-  const mcPrev = document.getElementById('mcPrev'), mcNext = document.getElementById('mcNext');
-  let mcTab = 0, mcIdx = 0;
-  function mcRender() {
-    mcTabs.forEach((t, i) => t.setAttribute('aria-selected', i === mcTab));
-    mcTrack.innerHTML = COURSES[mcTab].map(([title, , desc], i) => `
-      <div class="mc-card${i === mcIdx ? ' on' : ''}" data-i="${i}" tabindex="${i === mcIdx ? -1 : 0}" role="button" aria-expanded="${i === mcIdx}">
-        <div class="mc-top">
-          <div class="mc-name"><h3>${title}</h3><span>/ ${String(i + 1).padStart(2, '0')}</span></div>
-          <p class="mc-desc">${desc}</p>
-        </div>
-        <button class="mc-plus" type="button" aria-label="${title.replace(/<br>/g, ' ')} 자세히 보기"><i></i></button>
-      </div>`).join('');
-    mcSync();
-  }
-  function mcSync() {
-    [...mcTrack.children].forEach((c, i) => { const on = i === mcIdx; c.classList.toggle('on', on); c.setAttribute('aria-expanded', on); c.tabIndex = on ? -1 : 0; });
-    mcPrev.disabled = mcTab === 0 && mcIdx === 0;
-    mcNext.disabled = mcTab === COURSES.length - 1 && mcIdx === COURSES[mcTab].length - 1;
-    const card = mcTrack.children[mcIdx];
-    // after the width transition, scroll only as far as needed to show the open card whole
-    if (card) setTimeout(() => {
-      const l = card.offsetLeft - mcTrack.offsetLeft, r = l + card.offsetWidth, v = mcTrack.scrollLeft, w = mcTrack.clientWidth;
-      if (l < v) mcTrack.scrollTo({ left: l, behavior: 'smooth' });
-      else if (r > v + w) mcTrack.scrollTo({ left: r - w, behavior: 'smooth' });
-    }, 640);
-  }
-  function mcGo(tab, idx) {
-    if (tab !== mcTab) { mcTab = tab; mcIdx = idx; mcRender(); mcTrack.scrollLeft = 0; }
-    else { mcIdx = idx; mcSync(); }
-  }
+  const mcGrid = document.getElementById('mcGrid');
+  mcGrid.innerHTML = COURSES.map(([title, sub, who, desc], i) => `
+    <div class="cf" data-i="${i}">
+      <div class="cf-in">
+        <div class="cf-face cf-front"><h3>${title}</h3><div><span>${sub}</span><b>${who}</b></div></div>
+        <div class="cf-face cf-back"><div class="t"><small>${sub}</small><p>${desc}</p></div><button type="button" aria-label="${title.replace(/<br>/g, ' ')} Course Profile 보기">Course Profile</button></div>
+      </div>
+    </div>`).join('');
   function mcOpen(i) {
-    const [title, sub, desc, modal] = COURSES[mcTab][i];
+    const [title, sub, who, desc, modal] = COURSES[i];
     if (modal) return openModal(modal);
-    document.getElementById('m-course-t').innerHTML = title.replace('<br>', ' ');
+    document.getElementById('m-course-t').innerHTML = title.replace(/<br>/g, ' ');
     document.getElementById('m-course-s').textContent = sub;
+    document.getElementById('m-course-w').textContent = who;
     document.getElementById('m-course-d').textContent = desc;
     openModal('m-course');
   }
-  mcTabs.forEach((t, i) => t.addEventListener('click', () => mcGo(i, 0)));
-  mcTrack.addEventListener('click', e => {
-    const card = e.target.closest('.mc-card'); if (!card) return;
-    const i = +card.dataset.i;
-    if (e.target.closest('.mc-plus') && i === mcIdx) return mcOpen(i);
-    if (i !== mcIdx) mcGo(mcTab, i);
+  mcGrid.addEventListener('click', e => {
+    const card = e.target.closest('.cf'); if (!card) return;
+    if (e.target.closest('button')) return mcOpen(+card.dataset.i);
+    // touch: first tap flips the card, a second tap flips it back
+    mcGrid.querySelectorAll('.cf.flip').forEach(c => c !== card && c.classList.remove('flip'));
+    card.classList.toggle('flip');
   });
-  mcTrack.addEventListener('keydown', e => {
-    const card = e.target.closest('.mc-card');
-    if (card && (e.key === 'Enter' || e.key === ' ') && e.target === card) { e.preventDefault(); mcGo(mcTab, +card.dataset.i); }
-  });
-  mcPrev.addEventListener('click', () => mcIdx > 0 ? mcGo(mcTab, mcIdx - 1) : mcTab > 0 && mcGo(mcTab - 1, COURSES[mcTab - 1].length - 1));
-  mcNext.addEventListener('click', () => mcIdx < COURSES[mcTab].length - 1 ? mcGo(mcTab, mcIdx + 1) : mcTab < COURSES.length - 1 && mcGo(mcTab + 1, 0));
-  mcRender();
 
-  /* ---------- 수업을 관통하는 접근: pinned screen, scroll steps through the list ----------
-     Item copy from the accordion on phi.design/programs */
+  /* ---------- 역량과 태도: arrow-driven track ---------- */
+  const capTrack = document.getElementById('capTrack'), capPrev = document.getElementById('capPrev'), capNext = document.getElementById('capNext');
+  const capCards = [...capTrack.children];
+  function capSync() {
+    capPrev.disabled = capTrack.scrollLeft < 4;
+    capNext.disabled = capTrack.scrollLeft > capTrack.scrollWidth - capTrack.clientWidth - 4;
+  }
+  function capStep(dir) {
+    const pad = parseFloat(getComputedStyle(capTrack).scrollPaddingLeft) || 0;
+    const x = capTrack.scrollLeft + pad;
+    const target = dir > 0 ? capCards.find(c => c.offsetLeft > x + 4) : [...capCards].reverse().find(c => c.offsetLeft < x - 4);
+    if (target) capTrack.scrollTo({ left: target.offsetLeft - pad });
+  }
+  capPrev.addEventListener('click', () => capStep(-1));
+  capNext.addEventListener('click', () => capStep(1));
+  capTrack.addEventListener('scroll', capSync, { passive: true });
+  addEventListener('resize', capSync);
+  capSync();
+
+  /* ---------- 수업을 관통하는 접근: pinned slides, scroll steps through them ----------
+     [name, copy, photo, left shade strength] */
   const AP = [
-    ['라이브데모', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는<br>문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다."],
-    ['피어크리틱', '모든 코스에는 관찰 가능한 평가 기준, 즉 루브릭이 있습니다. 전문가는 매주 Learning Design팀과 학습자의 결과물을 리뷰하고, 루브릭 기반으로 주로 하는 실수 패턴을 정의합니다. 학습자는 매 세션 이 패턴을 기준으로 구체적인 피드백을 주고받습니다.'],
-    ['셀프피드백', 'Phi에는 별도의 평가 시스템이 없습니다. 하지만, 학습자 역시 전문가와 동일한 기준으로 자신의 작업을 판단할 수 있도록, 모든 코스에는 정교하게 설계된 루브릭이 있습니다. 시작 전과 진행 중 매주, 학습 목표를 어느 정도 달성했고 그 이유가 무엇인지 루브릭 기반으로 작성합니다. 코스가 끝난 뒤에는 시작 전과 후의 자신을 현재의 언어로 다시 평가합니다.'],
-    ['워크숍', '정해진 코스 외에도, 학기 중 학습자의 이해도를 높이는 워크숍이 열립니다. 주제는 다양하고, 매 기수 학습자들의 상태를 반영합니다. 예를 들어 Phi의 세션은 시연 위주라 능동적 관찰이 중요한데, 전문가의 암묵지를 분석하고 분해하는 법은 코스 밖 워크숍에서 따로 배웁니다.'],
-    ['공유회', '가장 잘 배우는 방법은 남에게 가르쳐보는 것입니다. 워크숍은 매회 정해진 인원만 들을 수 있습니다. 서로 다른 주제의 워크숍을 들은 동기들은 자연스럽게 배운 것을 나눕니다. 설명하는 사람은 자신이 이해하지 못한 부분을 발견하고, 듣는 사람은 놓친 주제를 얻으면서 자발적인 공유회가 일상적으로 일어납니다.'],
-    ['저널링', '매주 혹은 매일 배운 점이나 느낀 점 등을 4F(Fact/Feeling/Finding/Future Item)양식으로 회고합니다. 스스로 수업을 정리해보기도 하고, 동기의 저널링을 보면서 깨달음이나 동기를 얻기도 합니다. 쌓인 저널링은 학기별로 Phi만의 회고 방식을 담은 러닝 리포트로 정리해 드립니다.']
+    ['라이브데모', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는 문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다.", 'ap1', .24],
+    ['피어크리틱', '모든 코스에는 관찰 가능한 평가 기준, 즉 루브릭이 있습니다. 전문가는 매주 Learning Design팀과 학습자의 결과물을 리뷰하고, 루브릭 기반으로 주로 하는 실수 패턴을 정의합니다. 학습자는 매 세션 이 패턴을 기준으로 구체적인 피드백을 주고받습니다.', 'ap2', .23],
+    ['셀프피드백', 'Phi에는 별도의 평가 시스템이 없습니다. 하지만, 학습자 역시 전문가와 동일한 기준으로 자신의 작업을 판단할 수 있도록, 모든 코스에는 정교하게 설계된 루브릭이 있습니다. 시작 전과 진행 중 매주, 학습 목표를 어느 정도 달성했고 그 이유가 무엇인지 루브릭 기반으로 작성합니다. 코스가 끝난 뒤에는 시작 전과 후의 자신을 현재의 언어로 다시 평가합니다.', 'ap3', .58],
+    ['워크숍', '정해진 코스 외에도, 학기 중 학습자의 이해도를 높이는 워크숍이 열립니다. 주제는 다양하고, 매 기수 학습자들의 상태를 반영합니다. 예를 들어 Phi의 세션은 시연 위주라 능동적 관찰이 중요한데, 전문가의 암묵지를 분석하고 분해하는 법은 코스 밖 워크숍에서 따로 배웁니다.', 'ap4', .58],
+    ['공유회', '가장 잘 배우는 방법은 남에게 가르쳐보는 것입니다. 워크숍은 매회 정해진 인원만 들을 수 있습니다. 서로 다른 주제의 워크숍을 들은 동기들은 자연스럽게 배운 것을 나눕니다. 설명하는 사람은 자신이 이해하지 못한 부분을 발견하고, 듣는 사람은 놓친 주제를 얻으면서 자발적인 공유회가 일상적으로 일어납니다.', 'ap5', .58],
+    ['저널링', '매주 혹은 매일 배운 점이나 느낀 점 등을 4F(Fact/Feeling/Finding/Future Item)양식으로 회고합니다. 스스로 수업을 정리해보기도 하고, 동기의 저널링을 보면서 깨달음이나 동기를 얻기도 합니다. 쌓인 저널링은 학기별로 Phi만의 회고 방식을 담은 러닝 리포트로 정리해 드립니다.', 'ap6', .58]
   ];
-  const ap = document.getElementById('approach'), apCopy = document.getElementById('apCopy'), apList = document.getElementById('apList');
-  AP.forEach(([t, d]) => apCopy.insertAdjacentHTML('beforeend', `<div class="ap-state"><h3>${t}</h3><p>${d}</p></div>`));
-  apList.innerHTML = ['수업을 관통하는 접근', ...AP.map(a => a[0])].map((t, i) =>
-    `<li><button type="button" data-i="${i}"${i === 0 ? ' aria-current="true"' : ''}><img src="assets/arrow-right.svg" alt="">${t}</button></li>`).join('');
-  const apStates = [...apCopy.children], apBtns = [...apList.querySelectorAll('button')];
-  const AP_STEP = .75; // viewport heights of scroll per list item
+  const ap = document.getElementById('approach'), apStage = document.getElementById('apStage'), apNav = document.getElementById('apNav');
+  const num = i => String(i + 1).padStart(2, '0');
+  apStage.insertAdjacentHTML('afterbegin', AP.map(([t, d, img, side], i) => `
+    <div class="ap-slide${i === 0 ? ' on' : ''}" style="--side:${side}"><img src="assets/${img}.webp" alt="" loading="${i === 0 ? 'eager' : 'lazy'}">
+      <div class="ap-cap"><span><b>${num(i)}</b><b>${t}</b></span><p>${d}</p></div></div>`).join(''));
+  apNav.innerHTML = AP.map(([t], i) =>
+    `<li><button type="button" data-i="${i}"${i === 0 ? ' aria-current="true"' : ''}><i></i><span>${num(i)} ${t}</span></button></li>`).join('');
+  const apSlides = [...apStage.querySelectorAll('.ap-slide')], apBtns = [...apNav.querySelectorAll('button')];
+  const AP_STEP = .75; // viewport heights of scroll per slide
   let apIdx = 0;
-  function apLayout() { ap.style.height = (innerHeight * (1 + AP_STEP * AP.length)) + 'px'; }
+  function apLayout() { ap.style.height = (innerHeight * (1 + AP_STEP * (AP.length - 1))) + 'px'; }
   function apSet(i) {
     if (i === apIdx) return; apIdx = i;
-    apStates.forEach((s, k) => s.classList.toggle('on', k === i));
+    apSlides.forEach((s, k) => s.classList.toggle('on', k === i));
     apBtns.forEach((b, k) => k === i ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'));
-    ap.classList.toggle('item', i > 0);
   }
   function apScroll() {
     const y = scrollY - ap.offsetTop, step = innerHeight * AP_STEP;
-    apSet(Math.max(0, Math.min(AP.length, Math.floor((y + step * .5) / step))));
+    apSet(Math.max(0, Math.min(AP.length - 1, Math.floor((y + step * .5) / step))));
   }
   apBtns.forEach((b, i) => b.addEventListener('click', () => scrollTo({ top: ap.offsetTop + i * innerHeight * AP_STEP, behavior: 'smooth' })));
   addEventListener('scroll', apScroll, { passive: true });
