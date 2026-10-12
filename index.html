@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Phi 1년제 프로그램</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,7 +83,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* ---------- Hero (pinned) ---------- */
 .hero { position: relative; background: var(--black); }
-.stage { position: relative; height: 100vh; height: 100svh; overflow: hidden; z-index: 0; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; z-index: 0; }
+/* Intro (Figma 6493:731 → 6493:997): medallion among reliefs; scrolling pushes the reliefs out, then hands over to the hero */
+.med { position: absolute; left: 626px; top: 165px; width: 668px; height: 842px; overflow: hidden; }
+.med img { position: absolute; left: -.16%; top: -.92%; width: 99.14%; height: 104.74%; max-width: none; }
 .canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
 .canvas .abs { position: absolute; }
 .layer { position: absolute; inset: 0; will-change: transform, opacity; }
@@ -95,7 +98,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* ---------- Hero copy (Figma 5288:5123, 1920×1077 coordinates) ---------- */
 .ui { position: absolute; left: 0; top: 0; width: 1920px; height: 1077px; transform-origin: 0 0; pointer-events: none; }
-.copy { position: absolute; left: 590px; top: 365px; width: 740px; display: flex; flex-direction: column; gap: 40px; color: #fff; pointer-events: auto; }
+.ui .copy { position: absolute; left: 590px; top: 365px; width: 740px; display: flex; flex-direction: column; gap: 40px; color: #fff; pointer-events: auto; }
 .copy h1 { margin: 0; align-self: center; font-size: 42px; font-weight: 700; line-height: 1.2; white-space: nowrap; opacity: 0; will-change: opacity, transform; }
 .copy .paras { display: flex; flex-direction: column; gap: 36px; }
 .copy .paras p { font-size: 20px; line-height: 1.6; color: var(--mute); opacity: 0; will-change: opacity, transform; }
@@ -449,6 +452,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   * { transition-duration: .01ms !important; }
 }
 </style>
+</head><body>
 
 <div class="nav-wrap">
   <nav class="nav" aria-label="주요 메뉴">
@@ -466,7 +470,8 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
 </div>
 
 <main class="content" id="top">
-  <!-- Hero: Figma 5288:5123. Plays its own entrance on load: edge reliefs settle in, frame draws, copy reveals -->
+  <!-- Hero: opens on the medallion intro (Figma 6493:731 → 6493:997); scrolling pushes the reliefs out and hands over to Figma 5288:5123,
+       which then plays its entrance: edge reliefs settle in, frame draws, copy reveals -->
   <section class="hero" id="hero" aria-label="Phi의 1년제 프로그램">
     <div class="stage" id="stage">
       <div class="canvas" id="canvas">
@@ -475,6 +480,12 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
         <div class="layer" data-cl="N_R"></div>
         <div class="layer" data-cl="N_BR"></div>
         <div class="layer" data-cl="FRAME"></div>
+        <div class="layer" data-il="C"></div>
+        <div class="layer" data-il="TL"></div>
+        <div class="layer" data-il="BL"></div>
+        <div class="layer" data-il="TR"></div>
+        <div class="layer" data-il="BR"></div>
+        <div class="layer" data-il="MED"><div class="med"><img src="assets/medallion.webp" alt="OBSERVE 메달리온"></div></div>
       </div>
       <div class="ui" id="ui">
         <div class="copy">
@@ -709,7 +720,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   const NS = 'http://www.w3.org/2000/svg';
   let gid = 0;
   const layers = {}, frameLines = [];
-  document.querySelectorAll('.layer').forEach(el => {
+  document.querySelectorAll('.layer[data-cl]').forEach(el => {
     const c = el.dataset.cl; layers[c] = el;
     (IMG[c] || []).forEach(([src,x,y,w,h,op=1,crop]) => {
       const d = document.createElement('div');
@@ -744,7 +755,59 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
     (LBL[c] || []).forEach(([x,y,t,o]) => { const s = document.createElement('span'); s.className = 'lbl'; s.style.cssText = `left:${x}px;top:${y}px;opacity:${o}`; s.textContent = t; el.appendChild(s); });
   });
 
-  /* ---------- Hero entrance (autoplays on load) ---------- */
+  /* ---------- Intro: medallion among reliefs (Figma 6493:731) ----------
+     Groups drift outward along DRIFT as the intro scrolls away (6493:820 → 908 → 997). Lines are [x1,y1,x2,y2]. */
+  const INTRO = {
+    C:  { lines: [[567,1024,567,146],[567,-70,567,138],[563,142,398,142],[571,142,1274,142],[1366,565,1366,1028],[1366,1036,1366,1244],[1362,1032,594,1032]],
+          sq: [[563,138,'f'],[1362,1028,'f'],[565,527,'d'],[565,859,'d']],
+          lbl: [[535.5,148,'238,256',1],[566.5,1024,'8 (14.581)',1]] },
+    TL: { img: [['relief-left',-1,14,391,498,1]],
+          lines: [[398,623,398,532],[402,528,650,528],[394,528,-24,528],[398,524,398,-20]],
+          sq: [[394,524,'o']], lbl: [[426.5,534,'456,398',.7]] },
+    BL: { img: [['frieze',-286,873,751,320,1]],
+          lines: [[-2,725,523,725],[476,575,476,857],[480,861,760,861],[472,861,-88,861],[476,1333,476,865]],
+          sq: [[472,857,'o'],[474,723,'d']], lbl: [[503.5,837,'684,234',1]] },
+    TR: { img: [['relief-small',1377,259,169,163,1],['coin',1692,-61,294,367,1,COIN]],
+          lines: [[1553,248,1370,248],[1553,434,1370,434],[1366,430,1366,252],[1502,562,1370,438],[1557,512,1557,438],[1675,529,1675,307],
+                  [1366,646,1366,438],[1366,244,1366,59],[1362,248,1058,248],[1671,303,1557,303],[1362,434,1290,434],[1561,434,1889,434],
+                  [1561,244,1675,-70],[1557,430,1557,252],[2055,303,1679,303],[1675,299,1675,-24]],
+          sq: [[1553,244,'o'],[1553,430,'o'],[1673,432,'d'],[1362,244,'o'],[1362,430,'f'],[1671,299,'o']],
+          lbl: [[1342.5,226,'92.156',.7],[1290,134,'10 (51.387)',1],[1340.5,440,'152.156',.7],[1584.5,410,'456,398',.7]] },
+    BR: { img: [['relief-right',1526,582,343,436,1]],
+          lines: [[1886,566,1510,566],[1886,1042,1510,1042],[1890,1038,1890,570],[1506,1038,1506,570],[1890,346,1890,562],
+                  [1502,1042,1370,1032],[1894,1042,2176,1042],[1894,566,2222,566],[1890,1046,1890,1170]],
+          sq: [[1886,562,'o'],[1886,1038,'o'],[1502,562,'f'],[1502,1038,'o']],
+          lbl: [[1481.5,1017,'92.156',1],[1526,540,'538,511',1]] }
+  };
+  // per-group outward travel at the end of the intro (≈ 2× the 6493:731 → 820 step)
+  const DRIFT = { C: [-40,-40], TL: [-270,-280], BL: [-440,170], TR: [190,-190], BR: [260,260] };
+  const introLayers = {};
+  document.querySelectorAll('.layer[data-il]').forEach(el => {
+    const g = el.dataset.il; introLayers[g] = el;
+    const d = INTRO[g]; if (!d) return;
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', 1920); svg.setAttribute('height', 1080);
+    d.lines.forEach(([x1,y1,x2,y2]) => {
+      const ln = document.createElementNS(NS, 'line');
+      Object.entries({x1,y1,x2,y2,stroke:'#fff','stroke-width':.8,opacity:.45}).forEach(([k,v]) => ln.setAttribute(k, v));
+      svg.appendChild(ln);
+    });
+    el.appendChild(svg);
+    (d.img || []).forEach(([src,x,y,w,h,op,crop]) => {
+      const box = document.createElement('div');
+      box.className = 'abs crop'; box.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;opacity:${op}`;
+      const im = document.createElement('img'); im.src = `assets/${src}.webp`; im.alt = '';
+      im.style.cssText = crop || 'inset:0;width:100%;height:100%;object-position:bottom';
+      box.appendChild(im); el.appendChild(box);
+    });
+    d.sq.forEach(([x,y,k]) => { const s = document.createElement('span'); s.className = 'sq ' + k; s.style.cssText = `left:${x}px;top:${y}px`; el.appendChild(s); });
+    d.lbl.forEach(([x,y,t,o]) => { const s = document.createElement('span'); s.className = 'lbl'; s.style.cssText = `left:${x}px;top:${y}px;opacity:${o}`; s.textContent = t; el.appendChild(s); });
+  });
+
+  /* ---------- Intro → hero entrance ----------
+     The hero section is INTRO_LEN viewports taller than the screen and its stage stays pinned. Scroll progress q (0 → 1):
+     0–.4    intro reliefs drift outward and fade, medallion holds        .32–.52  medallion recedes
+     ≥ .5    hero entrance plays on its own clock (reverses if you scroll back up) */
   const hero = document.getElementById('hero'), stage = document.getElementById('stage');
   const canvas = document.getElementById('canvas'), ui = document.getElementById('ui');
   const facts = document.getElementById('heroFacts'), navWrap = document.querySelector('.nav-wrap');
@@ -755,7 +818,8 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   const lerp = (a, b, t) => a + (b - a) * t;
   const seg = (p, a, b) => clamp((p - a) / (b - a));
   // depth: >1 reads as closer to camera (travels, grows and blurs more)
-  const DEPTH = { N_L: .8, N_TL: .6, N_R: .7, N_BR: .9, FRAME: .15 };
+  const DEPTH = { N_L: .8, N_TL: .6, N_R: .7, N_BR: .9, FRAME: .15, C: .2, TL: .8, BL: .9, TR: .7, BR: .9, MED: .35 };
+  const INTRO_LEN = 1.6;
   let S = 1, vh = innerHeight, cur = 0;
   const t0 = performance.now();
   let mx = 0, my = 0, smx = 0, smy = 0;
@@ -771,7 +835,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
     S = portrait ? (vh * .62) / 1080 : Math.min(vw / 1920, vh / 1077);
     const left = (vw - 1920 * S) / 2, top = (vh - 1077 * S) / 2;
     canvas.style.transform = ui.style.transform = `translate(${left}px, ${top}px) scale(${S})`;
-    hero.style.height = vh + 'px';
+    hero.style.height = (vh * (reduce ? 1 : 1 + INTRO_LEN)) + 'px';
   }
   const HOLD = .25, PLAY = 2.9;
   let clock = 0, lastNow = null;
@@ -786,18 +850,32 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
     L.style.opacity = o.toFixed(3);
     L.style.filter = blur > .15 ? `blur(${blur.toFixed(2)}px) brightness(${dim.toFixed(3)})` : 'none';
   }
+  const idle = (time, z, k=1) => reduce ? [0, 0] : [
+    (Math.sin(time * .5 + z * 3) * 5 * z - smx * 18 * z) * k,
+    (Math.cos(time * .42 + z * 2) * 7 * z - smy * 12 * z) * k];
+  function renderIntro(q, time) {
+    if (reduce) { Object.values(introLayers).forEach(L => setLayer(L, 0, 0, 1, 0, 0, 1)); return; }
+    // on load the groups gather in from their drift direction; scrolling sends them back out
+    ['C', 'TL', 'BL', 'TR', 'BR'].forEach((g, i) => {
+      const enter = easeOut(seg(time, .15 + i * .07, 1.5 + i * .07));
+      const out = ease(seg(q, 0, .4));
+      const k = (1 - enter) * .5 + out;
+      const [dx, dy] = DRIFT[g], [ix, iy] = idle(time, DEPTH[g]);
+      setLayer(introLayers[g], dx * k + ix, dy * k + iy, 1 + .06 * k, enter * (1 - out), 4 * Math.min(1, k), 1);
+    });
+    const me = ease(seg(time, .1, 1.4)), mo = ease(seg(q, .32, .52));
+    const [ix, iy] = idle(time, DEPTH.MED);
+    setLayer(introLayers.MED, ix, iy, 1.04 - .04 * me - .1 * mo, me * (1 - mo), 10 * mo, 1);
+  }
   function render(p, time, ts) {
-    smx += (mx - smx) * .05; smy += (my - smy) * .05;
-    const idle = (z, k=1) => reduce ? [0, 0] : [
-      (Math.sin(time * .5 + z * 3) * 5 * z - smx * 18 * z) * k,
-      (Math.cos(time * .42 + z * 2) * 7 * z - smy * 12 * z) * k];
+    const idle2 = (z, k) => idle(time, z, k);
 
     // edge reliefs fly in from outside, sharpen as they land
     const order = ['N_L', 'N_TL', 'N_R', 'N_BR'];
     order.forEach((c, i) => {
       const t = easeOut(seg(p, i * .05, .42 + i * .03));
       const [fx, fy2] = ENTER_FROM[c];
-      const [ix, iy] = idle(DEPTH[c], t);
+      const [ix, iy] = idle2(DEPTH[c], t);
       setLayer(layers[c], fx * (1 - t) + ix, fy2 * (1 - t) + iy, 1 + .08 * (1 - t), t, reduce ? 0 : 6 * (1 - t), 1);
     });
     // frame: corner nodes first, then lines draw out from them
@@ -827,13 +905,17 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   let lastY = scrollY;
   function tick(now) {
     const time = (now - t0) / 1000;
-    // scrolling during the entrance fast-forwards it rather than leaving it half-played
     const dt = lastNow == null ? 0 : Math.min(.1, (now - lastNow) / 1000); lastNow = now;
-    clock += dt * (scrollY > 10 ? 4 : 1);
+    smx += (mx - smx) * .05; smy += (my - smy) * .05;
+    const pin = hero.offsetHeight - vh, q = pin > 0 ? clamp(scrollY / pin) : 1;
+    renderIntro(q, time);
+    // the hero entrance runs forward once the intro is past halfway and rewinds (faster) when scrolled back;
+    // scrolling on past the pin fast-forwards it rather than leaving it half-played
+    if (q >= .5) clock += dt * (q >= 1 ? 4 : 1); else clock = Math.max(0, Math.min(clock, HOLD + PLAY) - dt * 8);
     cur = reduce ? 1 : clamp((clock - HOLD) / PLAY);
     render(cur, time, clock - HOLD);
     const y = scrollY;
-    if (Math.abs(y - lastY) > 6) { navWrap.classList.toggle('tuck', y > lastY && y > vh * .6); lastY = y; }
+    if (Math.abs(y - lastY) > 6) { navWrap.classList.toggle('tuck', y > lastY && y > pin + vh * .6); lastY = y; }
     requestAnimationFrame(tick);
   }
   addEventListener('resize', layout);
