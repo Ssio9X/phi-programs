@@ -1,9 +1,9 @@
-<!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!doctype html><html lang="ko"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>Phi 1년제 프로그램</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+</head><body>
 <style>
 /* Layout: hero stage (1920×1077 design canvas, scaled; entrance autoplays) → white/grey/black content bands on a 1280 column → footer revealed under the rounded last band */
 @font-face {
@@ -81,47 +81,98 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .nav .cta:hover { transform: scale(1.03); }
 
-/* ---------- Hero (pinned) ---------- */
+/* ---------- Hero (pinned scroll story, Figma 6899:1859 "Hero 모션 가이드") ----------
+   Frames 1–4: copy fades while the statue drifts left and grows · 5–8: cards fall in around it, then the toggle appears.
+   Settled: the deck orbits the statue's vertical axis in steps; the toggle scatters it outward and gathers the other set in (Figma 6899:1909). */
 .hero { position: relative; background: var(--black); }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; z-index: 0; }
-/* Intro (Figma 6493:731 → 6493:997): medallion among reliefs; scrolling pushes the reliefs out, then hands over to the hero */
-.med { position: absolute; left: 626px; top: 165px; width: 668px; height: 842px; overflow: hidden; }
-.med img { position: absolute; left: -.16%; top: -.92%; width: 99.14%; height: 104.74%; max-width: none; }
 .canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
-.canvas .abs { position: absolute; }
-.layer { position: absolute; inset: 0; will-change: transform, opacity; }
-.layer svg { position: absolute; left: 0; top: 0; overflow: visible; }
-.sq { position: absolute; width: 8px; height: 8px; border: .8px solid #fff; }
-.sq.f { background: #fff; }
-.sq.d { width: 4px; height: 4px; background: #fff; border: 0; }
-.lbl { position: absolute; transform: translateX(-50%); font-size: 10px; line-height: 1.6; color: #fff; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.statue { position: absolute; z-index: 2; left: 0; top: 0; width: 1858.6px; height: 2489.5px; transform-origin: 0 0; will-change: transform, opacity; pointer-events: none; }
+.statue img { width: 100%; height: 100%; max-width: none; transform: scaleX(-1); }
 
-/* ---------- Hero copy (Figma 5288:5123, 1920×1077 coordinates) ---------- */
-.ui { position: absolute; left: 0; top: 0; width: 1920px; height: 1077px; transform-origin: 0 0; pointer-events: none; }
-.ui .copy { position: absolute; left: 590px; top: 365px; width: 740px; display: flex; flex-direction: column; gap: 40px; color: #fff; pointer-events: auto; }
-.copy h1 { margin: 0; align-self: center; font-size: 42px; font-weight: 700; line-height: 1.2; white-space: nowrap; opacity: 0; will-change: opacity, transform; }
+/* cards: positioned every frame from JS (ring angle + fall-in offset); the wrapper only carries depth order */
+.kw { position: absolute; left: 0; top: 0; will-change: transform; }
+.k {
+  position: absolute; left: 0; top: 0; width: 480px; height: 600px; border-radius: 24px; overflow: hidden;
+  background: var(--kbg, #fff); color: #0d0d0d; transform-origin: 0 0; will-change: transform, opacity;
+}
+.k::after { content: ""; position: absolute; inset: 0; background: #000; opacity: var(--shade, 0); pointer-events: none; } /* depth shading */
+.k .lb { position: absolute; left: 36px; top: 36px; width: 408px; display: flex; flex-direction: column; gap: 8px; white-space: nowrap; }
+.k .lb small { font-family: var(--font-latin); font-size: 20px; font-weight: 500; line-height: 1; color: #000; }
+.k .lb b { font-family: var(--font-latin); font-size: 32px; font-weight: 700; line-height: 1.3; }
+.k .n { position: absolute; left: 36px; top: 328px; font-size: 240px; font-weight: 860; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.k.back .fr { position: absolute; left: 24.5px; top: 15.9px; width: 431px; height: 568.15px; max-width: none; }
+.k.back .mk { position: absolute; left: 45.77px; top: 119px; width: 387.46px; height: 361px; max-width: none; }
+
+/* copy (frame 1) */
+.ui { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; pointer-events: none; z-index: 3; }
+.copy { position: absolute; left: 151px; top: 251px; width: 740px; display: flex; flex-direction: column; gap: 40px; color: #fff; }
+.copy h1 { margin: 0; font-size: 42px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .copy .paras { display: flex; flex-direction: column; gap: 36px; }
-.copy .paras p { font-size: 20px; line-height: 1.6; color: var(--mute); opacity: 0; will-change: opacity, transform; }
-.hfacts { position: absolute; left: 637px; top: 878px; width: 646px; border-block: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; pointer-events: auto; will-change: opacity, transform; }
-.hfacts .r { display: flex; gap: 16px; height: 48px; align-items: center; }
-.fact { display: flex; align-items: center; gap: 12px; padding: 14px 0; white-space: nowrap; }
-.fact dt { color: var(--mute); font-size: 14px; font-weight: 500; }
-.fact dd { margin: 0; color: #fff; font-size: 16px; }
-.fact dd span { color: #dcdcdc; }
-.fact.wide { gap: 16px; }
-.hfacts .bar { width: 1px; height: 16px; background: var(--line); }
+.copy .paras p { font-size: 20px; line-height: 1.6; color: var(--mute); }
+.hfacts { position: absolute; left: 151px; top: 650px; width: 426px; }
+.hfacts > div { display: grid; grid-template-columns: 136px 1fr; align-items: center; padding: 12px 0; border-bottom: 1px solid #30333a; }
+.hfacts dt { font-size: 14px; line-height: 1.5; color: #7a7c83; }
+.hfacts dd { margin: 0; font-size: 16px; line-height: 1.6; color: #f2f2f4; }
 dl { margin: 0; }
-/* portrait phones: copy leaves the canvas grid and reflows */
+.copy h1, .copy .paras p, .hfacts { will-change: opacity, transform; }
+
+/* 역량 / 태도 toggle (Figma Nav 6899:1562) */
+.seg {
+  position: absolute; z-index: 20; left: 50%; bottom: clamp(24px, 7.4vh, 80px); transform: translateX(-50%);
+  width: min(500px, calc(100vw - 32px)); height: 72px; padding: 8px; border-radius: 50px; display: flex; gap: 12px;
+  background: #1a1b1e; box-shadow: 0 4px 35.4px rgba(0,0,0,.52); opacity: 0;
+}
+.seg button { flex: 1 1 0; border-radius: 50px; font-size: clamp(16px, 1.05vw, 20px); font-weight: 600; color: var(--mute); white-space: nowrap; transition: background .3s, color .3s; }
+.seg button[aria-selected="true"] { background: #3b3d43; color: #fff; font-weight: 700; }
+.seg button:not([aria-selected="true"]):hover { color: #d5d5d5; }
+
+/* numbered cards open the detail view */
+.kw:not([aria-hidden]) .k { cursor: pointer; }
+
+/* card detail (Figma 6899:3374): 898×480 cards on a 1920 frame → ~46.8vw, carousel with the active card centred */
+.dk {
+  --dk-w: min(898px, 46.8vw); --dk-gap: clamp(14px, 1.46vw, 28px);
+  position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(20px, 2.2vw, 42px);
+  background: rgba(0,0,0,.72); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility 0s .4s;
+}
+.dk.open { opacity: 1; visibility: visible; transition: opacity .4s ease; }
+.dk-view { width: 100%; overflow: hidden; touch-action: pan-y; transform: translateY(48px) scale(.96); transition: transform .7s cubic-bezier(.22,1,.36,1); }
+.dk.open .dk-view { transform: none; }
+.dk-track { display: flex; gap: var(--dk-gap); width: max-content; transition: transform .65s cubic-bezier(.22,1,.36,1); will-change: transform; }
+.dkc {
+  flex: 0 0 var(--dk-w); height: calc(var(--dk-w) * 480 / 898); padding: clamp(20px, 1.875vw, 36px); border-radius: clamp(16px, 1.25vw, 24px);
+  background: #fff; color: #0d0d0d; display: flex; flex-direction: column; justify-content: space-between; text-align: left;
+  opacity: .32; transform: scale(.94); transition: opacity .5s ease, transform .65s cubic-bezier(.22,1,.36,1); cursor: pointer; user-select: none;
+}
+.dkc.on { opacity: 1; transform: none; cursor: default; }
+.dkc small { display: block; font-family: var(--font-latin); font-size: clamp(14px, 1.04vw, 20px); font-weight: 500; line-height: 1; color: #000; }
+.dkc b { display: block; margin-top: 8px; font-family: var(--font-latin); font-size: clamp(22px, 1.67vw, 32px); font-weight: 700; line-height: 1.3; }
+.dkc p { width: 60%; font-size: clamp(14px, .885vw, 17px); font-weight: 700; line-height: 1.6; color: #8d8d8d; word-break: keep-all; }
+.dk-dots { display: flex; align-items: center; gap: clamp(10px, .94vw, 18px); }
+.dk-dots button { width: clamp(10px, 1.25vw, 24px); height: clamp(10px, 1.25vw, 24px); border-radius: 16px; background: rgba(255,255,255,.32); transition: width .5s cubic-bezier(.22,1,.36,1), background .3s; }
+.dk-dots button[aria-current="true"] { width: clamp(64px, 10.4vw, 200px); background: #fff; }
+.dk-x { position: absolute; right: clamp(16px, 2.3vw, 44px); top: clamp(16px, 2.3vw, 44px); width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,.12); transition: background .2s; }
+.dk-x:hover { background: rgba(255,255,255,.22); }
+.dk-x::before, .dk-x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 18px; height: 2px; background: #fff; border-radius: 2px; }
+.dk-x::before { transform: translate(-50%, -50%) rotate(45deg); }
+.dk-x::after { transform: translate(-50%, -50%) rotate(-45deg); }
+@media (max-width: 760px) {
+  .dk { --dk-w: calc(100vw - 48px); --dk-gap: 12px; }
+  .dkc { height: auto; min-height: 320px; gap: 40px; }
+  .dkc p { width: 100%; }
+}
+
+/* portrait phones: copy leaves the canvas grid and reflows over a dimmed statue */
 .stage.portrait .ui { transform: none !important; width: 100%; height: 100%; }
-.stage.portrait .copy { left: 16px; right: 16px; width: auto; top: 18%; gap: 24px; }
+.stage.portrait .copy { left: 16px; right: 16px; width: auto; top: 16%; gap: 20px; }
 .stage.portrait .copy h1 { font-size: clamp(24px, 7vw, 34px); white-space: normal; text-wrap: balance; }
-.stage.portrait .copy .paras { gap: 14px; }
-.stage.portrait .copy .paras p { font-size: 14.5px; }
-.stage.portrait .hfacts { left: 16px; right: 16px; width: auto; top: auto; bottom: 5%; align-items: flex-start; padding: 6px 0; }
-.stage.portrait .hfacts .r { flex-wrap: wrap; height: auto; gap: 0 12px; }
-.stage.portrait .hfacts .bar { display: none; }
-.stage.portrait .fact { padding: 5px 0; }
-.stage.portrait [data-cl="FRAME"] { display: none; }
+.stage.portrait .copy .paras { gap: 12px; }
+.stage.portrait .copy .paras p { font-size: 14.5px; color: #b4b4b4; }
+.stage.portrait .hfacts { left: 16px; right: 16px; width: auto; top: auto; bottom: 6%; }
+.stage.portrait .hfacts > div { grid-template-columns: 96px 1fr; padding: 7px 0; }
+.stage.portrait .seg { height: 60px; padding: 6px; }
 
 /* ---------- Bands ---------- */
 .band { position: relative; z-index: 1; }
@@ -141,6 +192,26 @@ dl { margin: 0; }
 .pill[aria-selected="true"] { background: var(--ink); color: #fff; font-weight: 700; }
 .pill:not([aria-selected="true"]):hover { color: var(--ink); }
 .mist .pill-bar { background: #fff; }
+
+/* Competency */
+.cap-head { padding-top: 120px; }
+.cap-head .lead { padding-top: 20px; }
+.cap-head .pills { padding-top: 52px; }
+.struct-title { padding-top: 52px; }
+.struct { display: flex; gap: 52px; padding: 48px 0 120px; align-items: flex-start; }
+.struct-art { flex: 1 1 0; min-width: 0; height: 600px; border-radius: 24px; background: var(--panel-2); position: relative; display: grid; place-items: center; overflow: hidden; }
+.struct-art .atlas { width: 328px; height: 552px; }
+.struct-art .atlas img { height: 100%; left: -2.01%; top: 0; width: 100.01%; }
+.struct-art .rule { position: absolute; left: 50%; transform: translateX(-50%); }
+.struct-art .v { position: absolute; width: 0; border-left: .8px dashed rgba(71,71,71,.2); }
+.struct-art .h { position: absolute; height: 0; border-top: .8px dashed rgba(71,71,71,.2); }
+.struct-art .s { position: absolute; width: 10px; height: 10px; border: .8px solid rgba(71,71,71,.2); }
+.struct-list { width: 580px; flex: 0 0 auto; display: flex; flex-direction: column; gap: 20px; }
+.struct-list .item { font-size: clamp(32px, 2.7vw, 52px); font-weight: 700; line-height: 1.2; color: var(--mute); }
+.struct-list .item.on { color: var(--ink); }
+.struct-list .detail { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; }
+.struct-list .detail strong { font-size: 24px; }
+.struct-list .detail p { font-size: 18px; line-height: 1.6; color: var(--ink-2); }
 
 /* Program components */
 .comp-lead { padding-top: 20px; }
@@ -305,121 +376,247 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
 
 /* motion helpers */
 .layer { transform-origin: 960px 540px; }
-.stage .canvas { height: 1077px; }
+.stage .canvas { height: 1080px; }
 .nav-wrap { transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s; }
 .nav-wrap.tuck { transform: translateY(-140%); opacity: 0; }
 .rv { transform: translateY(48px) scale(.97); opacity: .25; transition: transform 1s cubic-bezier(.16,1,.3,1), opacity .9s ease; }
 .rv.in { transform: none; opacity: 1; }
 .cc.rv.in:hover { transform: translateY(-6px); transition-delay: 0s !important; }
 
-/* ---------- 주요 수업들: card grid, cards flip to course summary (Figma 6493:460 / 6561:4467, back face 6559:1297) ---------- */
-.col2 { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
-.mc { background: linear-gradient(to bottom, #000 0, #000 calc(100% - 420px), #8c8c8c 100%); }
-.mc-head { padding-top: 120px; display: flex; flex-direction: column; gap: 24px; }
-.mc-head h2 { margin: 0; font-size: clamp(36px, 2.7vw, 52px); line-height: 1.2; color: #fff; }
-.mc-head p { max-width: 800px; font-size: var(--lead); line-height: 1.6; color: var(--mute); }
-.mc-head a { color: inherit; text-underline-offset: 3px; }
-.mc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; padding: 52px 0 520px; }
-.cf { position: relative; height: 376px; perspective: 1400px; }
-.cf-in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
-.cf:hover .cf-in, .cf.flip .cf-in, .cf:focus-within .cf-in { transform: rotateY(180deg); }
-.cf-face { position: absolute; inset: 0; border-radius: 24px; background: #fff; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
-.cf-front { display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: center; padding: 36px; text-align: center; cursor: pointer; }
-.cf-front h3 { margin: 0; font-size: clamp(26px, 1.67vw, 32px); font-weight: 860; line-height: 1.2; color: var(--ink); }
-.cf-front div { display: flex; flex-direction: column; gap: 6px; font-size: clamp(18px, 1.15vw, 22px); line-height: 1.6; color: var(--ink-2); }
-.cf-front span { font-weight: 300; }
-.cf-front b { font-weight: 700; }
-.cf-back { transform: rotateY(180deg); display: flex; flex-direction: column; gap: 8px; padding: 32px 36px 36px; }
-.cf-back .t { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
-.cf-back small { font-size: 16px; font-weight: 500; line-height: 1.6; color: var(--ink-2); }
-.cf-back p { font-size: 17px; line-height: 1.5; color: #131313; }
-.cf-back button { flex: 0 0 56px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 20px; font-weight: 700; transition: background .2s; }
-.cf-back button:hover { background: #333; }
-
-/* ---------- 역량과 태도: horizontal card track (Figma 6561:4605 / 6493:347 / 6561:4923) ---------- */
-.cap-head { padding-top: 120px; }
-.cap-head h2 { margin: 0; font-size: clamp(36px, 2.7vw, 52px); line-height: 1.2; color: var(--ink); }
-.cap-head .lead { text-align: left; color: var(--mute); padding-top: 20px; }
-.cap-head .pills { justify-content: flex-start; padding-top: 52px; }
-.cap-track {
-  display: flex; gap: 32px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none;
-  padding: 32px max(16px, calc((100vw - 1200px) / 2)) 40px; scroll-padding-inline: max(16px, calc((100vw - 1200px) / 2));
+/* ---------- 주요 수업들: tabbed accordion carousel (Figma 5288:596) ---------- */
+.mc-head { padding-top: clamp(96px, 9.3vw, 178px); }
+.mc-head h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); line-height: 1.2; color: #fff; }
+.mc-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 40px; flex-wrap: wrap; }
+.mc-tabs { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+.mc-tab { flex: 0 0 auto; height: 56px; min-width: 190px; padding: 4px 24px; border-radius: 12px; border: 1px solid #fff; color: #b9b9b9; font-size: 20px; transition: background .3s, color .3s; }
+.mc-tab[aria-selected="true"] { background: #fff; color: #000; font-weight: 700; }
+.mc-tab:not([aria-selected="true"]):hover { color: #fff; }
+.mc-arrows { display: flex; gap: 16px; }
+.mc-arrow { width: 52px; height: 52px; border-radius: 12px; }
+.mc-arrow path { fill: #000; transition: fill .2s; }
+.mc-arrow:disabled { cursor: default; }
+.mc-arrow:disabled path { fill: #dadada; }
+.mc-wrap { width: min(1440px, calc(100vw - 32px)); margin-inline: auto; padding: 52px 0 170px; }
+.mc-track { display: flex; gap: 16px; height: 520px; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
+.mc-track::-webkit-scrollbar { display: none; }
+.mc-card {
+  position: relative; flex: 0 0 300px; height: 100%; border-radius: 24px; background: #f2f3f5; color: #111214;
+  padding: 24px 24px 32px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; overflow: hidden;
+  transition: flex-basis .6s cubic-bezier(.65,0,.35,1), background .4s, padding .4s;
 }
-.cap-track::-webkit-scrollbar { display: none; }
-.cap-card { flex: 0 0 min(400px, 82vw); scroll-snap-align: start; display: flex; flex-direction: column; gap: 24px; }
-.cap-card.w { flex-basis: min(820px, 82vw); }
-.cap-pic { height: clamp(300px, 24vw, 460px); border-radius: 24px; background: var(--panel-2); }
-.cap-t { display: flex; flex-direction: column; gap: 16px; }
-.cap-t small { font-size: 20px; font-weight: 500; line-height: 1; color: #828282; }
-.cap-t h3 { margin: 8px 0 0; font-size: clamp(26px, 1.67vw, 32px); line-height: 1; color: var(--ink); }
-.cap-t p { font-size: 17px; font-weight: 700; line-height: 1.6; color: var(--mute); }
-.cap-nav { display: flex; justify-content: flex-end; gap: 18px; padding-bottom: 120px; }
-.cap-nav button { width: 52px; height: 52px; border-radius: 50%; }
-.cap-nav path { fill: #000; transition: fill .2s; }
-.cap-nav button:disabled { cursor: default; }
-.cap-nav button:disabled path { fill: #dadada; }
+.mc-card.on { flex-basis: min(808px, 82vw); background: #fff; padding: 24px 32px 32px; cursor: default; }
+.mc-card:not(.on):hover { background: #e7e9ec; }
+.mc-top { display: flex; flex-direction: column; gap: 32px; }
+.mc-name { display: flex; flex-direction: column; gap: 12px; }
+.mc-name h3 { margin: 0; font-size: 42px; line-height: 1.1; font-weight: 700; }
+.mc-name span { font-size: 16px; font-weight: 600; line-height: 1.6; color: var(--ink-2); }
+.mc-card.on .mc-name span { font-size: 20px; font-weight: 700; }
+.mc-desc { width: min(744px, 76vw); font-size: 20px; line-height: 1.6; color: var(--ink-2); opacity: 0; transform: translateY(10px); transition: opacity .35s, transform .35s; pointer-events: none; }
+.mc-card.on .mc-desc { opacity: 1; transform: none; transition-delay: .35s; pointer-events: auto; }
+.mc-plus { align-self: flex-end; width: 36px; height: 36px; border-radius: 52px; background: #a9a9a9; display: grid; place-items: center; transition: background .3s, transform .3s; }
+.mc-card.on .mc-plus { background: #000; }
+.mc-plus:hover { transform: rotate(90deg); }
+.mc-plus i { position: relative; width: 17px; height: 17px; }
+.mc-plus i::before, .mc-plus i::after { content: ""; position: absolute; left: 50%; top: 50%; background: #fff; border-radius: 39px; transform: translate(-50%, -50%); }
+.mc-plus i::before { width: 3.4px; height: 17px; }
+.mc-plus i::after { width: 17px; height: 3.4px; }
 
-/* ---------- 프로그램 구조 (Figma 6561:6755 / 6561:6766 / 6561:6807) ---------- */
-.ps-hero { position: relative; height: clamp(420px, 46.9vw, 900px); background: var(--ink); overflow: hidden; color: #fff; text-align: center; }
-.ps-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; }
-.ps-hero::after { content: ""; position: absolute; inset: 0; backdrop-filter: blur(1.5px); background: linear-gradient(to bottom, rgba(13,13,13,.94) .6%, rgba(13,13,13,.57) 22.3%, rgba(13,13,13,.05) 52.7%, rgba(13,13,13,0) 89.2%); }
-.ps-hero .t { position: relative; z-index: 1; padding-top: clamp(64px, 5.2vw, 100px); display: flex; flex-direction: column; gap: 16px; }
-.ps-hero h2 { margin: 0; font-size: clamp(36px, 2.7vw, 52px); line-height: 1; }
-.ps-hero p { font-size: 18px; font-weight: 700; line-height: 1.6; text-wrap: balance; }
-.ps-course { padding-top: 80px; display: flex; flex-direction: column; gap: 24px; }
-.ps-course h3 { margin: 0; font-size: 27px; line-height: 1; }
-.ps-course h3 small, .ps-other b small { font-size: 17px; }
-.ps-cols { display: flex; gap: 20px; }
-.ps-cols > div { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.ps-cols > i { flex: 0 0 .8px; height: 218px; background: #d9d9d9; }
-.ps-cols h4 { margin: 0; font-size: 21px; line-height: 1.2; }
-.ps-cols p, .ps-other p { font-size: 17px; font-weight: 700; line-height: 1.6; color: var(--mute); }
-.ps-other { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 80px 0 100px; align-items: start; }
-.ps-other article { display: flex; flex-direction: column; gap: 12px; }
-.ps-other .pic { height: 384px; border-radius: 24px; background: var(--panel); opacity: .9; }
-.ps-other b { font-size: 21px; line-height: 1.2; color: var(--ink); }
+/* ---------- 주요 수업들 grid (Figma 6906:4503) ---------- */
+/* hero stage is #000, this section #0d0d0d: blend the first stretch so the hand-off has no seam */
+.cg { background: linear-gradient(#000, #0d0d0d 240px); color: #fff; }
+.cg-col { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
+.cg-head { padding-top: 120px; display: flex; flex-direction: column; gap: 24px; }
+.cg-head h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1.2; }
+.cg-head p { max-width: 800px; font-size: var(--lead); line-height: 1.6; color: #8d8d8d; text-wrap: pretty; }
+.cg-head a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.cg-head a:hover { color: #d5d5d5; }
+.cg-grid { padding-top: 75px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; }
+.cgc {
+  aspect-ratio: 384 / 376; padding: 36px; border-radius: 24px; background: #fff; color: #0d0d0d; text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s;
+}
+.cgc h3 { margin: 0; font-size: clamp(24px, 1.67vw, 32px); font-weight: 860; line-height: 1.2; letter-spacing: -.01em; }
+.cgc .m { display: flex; flex-direction: column; gap: 6px; font-size: clamp(16px, 1.15vw, 22px); line-height: 1.6; color: #5f5f5f; }
+.cgc .m span { font-weight: 300; }
+.cgc .m b { font-weight: 700; }
+button.cgc { cursor: pointer; }
+button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255,255,255,.08); }
+.cg-photo { --lift: 2; position: relative; margin-top: 409px; height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
+.cg-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; }
+/* two viewports tall: top half solid #0d0d0d, bottom half the Figma fade (#0d0d0d → clear); JS slides it up as you scroll */
+.cg-veil { position: absolute; left: 0; right: 0; top: 0; height: 200%; will-change: transform;
+  background: linear-gradient(#0d0d0d 50%, rgba(13,13,13,.84) 59%, rgba(13,13,13,.41) 69%, rgba(13,13,13,.05) 83%, rgba(13,13,13,0) 96%); }
+@media (max-width: 1000px) { .cg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .cg-photo { margin-top: 200px; } }
+@media (max-width: 560px) { .cg-head { padding-top: 96px; } .cg-grid { grid-template-columns: 1fr; padding-top: 48px; } .cgc { aspect-ratio: auto; min-height: 240px; padding: 28px; } .cg-photo { margin-top: 120px; } }
 
-/* ---------- 수업을 관통하는 접근: header + pinned photo slides (Figma 6561:7117–7079, 6561:7155, 6561:7675–7828, nav 6561:7585) ---------- */
-.ap-head { background: #f6f6f6; padding: 180px 0 100px; text-align: center; color: #000; display: flex; flex-direction: column; gap: 32px; }
-.ap-head small { font-size: 21px; font-weight: 700; line-height: 1.2; }
-.ap-head h2 { margin: 0; font-size: clamp(44px, 4.17vw, 80px); line-height: 1.2; }
-.ap-head p { width: min(740px, calc(100vw - 32px)); margin-inline: auto; font-size: 18px; font-weight: 700; line-height: 1.6; }
-.ap { position: relative; background: var(--ink); }
-.ap-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff; }
-.ap-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
-.ap-slide.on { opacity: 1; }
-.ap-slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; transform: scale(1.06); transition: transform 1.6s cubic-bezier(.2,.8,.2,1); }
-.ap-slide.on img { transform: none; }
-.ap-slide::after { content: ""; position: absolute; inset: 0; background: linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(0,0,0,var(--side, .58)) 100%), linear-gradient(180deg, rgba(197,196,194,0) 0%, rgba(179,176,176,.27) 52.3%, rgba(112,112,112,.67) 74.9%, #444 100%); }
-.ap-cap { position: absolute; z-index: 1; left: max(24px, 8.33vw); bottom: clamp(48px, 9.26vh, 100px); width: min(817px, calc(100vw - 48px)); display: flex; flex-direction: column; gap: 12px; font-size: clamp(16px, 1.1vw, 21px); font-weight: 700; opacity: 0; transform: translateY(16px); transition: opacity .6s ease .15s, transform .7s cubic-bezier(.2,.8,.2,1) .15s; }
-.ap-slide.on .ap-cap { opacity: 1; transform: none; }
-.ap-cap span { display: flex; gap: 8px; line-height: 1; }
-.ap-cap p { line-height: 1.6; }
-.ap-nav { position: absolute; z-index: 2; left: max(24px, 8.33vw); top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.ap-nav button { display: flex; align-items: center; gap: 16px; height: 16px; padding-right: 24px; color: #fff; font-size: 18px; font-weight: 700; white-space: nowrap; transition: height .3s; }
-.ap-nav i { width: 25.6px; height: 3.2px; border-radius: 2px; background: rgba(255,255,255,.55); transition: width .35s cubic-bezier(.2,.8,.2,1), background .3s; }
-.ap-nav button[aria-current="true"] i { width: 41.6px; background: #fff; }
-.ap-nav span { opacity: 0; transform: translateX(-6px); transition: opacity .25s, transform .3s; pointer-events: none; }
-.ap-nav button:hover, .ap-nav button:focus-visible { height: 24px; }
-.ap-nav button:hover i, .ap-nav button:focus-visible i { width: 61.6px; background: #fff; }
-.ap-nav button:hover span, .ap-nav button:focus-visible span { opacity: 1; transform: none; }
+/* ---------- 프로그램 구조 (Figma 6891:839) ---------- */
+.ps2 { background: #fff; color: #0d0d0d; padding: 100px 0; }
+.ps2-col { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
+.ps2 h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1; color: #000; }
+.ps2-lead { padding-top: 16px; font-size: var(--lead); line-height: 1.6; color: #8d8d8d; }
+.ps2-h { margin: 32px 0 0; font-size: 27px; font-weight: 700; line-height: 1; }
+.ps2-h small { font-size: 17px; }
+.ps2-course { margin-top: 24px; display: flex; gap: 20px; align-items: stretch; }
+.ps2-course > div { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.ps2-course h4, .ps2-item b { font-size: 21px; font-weight: 700; line-height: 1.2; color: #0d0d0d; }
+.ps2-course h4 { margin: 0; }
+.ps2-course p, .ps2-item p { font-size: 17px; font-weight: 700; line-height: 1.6; color: #8d8d8d; word-break: keep-all; }
+/* Figma dashed divider: rgba(70,70,70,.2), ~4px dash / 3px gap */
+.ps2-rule { flex: 0 0 1px; min-height: 218px; background: repeating-linear-gradient(to bottom, rgba(70,70,70,.2) 0 4px, transparent 4px 7px); }
+.ps2-other { padding-top: 80px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.ps2-item { display: flex; flex-direction: column; gap: 12px; }
+.ps2-box { position: relative; aspect-ratio: 1; border-radius: 24px; background: #edeef0; overflow: hidden; }
+.ps2-pic { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); overflow: hidden; }
+.ps2-pic img { position: absolute; max-width: none; }
+.ps2-item small { font-size: 17px; font-weight: 700; color: #0d0d0d; }
+@media (max-width: 900px) {
+  .ps2-course { flex-direction: column; gap: 24px; }
+  .ps2-rule { flex: 0 0 1px; min-height: 0; height: 1px; background: repeating-linear-gradient(to right, rgba(70,70,70,.2) 0 4px, transparent 4px 7px); }
+  .ps2-other { grid-template-columns: 1fr; max-width: 480px; }
+}
 
-@media (max-width: 1180px) {
-  .mc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-bottom: 320px; }
-  .ps-other { grid-template-columns: 1fr; max-width: 560px; margin-inline: auto; }
+/* ---------- 수업을 관통하는 접근 (Figma 6906:6568) ---------- */
+.ap2 { background: #f6f6f6; color: #000; }
+.ap2-head { width: calc(100vw - 2 * clamp(16px, 8.33vw, 160px)); margin-inline: auto; padding-top: clamp(96px, 9.4vw, 180px); }
+.ap2-kicker { font-size: 21px; font-weight: 700; line-height: 1.2; }
+.ap2-head h2 { margin: 28px 0 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1.2; }
+.ap2-row { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 52px 0 80px; }
+.ap2-down { flex: 0 0 52px; width: 52px; height: 52px; border-radius: 8px; transition: transform .25s; }
+.ap2-down:hover { transform: translateY(3px); }
+.ap2-row p { max-width: 740px; font-size: 17px; font-weight: 700; line-height: 1.6; color: #8d8d8d; text-align: right; }
+.ap2-run { position: relative; }
+.ap2-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+/* card geometry is driven from JS: --m (side inset, px) and --r (corner radius, px) shrink to 0 as it grows */
+.ap2-card { position: absolute; top: 0; bottom: 0; left: var(--m, 160px); right: var(--m, 160px); border-radius: var(--r, 40px); overflow: hidden; background: #0d0d0d; will-change: left, right; }
+.ap2-imgs img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; opacity: 0; transform: scale(1.04); transition: opacity .8s ease, transform 1.4s cubic-bezier(.2,.8,.2,1); }
+.ap2-imgs img.on { opacity: 1; transform: none; }
+.ap2-shade { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.24) 100%), linear-gradient(180deg, rgba(197,196,194,0) 0%, rgba(179,176,176,.27) 52.3%, rgba(112,112,112,.666) 74.9%, #444 100%); }
+/* nav + copy: hidden on the rounded card, fade in once it is full screen */
+.ap2-nav, .ap2-copy { opacity: var(--ui, 0); visibility: var(--uiv, hidden); }
+.ap2-nav { position: absolute; left: clamp(24px, 8.33vw, 160px); top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ap2-nav button { display: block; width: 76px; height: 16px; position: relative; }
+.ap2-nav button::before { content: ""; position: absolute; left: 0; top: 50%; width: 24px; height: 1.6px; margin-top: -.8px; background: #fff; opacity: .6; transition: width .45s cubic-bezier(.2,.8,.2,1), opacity .3s; }
+.ap2-nav button[aria-current="true"]::before { width: 40px; opacity: 1; }
+.ap2-nav button:hover::before { opacity: 1; }
+.ap2-copy { position: absolute; left: clamp(24px, 8.33vw, 160px); bottom: clamp(48px, 9.26vh, 100px); width: min(817px, calc(100% - 48px)); color: #fff; }
+.ap2-item { position: absolute; left: 0; bottom: 0; width: 100%; display: flex; flex-direction: column; gap: 12px; opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.ap2-item.on { position: relative; opacity: 1; transform: none; pointer-events: auto; transition-delay: .12s; }
+.ap2-item h3 { margin: 0; display: flex; gap: 8px; font-size: clamp(16px, 1.1vw, 21px); font-weight: 700; line-height: 1; }
+.ap2-item h3 span { width: 30px; }
+.ap2-item p { font-size: clamp(15px, 1.1vw, 21px); font-weight: 700; line-height: 1.6; word-break: keep-all; }
+@media (max-width: 760px) {
+  .ap2-row { flex-direction: column; align-items: flex-start; padding: 32px 0 48px; }
+  .ap2-row p { text-align: left; font-size: 15px; }
+  .ap2-nav { top: 28%; }
+}
+
+/* ---------- 커리큘럼 (Figma 6892:1052) ---------- */
+.cu { background: #fff; color: #111214; padding: 52px 0 160px; }
+.cu-col { width: min(1280px, calc(100vw - 32px)); margin-inline: auto; }
+.cu h2 { margin: 0; font-size: clamp(44px, 4.17vw, 80px); font-weight: 700; line-height: 1.2; color: #000; }
+/* period tabs: widths follow the period length (4 · 2 · 4 · 2 months) */
+.cu-tabs { margin-top: 80px; display: flex; gap: 4px; }
+.cu-tab { flex: var(--g) 1 0; min-width: 0; height: 58px; display: flex; align-items: center; gap: 10px; padding: 16px 16px 16px 0; border-top: 2px solid #242529; color: #242529; font-size: 20px; font-weight: 600; line-height: 1.2; white-space: nowrap; opacity: .32; text-align: left; transition: opacity .3s; }
+.cu-tab i { width: 1px; height: 18px; background: #c9c9c9; }
+.cu-tab[aria-selected="true"] { opacity: 1; color: #5f5f5f; }
+.cu-tab:not([aria-selected="true"]):hover { opacity: .6; }
+.cu-body { margin-top: 64px; display: flex; gap: 80px; align-items: stretch; }
+.cu-left { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; }
+/* all panels share one grid cell, so the column keeps the tallest panel's height and nothing jumps on switch */
+.cu-panels { display: grid; }
+.cu-panel { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 32px; opacity: 0; visibility: hidden; transform: translateY(12px); transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s .45s; }
+.cu-panel.on { opacity: 1; visibility: visible; transform: none; transition: opacity .45s ease .08s, transform .55s cubic-bezier(.2,.8,.2,1) .08s; }
+.cu-panel h3 { margin: 0; font-size: 40px; font-weight: 700; line-height: 1.5; color: #111214; }
+.cu-date { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600; line-height: 1.6; color: #5f5f5f; }
+.cu-date b { padding: 2px 8px; border-radius: 6px; background: #242529; color: #fff; font-size: 13px; font-weight: 600; line-height: 1.5; }
+.cu-desc { margin-top: 20px; font-size: 20px; line-height: 1.6; color: #5f5f5f; word-break: keep-all; }
+.cu-list { display: flex; flex-direction: column; gap: 16px; }
+.cu-list small { display: block; font-size: 16px; font-weight: 700; line-height: 1.5; color: #8b95a1; }
+.cu-list strong { display: block; font-size: 18px; font-weight: 700; line-height: 1.7; color: #191f28; }
+.cu-list span { display: block; font-size: 16px; line-height: 1.7; color: #6b7684; }
+.cu-arrows { display: flex; }
+.cu-arrows button { width: 57px; height: 57px; }
+.cu-arrows path { fill: #5f5f5f; transition: fill .2s; }
+.cu-arrows button:hover:not(:disabled) path { fill: #131313; }
+.cu-arrows button:disabled { cursor: default; opacity: .15; }
+.cu-arrows button:disabled path { fill: #131313; }
+.cu-photo { flex: 1 1 0; min-width: 0; height: 700px; border-radius: 40px; overflow: hidden; position: relative; background: #f2f3f5; }
+.cu-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; opacity: 0; transform: scale(1.03); transition: opacity .6s ease, transform 1.2s cubic-bezier(.2,.8,.2,1); }
+.cu-photo img.on { opacity: 1; transform: none; }
+@media (max-width: 1000px) {
+  .cu-body { flex-direction: column-reverse; gap: 40px; }
+  .cu-photo { flex: none; height: auto; aspect-ratio: 600 / 700; max-height: 70vh; }
 }
 @media (max-width: 760px) {
-  .mc-grid { grid-template-columns: 1fr; }
-  .cf { height: 340px; }
-  .ps-cols { flex-direction: column; }
-  .ps-cols > i { height: .8px; flex-basis: auto; }
-  .ps-hero p br { display: none; }
-  .ap-head { padding: 120px 0 72px; }
-  .ap-cap p { font-size: 15px; }
+  .cu-tabs { margin-top: 48px; }
+  .cu-tab { flex-direction: column; align-items: flex-start; gap: 2px; height: auto; padding: 12px 6px 12px 0; font-size: 14px; white-space: normal; }
+  .cu-tab i { display: none; }
+  .cu-panel h3 { font-size: 30px; }
+  .cu-date, .cu-desc { font-size: 16px; }
+}
+
+/* ---------- 역량과 태도 (left-aligned, Figma 5288:468) ---------- */
+.cap-head h2 { margin: 0; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; color: var(--ink); }
+.cap-head .lead { text-align: left; }
+.cap-head .pills { justify-content: flex-start; }
+.struct { padding-top: 48px; }
+
+/* ---------- 프로그램 구조 (Figma 5435:15133) ---------- */
+.ps { background: #f2f3f5; color: #111214; padding-block: 160px; display: flex; flex-direction: column; gap: 80px; }
+.ps-title { margin: 0; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; }
+.ps-group { display: flex; flex-direction: column; gap: 32px; }
+.ps-group h3 { margin: 0 auto; font-size: clamp(28px, 2.1vw, 40px); line-height: 1.2; }
+.ps-grid { width: min(1440px, calc(100vw - 32px)); margin-inline: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.ps-card { background: rgba(255,255,255,.9); border-radius: 40px; padding: 20px 20px 40px; display: flex; flex-direction: column; gap: 32px; }
+.ps-card.white { background: #fff; }
+.ps-box { position: relative; aspect-ratio: 424 / 426.67; border-radius: 20px; background: #edeef0; overflow: hidden; }
+.ps-box .pic { position: absolute; }
+.ps-t { padding-inline: 20px; display: flex; flex-direction: column; gap: 12px; }
+.ps-t h4 { margin: 0; font-size: 24px; line-height: 1.2; }
+.ps-t p { font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+
+/* ---------- 수업을 관통하는 접근 (pinned, Figma 5288:5770) ---------- */
+.ap { position: relative; background: #000; }
+.ap-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff; }
+.ap-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; transform: scale(1.04); transition: transform 1.2s cubic-bezier(.2,.8,.2,1), filter 1s; }
+.ap.item .ap-bg { transform: scale(1.1); filter: blur(6px) grayscale(1); }
+.ap-shade { position: absolute; inset: 0; background: rgba(43,43,43,.52); }
+.ap-shade::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 68.5%; background: linear-gradient(to bottom, rgba(44,44,46,0) 31%, rgba(0,0,0,.32)); }
+.ap-dim { position: absolute; inset: 0; background: linear-gradient(to bottom, #a9a9a9 0%, #9d9d9d 55%, #6f6f6f 100%); opacity: 0; transition: opacity .8s ease; }
+.ap.item .ap-dim { opacity: .92; }
+.ap-copy { position: absolute; left: 0; right: 0; top: clamp(96px, 11.1vh, 120px); }
+.ap-state { position: absolute; left: 0; top: 0; width: 100%; display: flex; flex-direction: column; gap: 16px; opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .7s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.ap-state.on { opacity: 1; transform: none; pointer-events: auto; }
+.ap-state h2 { margin: 0 0 16px; font-size: clamp(36px, 3.33vw, 64px); line-height: 1.2; }
+.ap-state h3 { margin: 0; font-size: clamp(28px, 2.1vw, 40px); line-height: 1.2; }
+.ap-state p { max-width: 740px; font-size: var(--lead); line-height: 1.6; color: #d5d5d5; }
+.ap-list { position: absolute; left: 0; right: 0; bottom: clamp(48px, 11.6vh, 120px); list-style: none; margin: 0 auto; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ap-list button { display: flex; align-items: center; gap: 12px; padding: 4px 24px 4px 36px; position: relative; color: #fff; font-size: clamp(18px, 1.25vw, 24px); opacity: .6; transition: opacity .3s, padding .3s; text-align: left; }
+.ap-list button img { position: absolute; left: 4px; width: 15px; height: 15px; transform: rotate(-90deg); opacity: 0; transition: opacity .3s; }
+.ap-list button[aria-current="true"] { opacity: 1; font-weight: 700; }
+.ap-list button[aria-current="true"] img { opacity: 1; }
+.ap-list button:hover { opacity: 1; }
+
+@media (max-width: 1180px) {
+  .ps-grid { grid-template-columns: 1fr; max-width: 560px; }
+  .mc-track { height: 460px; }
+  .mc-name h3 { font-size: 32px; }
+  .mc-card { flex-basis: 220px; }
+}
+@media (max-width: 760px) {
+  .mc-tab { min-width: 0; font-size: 16px; height: 48px; padding: 4px 16px; }
+  .mc-desc { font-size: 16px; }
+  .ps { padding-block: 96px; gap: 56px; }
+  .ps-card { border-radius: 28px; }
 }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1180px) {
+  .struct { flex-direction: column; align-items: stretch; }
+  .struct-list { width: auto; }
   .course { flex-direction: column; }
   .course > .card-t { width: auto; }
   .course .dash { border-left: 0; border-top: .8px dashed var(--ink); }
@@ -447,12 +644,13 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   .fact + .fact::before { display: none; }
   .fact { padding: 8px 0; white-space: normal; }
   .hire-card { padding: 32px; }
+  .struct-art { height: 460px; }
+  .struct-art .atlas { transform: scale(.75); }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition-duration: .01ms !important; }
 }
 </style>
-</head><body>
 
 <div class="nav-wrap">
   <nav class="nav" aria-label="주요 메뉴">
@@ -470,25 +668,15 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
 </div>
 
 <main class="content" id="top">
-  <!-- Hero: opens on the medallion intro (Figma 6493:731 → 6493:997); scrolling pushes the reliefs out and hands over to Figma 5288:5123,
-       which then plays its entrance: edge reliefs settle in, frame draws, copy reveals -->
+  <!-- Hero: Figma 6899:1859 (scroll story) + cards 6899:2862 / 6899:2864 + toggle transition 6899:1909. Stage stays pinned while the page scrolls through it -->
   <section class="hero" id="hero" aria-label="Phi의 1년제 프로그램">
     <div class="stage" id="stage">
       <div class="canvas" id="canvas">
-        <div class="layer" data-cl="N_L"></div>
-        <div class="layer" data-cl="N_TL"></div>
-        <div class="layer" data-cl="N_R"></div>
-        <div class="layer" data-cl="N_BR"></div>
-        <div class="layer" data-cl="FRAME"></div>
-        <div class="layer" data-il="C"></div>
-        <div class="layer" data-il="TL"></div>
-        <div class="layer" data-il="BL"></div>
-        <div class="layer" data-il="TR"></div>
-        <div class="layer" data-il="BR"></div>
-        <div class="layer" data-il="MED"><div class="med"><img src="assets/medallion.webp" alt="OBSERVE 메달리온"></div></div>
+        <div class="statue" id="statue"><img src="assets/statue.png" alt=""></div>
+        <div id="deck" aria-live="polite"></div>
       </div>
       <div class="ui" id="ui">
-        <div class="copy">
+        <div class="copy" id="heroCopy">
           <h1 id="heroTitle">Phi의 1년제 프로그램을 소개합니다.</h1>
           <div class="paras" id="heroBody">
             <p>도구는 빠르게 바뀝니다. Phi는 도구보다 사고방식에 집중합니다. 탁월한 인재는 어떤 조건에도 적용할 수 있는 자신만의 성공 방정식을 갖고 있고, 이 인재를 벡터형 인재라 부릅니다. 1년제 프로그램은 벡터형 인재가 가진 역량과 태도를 학습하고, 나아가 주체적으로 자신만의 역량과 태도를 만들어갑니다.</p>
@@ -496,103 +684,101 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
           </div>
         </div>
         <dl class="hfacts" id="heroFacts">
-          <div class="r">
-            <div class="fact" style="width:160px"><dt style="width:56px">과정 기간</dt><dd>1년 (2학기)</dd></div><span class="bar"></span>
-            <div class="fact" style="width:180px"><dt style="width:56px">총 시수</dt><dd>약 1,000시간+</dd></div><span class="bar"></span>
-            <div class="fact" style="width:240px"><dt style="width:66px">수업 방식</dt><dd>월-금, 전일제 오프라인</dd></div>
-          </div>
-          <div class="r">
-            <div class="fact wide"><dt style="width:66px">학습자 규모</dt><dd>60명<span> (30명씩, 2개 클래스로 운영)</span></dd></div><span class="bar"></span>
-            <div class="fact" style="width:200px"><dt style="width:56px;font-size:16px;font-weight:400">개강</dt><dd>2026년 8월 24일</dd></div>
-          </div>
+          <div><dt>과정 기간</dt><dd>1년 (2학기)</dd></div>
+          <div><dt>총 시수</dt><dd>약 1,000시간+</dd></div>
+          <div><dt>수업 방식</dt><dd>월–금, 전일제 오프라인</dd></div>
+          <div><dt>학습자 규모</dt><dd>60명 (30명 × 2클래스)</dd></div>
+          <div><dt>개강</dt><dd>2026년 8월 24일</dd></div>
         </dl>
       </div>
-    </div>
-  </section>
-
-  <!-- 주요 수업들 — Figma 6493:460 / 6561:4467. Cards flip (hover/tap) to the summary in 6559:1297; Course Profile opens the modal -->
-  <section class="band dark mc" id="courses">
-    <div class="col2 mc-head">
-      <h2>주요 수업들</h2>
-      <p>상기된 <a href="#competencies">역량과 태도</a>를 중심으로 수업들이 설계되었습니다.<br>이를 토대로 디지털 프로덕트 디자인과 브랜딩 분야에서 자신의 가능성을 펼칠 수 있도록 합니다.<br>본 주요 수업들은 1학기에 진행되는 수업들이며, 2학기는 1학기의 성취에 따라 학습 효과를 보완, 증폭할 수 있는 방향으로 준비됩니다.</p>
-    </div>
-    <div class="col2 mc-grid" id="mcGrid"></div>
-  </section>
-
-  <!-- 역량과 태도 — Figma 6561:4605 / 6493:338 / 6493:340 / 6493:347 / 6561:4923 -->
-  <section class="band white" id="competencies">
-    <div class="col2 cap-head">
-      <h2>역량과 태도</h2>
-      <p class="lead">어떤 환경에서도 스스로 답을 찾을 수 있는 사고방식을 만들기 위해,<br>Phi는 아래 역량과 태도를 중요시합니다.</p>
-      <div class="pills"><div class="pill-bar fixed" role="tablist"><button class="pill" role="tab" aria-selected="true">역량 Competency</button><button class="pill" role="tab" aria-selected="false">태도 Phi OS</button></div></div>
-    </div>
-    <div class="cap-track" id="capTrack">
-      <article class="cap-card w"><div class="cap-pic"></div><div class="cap-t"><div><small>심미안</small><h3>Aesthetic Sense</h3></div><p>디자이너에게 가장 중요한 역량을 고르라면 아름다움을 인식하는 능력 아닐까? 대상을 보았을 때 구체적으로 부분을 인식하고, 미추를 판단하며, 그 미추의 정도를 가늠할 수 있는 예리한 감각을 훈련한다.</p></div></article>
-      <article class="cap-card"><div class="cap-pic"></div><div class="cap-t"><div><small>언어화</small><h3>Articulation</h3></div><p>언어는 곧 사고의 천장이다. 내가 다룰 수 있는 어휘의 질과 양이 나의 사고방식의 높이를 결정한다. 타인에게 내 생각을 전달하는 것은 물론, 스스로를 설득할 수 있는 언어 체계를 갖춘다.</p></div></article>
-      <article class="cap-card"><div class="cap-pic"></div><div class="cap-t"><div><small>구조화</small><h3>Structural Thinking</h3></div><p>나무를 보는 것만큼 숲을 보는 일도 중요하다. 구체와 추상을 오가며 현재 다루고 있는 문제가 전체 그림에서 어느 위치성을 지니는지 이해하고, 파편화된 분야들을 하나로 엮어내는 구조적 사고를 훈련한다.</p></div></article>
-      <article class="cap-card w"><div class="cap-pic"></div><div class="cap-t"><div><small>관점 전환</small><h3>Reframing</h3></div><p>혁신적인 해결책은 같은 문제를 다른 관점으로 바라보았을 때 나온다. 특정 문제를 그 분야의 문법으로만 정의하는 것이 아니라, 다른 분야의 레퍼런스도 내 문제에 적용할 수 있는 관점을 지니기 위해 유연한 관점 전환을 훈련한다.</p></div></article>
-      <article class="cap-card"><div class="cap-pic"></div><div class="cap-t"><div><small>문제 정의</small><h3>Problem Definition</h3></div><p>많은 디자인이 실패하는 이유는 틀린 문제를 풀었기 때문이다. 증상을 문제로 오독하지 않고, 본질이 무엇인지 파악함으로써 정확한 문제 정의를 추구한다.</p></div></article>
-    </div>
-    <div class="col2 cap-nav">
-      <button type="button" id="capPrev" aria-label="이전 역량"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="26" fill="#EFEFEF"/><path d="M18.2 23.5751C16.3333 24.6529 16.3333 27.3472 18.2 28.4249L27.8 33.9674C29.6667 35.0452 32 33.698 32 31.5426L32 20.4574C32 18.302 29.6667 16.9548 27.8 18.0326L18.2 23.5751Z"/></svg></button>
-      <button type="button" id="capNext" aria-label="다음 역량"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="26" fill="#EFEFEF"/><path d="M33.8 23.5751C35.6667 24.6529 35.6667 27.3472 33.8 28.4249L24.2 33.9674C22.3333 35.0452 20 33.698 20 31.5426L20 20.4574C20 18.302 22.3333 16.9548 24.2 18.0326L33.8 23.5751Z"/></svg></button>
-    </div>
-  </section>
-
-  <!-- 프로그램 구조 — Figma 6561:6755 / 6561:6766 / 6561:6807 -->
-  <section class="band white" id="structure">
-    <div class="ps-hero">
-      <img src="assets/structure-bg.webp" alt="">
-      <div class="col t"><h2>프로그램 구조</h2><p>코스는 '과목'에 해당하는 개념입니다. Phi의 코스는 일관된 시수가 아니라,<br>학습 목표에 따라 각기 다른 시수와 기간으로 구성됩니다.</p></div>
-    </div>
-    <div class="col2 ps-course">
-      <h3><small>1) </small>Course</h3>
-      <div class="ps-cols">
-        <div><h4>Fundamental</h4><p>4개월 동안 매주 이어지며, 한 분야의 핵심 원리를 전문가와 함께 오래 다지는 수업입니다. 사고방식 위주의 기본기를 학습할 때는 지식을 습득하는 것은 물론, 다양한 맥락에서의 적용이 필요하기 때문에 긴 호흡으로 진행합니다.</p></div>
-        <i></i>
-        <div><h4>Domain</h4><p>1-2개월 단위로 구성되며, 기본기를 단기간에 습득할 수 있는 단위로 쪼개어서 경험하는 수업입니다. 여러 주제를 들어보면서 나에게 더 맞는 주제가 있다면 이후에 심화하여 학습할 수 있습니다.</p></div>
-        <i></i>
-        <div><h4>Ritual</h4><p>한 달에 한 번, 하루 여섯 시간을 통째로 쓰는 수업입니다. 학습 목표에 따라 단기간에 집중적인 학습이 필요한 코스가 있고, 간격을 두고(spaced repetition) 다른 일과를 수행하면서 배우면 효과적인 코스가 있습니다. Ritual은 후자의 수업으로, 반복적인 훈련과 습관화가 필요한 종류의 내용을 배웁니다.</p></div>
+      <!-- card detail (Figma 6899:3374): opens from a numbered card; the set's five cards as a carousel -->
+      <div class="dk" id="dk" role="dialog" aria-modal="true" aria-label="역량과 태도 자세히 보기">
+        <button class="dk-x" type="button" aria-label="닫기"></button>
+        <div class="dk-view" id="dkView"><div class="dk-track" id="dkTrack" aria-live="polite"></div></div>
+        <div class="dk-dots" id="dkDots"></div>
+      </div>
+      <div class="seg" id="seg" role="tablist" aria-label="역량과 태도">
+        <button type="button" role="tab" aria-selected="true" data-set="0">역량 Competency</button>
+        <button type="button" role="tab" aria-selected="false" data-set="1">태도 Phi OS</button>
       </div>
     </div>
-    <div class="col2 ps-other">
-      <article><div class="pic"></div><p><b><small>2) </small>Study.</b> 전문가 없이 학습자끼리 학습하는 수업입니다. 궁극적으로 학습자들은 스스로 배울 수 있는 상태가 되어야 합니다. Phi에서는 전문가의 전문성은 물론 학습자의 자율적 학습도 배워야 할 대상으로 여기며, 이를 위해 Learning Design팀이 각종 지원을 제공합니다.</p></article>
-      <article><div class="pic"></div><p><b><small>3) </small>Workshop.</b> 학기 중 코스 외 시간에 학습 능력 증진을 위해 제공되는 워크숍입니다.</p></article>
-      <article><div class="pic"></div><p><b><small>4) </small>Event.</b> OT나 클로징 파티 등 코스를 시작하거나 끝맺음할 때, 혹은 특별한 이벤트가 있을 때 열리는 행사입니다.</p></article>
+  </section>
+
+  <!-- 주요 수업들 — Figma 6906:4503: intro copy, 3-column course grid, then the classroom photo fading up out of the dark -->
+  <section class="band cg" id="courses">
+    <div class="cg-col cg-head">
+      <h2>주요 수업들</h2>
+      <p>상기된 <a href="#hero" id="toCompetencies">역량과 태도</a>를 중심으로 수업들이 설계되었습니다.<br>이를 토대로 디지털 프로덕트 디자인과 브랜딩 분야에서 자신의 가능성을 펼칠 수 있도록 합니다.<br>본 주요 수업들은 1학기에 진행되는 수업들이며, 2학기는 1학기의 성취에 따라 학습 효과를 보완, 증폭할 수 있는 방향으로 준비됩니다.</p>
+    </div>
+    <div class="cg-col cg-grid" id="cgGrid"></div>
+    <!-- classroom photo: pinned while the dark lifts off it over two screens of scroll (veil = solid half + Figma 6891:803 gradient half) -->
+    <div class="cg-photo" id="cgPhoto" aria-hidden="true"><div class="cg-pin"><img src="assets/classroom-courses.webp" alt=""><span class="cg-veil" id="cgVeil"></span></div></div>
+  </section>
+
+  <!-- 프로그램 구조 — Figma 6891:839 -->
+  <section class="band ps2" id="structure">
+    <div class="ps2-col">
+      <h2>프로그램 구조</h2>
+      <p class="ps2-lead">코스는 '과목'에 해당하는 개념입니다. Phi의 코스는 일관된 시수가 아니라,<br>학습 목표에 따라 각기 다른 시수와 기간으로 구성됩니다.</p>
+      <h3 class="ps2-h"><small>1)</small> Course</h3>
+      <div class="ps2-course">
+        <div><h4>Fundamental</h4><p>4개월 동안 매주 이어지며, 한 분야의 핵심 원리를 전문가와 함께 오래 다지는 수업입니다. 사고방식 위주의 기본기를 학습할 때는 지식을 습득하는 것은 물론, 다양한 맥락에서의 적용이 필요하기 때문에 긴 호흡으로 진행합니다.</p></div>
+        <span class="ps2-rule" aria-hidden="true"></span>
+        <div><h4>Domain</h4><p>1-2개월 단위로 구성되며, 기본기를 단기간에 습득할 수 있는 단위로 쪼개어서 경험하는 수업입니다. 여러 주제를 들어보면서 나에게 더 맞는 주제가 있다면 이후에 심화하여 학습할 수 있습니다.</p></div>
+        <span class="ps2-rule" aria-hidden="true"></span>
+        <div><h4>Ritual</h4><p>한 달에 한 번, 하루 여섯 시간을 통째로 쓰는 수업입니다. 학습 목표에 따라 단기간에 집중적인 학습이 필요한 코스가 있고, 간격을 두고(spaced repetition) 다른 일과를 수행하면서 배우면 효과적인 코스가 있습니다. Ritual은 후자의 수업으로, 반복적인 훈련과 습관화가 필요한 종류의 내용을 배웁니다.</p></div>
+      </div>
+      <div class="ps2-other">
+        <article class="ps2-item"><div class="ps2-box"><div class="ps2-pic" style="width:96.61%;height:98.44%"><img src="assets/ps-study.webp" alt="" style="height:145.06%;left:-9.17%;top:-23.68%;width:118.2%"></div></div>
+          <p><small>2)</small> <b>Study.</b> 전문가 없이 학습자끼리 학습하는 수업입니다. 궁극적으로 학습자들은 스스로 배울 수 있는 상태가 되어야 합니다. Phi에서는 전문가의 전문성은 물론 학습자의 자율적 학습도 배워야 할 대상으로 여기며, 이를 위해 Learning Design팀이 각종 지원을 제공합니다.</p></article>
+        <article class="ps2-item"><div class="ps2-box"><div class="ps2-pic" style="width:132.29%;height:90.1%"><img src="assets/ps-workshop.webp" alt="" style="height:220.71%;left:-9.96%;top:-42.1%;width:119.79%"></div></div>
+          <p><small>3)</small> <b>Workshop.</b> 학기 중 코스 외 시간에 학습 능력 증진을 위해 제공되는 워크숍입니다.</p></article>
+        <article class="ps2-item"><div class="ps2-box"><div class="ps2-pic" style="width:98.44%;height:100%"><img src="assets/ps-event.webp" alt="" style="height:137.69%;left:-2.67%;top:-17.45%;width:105.21%"></div></div>
+          <p><small>4)</small> <b>Event.</b> OT나 클로징 파티 등 코스를 시작하거나 끝맺음할 때, 혹은 특별한 이벤트가 있을 때 열리는 행사입니다.</p></article>
+      </div>
     </div>
   </section>
 
-  <!-- 수업을 관통하는 접근 — header Figma 6561:7117 / 7114 / 7079; slides 6561:7155, 6561:7675–7828. Screen stays pinned; scrolling steps through the slides -->
-  <section class="ap-head" aria-labelledby="apTitle">
-    <small>핵심 수업 장치</small>
-    <h2 id="apTitle">수업을 관통하는 접근</h2>
-    <p>Phi의 교육은 인지적 도제(Cognitive Apprenticeship)를 토대로 설계되었습니다.<br>전문가의 사고 과정을 학습자가 능동적으로 관찰할 수 있도록 다양한 장치가 준비되어있습니다.</p>
-  </section>
-  <section class="ap" id="approach" aria-label="핵심 수업 장치">
-    <div class="ap-stage" id="apStage">
-      <ol class="ap-nav" id="apNav"></ol>
+  <!-- 수업을 관통하는 접근 — Figma 6906:6568: header, then a rounded photo card that grows to full screen,
+       after which the nav + copy appear and scrolling steps 01 → 06 -->
+  <section class="ap2" id="approach">
+    <div class="ap2-head">
+      <p class="ap2-kicker">핵심 수업 장치</p>
+      <h2>수업을 관통하는 접근</h2>
+      <div class="ap2-row">
+        <button class="ap2-down" type="button" id="ap2Down" aria-label="핵심 수업 장치 보기"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="8" fill="#EFEFEF"/><path transform="rotate(90 26 26)" d="M33.8 23.5751C35.6667 24.6529 35.6667 27.3472 33.8 28.4249L24.2 33.9674C22.3333 35.0452 20 33.698 20 31.5426L20 20.4574C20 18.302 22.3333 16.9548 24.2 18.0326L33.8 23.5751Z" fill="#000"/></svg></button>
+        <p>Phi의 교육은 인지적 도제(Cognitive Apprenticeship)를 토대로 설계되었습니다.<br>전문가의 사고 과정을 학습자가 능동적으로 관찰할 수 있도록 다양한 장치가 준비되어있습니다.</p>
+      </div>
+    </div>
+    <div class="ap2-run" id="ap2Run">
+      <div class="ap2-stage">
+        <div class="ap2-card" id="ap2Card">
+          <div class="ap2-imgs" id="ap2Imgs"></div>
+          <span class="ap2-shade"></span>
+          <ol class="ap2-nav" id="ap2Nav" aria-label="핵심 수업 장치"></ol>
+          <div class="ap2-copy" id="ap2Copy" aria-live="polite"></div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- 커리큘럼 + 채용 연계 -->
   <div class="band white hire-wrap">
-    <section id="curriculum">
-      <div class="col cur-head"><h2 class="h1">커리큘럼</h2>
-        <div class="pills"><div class="pill-bar fixed" role="tablist" id="curTabs"><button class="pill" role="tab" aria-selected="true" aria-controls="pYear" id="tYear">연간 구조</button><button class="pill" role="tab" aria-selected="false" aria-controls="pWeek" id="tWeek">주간 시간표</button></div></div>
-      </div>
-      <p class="col lead cur-cap" id="curCap">1년제 프로그램은 아래 요소들로 구성되어있습니다.</p>
-      <div class="col year" id="pYear" role="tabpanel" aria-labelledby="tYear">
-        <div class="row">
-          <article class="card term"><div class="term-top"><div class="term-name"><div class="n"><h3>1학기</h3><span class="tag">개강 8/24</span></div><span class="date">2026년 8월 24일 - 12월 24일</span></div></div><p>Warm-up Week(B/24-8/28)를 시작으로 개강. 매주 월-금 수업이 진행되며, 오전/오후 각 세션으로 나뉘어 전문가 수업이 이어집니다</p></article>
-          <article class="card term"><div class="term-top"><div class="term-name"><div class="n"><h3>방학+캠프</h3></div><span class="date">2027년 1월 - 2월</span></div><button class="plus" type="button" data-open="m-camp" aria-label="방학+캠프 자세히 보기"><i></i></button></div><p>4개월의 루틴에서 벗어나 휴식과 함께 복수의 워크숍 프로그램이 진행됩니다. Practical Camp(토스), 디지털 타이포그래피 워크숍, Skills Boost 등이 예정되어 있습니다</p></article>
+    <!-- 커리큘럼 — Figma 6892:1052 (1학기); the other three periods follow the same layout with copy supplied from the reference screens -->
+    <section id="curriculum" class="cu">
+      <div class="cu-col">
+        <h2>커리큘럼</h2>
+        <div class="cu-tabs" role="tablist" aria-label="연간 구조" id="cuTabs"></div>
+        <div class="cu-body">
+          <div class="cu-left">
+            <div class="cu-panels" id="cuPanels"></div>
+            <div class="cu-arrows">
+              <button type="button" id="cuPrev" aria-label="이전 기간"><svg viewBox="0 0 57 57" width="57" height="57" aria-hidden="true"><path transform="rotate(180 28.5 28.5)" d="M36.8286 30.1781H15V27.4781H36.8286L26.5754 17.2249L28.5 15.3281L42 28.8281L28.5 42.3281L26.5754 40.4314L36.8286 30.1781Z"/></svg></button>
+              <button type="button" id="cuNext" aria-label="다음 기간"><svg viewBox="0 0 57 57" width="57" height="57" aria-hidden="true"><path d="M36.8286 30.1781H15V27.4781H36.8286L26.5754 17.2249L28.5 15.3281L42 28.8281L28.5 42.3281L26.5754 40.4314L36.8286 30.1781Z"/></svg></button>
+            </div>
+          </div>
+          <div class="cu-photo" id="cuPhoto" aria-hidden="true"></div>
         </div>
-        <div class="row">
-          <article class="card term"><div class="term-top"><div class="term-name"><div class="n"><h3>2학기</h3></div><span class="date">2027년 3월 2일 - 6월 24일</span></div></div><p>1학기에서 쌓은 역량을 심화하고 통합하는 시간.<br>전문가 라인업이 일부 교체되며, 학습자가 자신만의 방향을 구체화합니다</p></article>
-          <article class="card term"><div class="term-top"><div class="term-name"><div class="n"><h3>수료 &amp; 졸업</h3><span class="tag">졸업</span></div><span class="date">2027년 7월 - 8월</span></div><button class="plus" type="button" data-open="m-grad" aria-label="수료와 졸업 자세히 보기"><i></i></button></div><p>수료(전 과정 이수) 후 졸업 프로젝트를 완성합니다. 졸업 프로젝트는 외부에 실제 발표 또는 출시되어야 합니다.</p></article>
-        </div>
-      </div>
-      <div class="col week" id="pWeek" role="tabpanel" aria-labelledby="tWeek" hidden>
-        <div class="week-card"><div class="tt" id="tt"></div></div>
       </div>
     </section>
 
@@ -625,8 +811,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   <div class="sheet"><div class="sheet-top"><button class="x" type="button" data-close aria-label="닫기"></button></div>
     <div class="sheet-body"><div class="sheet-in">
       <div><h2 id="m-course-t"></h2><p class="sub" id="m-course-s"></p></div>
-      <section><h4>A. 전문가 소개</h4><div class="blk"><strong id="m-course-w"></strong></div></section>
-      <section><h4>B. 수업 개요</h4><div class="blk"><p id="m-course-d"></p></div></section>
+      <section><h4>수업 목표</h4><div class="blk"><p id="m-course-d"></p></div></section>
     </div></div>
   </div>
 </div>
@@ -670,252 +855,288 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
 
 <script>
 (() => {
-  /* ---------- Hero elements (1920×1080 design coordinates) ----------
-     Lines: [x1,y1,x2,y2, stops|null, dashed, opacity, gradFrac]
-     Gradients follow the Figma SVGs: stop 0 sits at the line's END and runs back to its start. */
-  const S0 = {
-    out: [[0,1],[1,0]], inn: [[0,0],[1,1]], mid: [[0,1],[.5,.1],[1,1]],
-    l20: [[.35,0],[1,1]], l21: [[0,0],[.26,.06],[1,1]], l40: [[0,0],[.44,.56],[1,1]],
-    l42: [[0,1],[.43,.5],[.63,0],[.81,.45],[1,1]], l43: [[0,0],[.49,.43],[1,1]],
-    l46: [[0,.1],[.52,.47],[1,1]], l49: [[0,0],[.4,.08],[1,1]],
-    fr: [[0,1],[.5,.4],[1,1]], tri: [[0,1],[.5,.1],[1,.4]], l60: [[0,.81],[1,0]]
-  };
-  const D = (x1,y1,x2,y2,g,op=1,frac=1) => [x1,y1,x2,y2,S0[g],true,op,frac];
-  const P = (x1,y1,x2,y2,op=1,g=null) => [x1,y1,x2,y2,g?S0[g]:null,false,op,1];
-  const LINES = {
-    N_L: [D(180,541,180,450,'out',.4),D(-106,605,419,605,'l46',.5),D(184,446,464,446,'l40',.4),P(176,446,-242,446,.4),P(180,442,180,-102,.4),
-          D(315,363,315,750,'out',.4),P(311,754,-249,754,.4),P(315,1226,315,758,.4)],
-    N_TL: [P(442,-28,259,-28),P(442,158,259,158,.2),P(255,154,255,-24,.2),D(446,236,446,162,'out',.5),D(255,-32,255,-217,'inn'),
-           D(251,-28,-53,-28,'l20'),D(251,158,179,158,'l21',.2),D(450,158,778,158,'inn',.2),P(446,154,446,-24,.2)],
-    N_R: [D(1917.5,333,1917.5,549,'out'),D(1627.4,457.1,1626.9,222.2,'out',.4),D(1622.6,218,1502,218.3,'inn',.4),P(2029,217,1631.1,218,.4),P(1626.9,213.7,1626,-128.1,.4)],
-    N_BR: [D(1921,1029.4,2203,1029.4,'inn'),D(1921,553.4,2249,553.4,'inn'),P(1913,553.4,1537,553.4,.4),P(1913,1029.4,1537,1029.4,.4),
-           P(1917,1025.4,1917,557.4,.4),P(1533,1025.4,1533,557.4,.4),D(1917,1033.4,1917,1157.4,'inn',1,33.5/124)],
-    FRAME: [P(1383,817,1383,284,.5,'fr'),P(533,794,533,284,.4,'fr'),D(1383,1010,1383,802,'out',.5),D(1383,68,1383,276,'out',.5),D(533,68,533,276,'out',.5),
-            D(533,1010,533,802,'out',.4),D(294,798,529,798,'out',.5),D(322,758,529,794,'tri',.5),D(322,280,529,280,'out',.5),D(1594,280,1387,280,'out',.5),
-            D(1505,798,1387,798,'l60',.5),P(1379,798,537,798,.5,'fr'),P(1379,280,537,280,.5,'fr'),D(184,442,528,284,'tri',.5),D(450,162,529,276,'mid',.5),
-            D(1623,221,1387,276,'tri',.5),D(1529,557,1387,794,'tri',.5)]
-  };
-  const SQ = { // [x, y, kind, opacity]  o=outline f=filled d=4px dot
-    N_L: [[176,443,'o',.4],[311,751,'o',.4],[313,604,'d',.4],[313,445,'d',.4]],
-    N_TL: [[442,-31,'o'],[442,155,'o',.2],[251,-31,'o'],[251,155,'f',.2]],
-    N_R: [[1622.6,214.7,'o'],[1625,355.5,'d']],
-    N_BR: [[1913,550.4,'o',.4],[1913,1026.4,'o',.4],[1529,550.4,'f',.4],[1529,1026.4,'o',.4]],
-    FRAME: [[1379,795,'f',.5],[529,795,'f',.4],[1379,277,'f',.5],[529,277,'f',.4]]
-  };
-  const LBL = { // [centerX, top, text, opacity]
-    N_L: [[310.5,269,'238,256',.2],[208.5,453,'456,398',.2],[342.5,731,'684,234',.4],[532.5,1011,'8 (14.581)',.2]],
-    N_BR: [[1508.5,1005.4,'92.156',1],[1553,528.4,'538,511',1]],
-    FRAME: [[1353.5,810,'152.156',.5],[1359.5,257,'456,398',.5],[507.5,805,'92.156',.5]]
-  };
-  const COIN = 'height:266.8%;left:-83.33%;top:-83.4%;width:266.67%';
-  const IMG = { // [src, x, y, w, h, opacity, crop]
-    N_L: [['relief-left',-219,-67,391,498,.2],['frieze',-447,767,751,320,.6]],
-    N_TL: [['relief-small',266,-16,169,163,.2]],
-    N_R: [['coin',1644,-167,312,389,.2,COIN]],
-    N_BR: [['relief-right',1553,570.4,343,436,.4]]
-  };
-  // Settled-hero groups fly in from outside the frame
-  const ENTER_FROM = { N_L: [-220,60], N_TL: [-150,-150], N_R: [190,-150], N_BR: [210,190] };
-
-  const NS = 'http://www.w3.org/2000/svg';
-  let gid = 0;
-  const layers = {}, frameLines = [];
-  document.querySelectorAll('.layer[data-cl]').forEach(el => {
-    const c = el.dataset.cl; layers[c] = el;
-    (IMG[c] || []).forEach(([src,x,y,w,h,op=1,crop]) => {
-      const d = document.createElement('div');
-      d.className = 'abs crop'; d.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;opacity:${op}`;
-      const im = document.createElement('img'); im.src = `assets/${src}.webp`; im.alt = '';
-      im.style.cssText = crop || 'inset:0;width:100%;height:100%;object-position:bottom';
-      d.appendChild(im); el.appendChild(d);
-    });
-    if (LINES[c]) {
-      const svg = document.createElementNS(NS, 'svg');
-      svg.setAttribute('width', 1920); svg.setAttribute('height', 1080);
-      const defs = document.createElementNS(NS, 'defs'); svg.appendChild(defs);
-      LINES[c].forEach(([x1,y1,x2,y2,stops,dashed,op,frac]) => {
-        const ln = document.createElementNS(NS, 'line');
-        Object.entries({x1,y1,x2,y2,'stroke-width':.8,opacity:op}).forEach(([k,v]) => ln.setAttribute(k, v));
-        if (stops) {
-          const id = 'g' + (gid++);
-          const lg = document.createElementNS(NS, 'linearGradient');
-          const gx = x1 + (x2 - x1) * frac, gy = y1 + (y2 - y1) * frac;
-          Object.entries({id, gradientUnits:'userSpaceOnUse', x1:gx, y1:gy, x2:x1, y2:y1}).forEach(([k,v]) => lg.setAttribute(k, v));
-          stops.forEach(([o,a]) => { const s = document.createElementNS(NS, 'stop'); s.setAttribute('offset', o); s.setAttribute('stop-color', '#fff'); s.setAttribute('stop-opacity', a); lg.appendChild(s); });
-          defs.appendChild(lg);
-          ln.setAttribute('stroke', `url(#${id})`);
-        } else ln.setAttribute('stroke', '#fff');
-        if (dashed) ln.setAttribute('stroke-dasharray', '2.4 2.4');
-        svg.appendChild(ln);
-        if (c === 'FRAME') frameLines.push({ ln, x1, y1, x2, y2 });
-      });
-      el.appendChild(svg);
-    }
-    (SQ[c] || []).forEach(([x,y,k,op=1]) => { const s = document.createElement('span'); s.className = 'sq ' + k; s.style.cssText = `left:${x}px;top:${y}px;opacity:${op}`; el.appendChild(s); });
-    (LBL[c] || []).forEach(([x,y,t,o]) => { const s = document.createElement('span'); s.className = 'lbl'; s.style.cssText = `left:${x}px;top:${y}px;opacity:${o}`; s.textContent = t; el.appendChild(s); });
-  });
-
-  /* ---------- Intro: medallion among reliefs (Figma 6493:731) ----------
-     Groups drift outward along DRIFT as the intro scrolls away (6493:820 → 908 → 997). Lines are [x1,y1,x2,y2]. */
-  const INTRO = {
-    C:  { lines: [[567,1024,567,146],[567,-70,567,138],[563,142,398,142],[571,142,1274,142],[1366,565,1366,1028],[1366,1036,1366,1244],[1362,1032,594,1032]],
-          sq: [[563,138,'f'],[1362,1028,'f'],[565,527,'d'],[565,859,'d']],
-          lbl: [[535.5,148,'238,256',1],[566.5,1024,'8 (14.581)',1]] },
-    TL: { img: [['relief-left',-1,14,391,498,1]],
-          lines: [[398,623,398,532],[402,528,650,528],[394,528,-24,528],[398,524,398,-20]],
-          sq: [[394,524,'o']], lbl: [[426.5,534,'456,398',.7]] },
-    BL: { img: [['frieze',-286,873,751,320,1]],
-          lines: [[-2,725,523,725],[476,575,476,857],[480,861,760,861],[472,861,-88,861],[476,1333,476,865]],
-          sq: [[472,857,'o'],[474,723,'d']], lbl: [[503.5,837,'684,234',1]] },
-    TR: { img: [['relief-small',1377,259,169,163,1],['coin',1692,-61,294,367,1,COIN]],
-          lines: [[1553,248,1370,248],[1553,434,1370,434],[1366,430,1366,252],[1502,562,1370,438],[1557,512,1557,438],[1675,529,1675,307],
-                  [1366,646,1366,438],[1366,244,1366,59],[1362,248,1058,248],[1671,303,1557,303],[1362,434,1290,434],[1561,434,1889,434],
-                  [1561,244,1675,-70],[1557,430,1557,252],[2055,303,1679,303],[1675,299,1675,-24]],
-          sq: [[1553,244,'o'],[1553,430,'o'],[1673,432,'d'],[1362,244,'o'],[1362,430,'f'],[1671,299,'o']],
-          lbl: [[1342.5,226,'92.156',.7],[1290,134,'10 (51.387)',1],[1340.5,440,'152.156',.7],[1584.5,410,'456,398',.7]] },
-    BR: { img: [['relief-right',1526,582,343,436,1]],
-          lines: [[1886,566,1510,566],[1886,1042,1510,1042],[1890,1038,1890,570],[1506,1038,1506,570],[1890,346,1890,562],
-                  [1502,1042,1370,1032],[1894,1042,2176,1042],[1894,566,2222,566],[1890,1046,1890,1170]],
-          sq: [[1886,562,'o'],[1886,1038,'o'],[1502,562,'f'],[1502,1038,'o']],
-          lbl: [[1481.5,1017,'92.156',1],[1526,540,'538,511',1]] }
-  };
-  // per-group outward travel at the end of the intro (≈ 2× the 6493:731 → 820 step)
-  const DRIFT = { C: [-40,-40], TL: [-270,-280], BL: [-440,170], TR: [190,-190], BR: [260,260] };
-  const introLayers = {};
-  document.querySelectorAll('.layer[data-il]').forEach(el => {
-    const g = el.dataset.il; introLayers[g] = el;
-    const d = INTRO[g]; if (!d) return;
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('width', 1920); svg.setAttribute('height', 1080);
-    d.lines.forEach(([x1,y1,x2,y2]) => {
-      const ln = document.createElementNS(NS, 'line');
-      Object.entries({x1,y1,x2,y2,stroke:'#fff','stroke-width':.8,opacity:.45}).forEach(([k,v]) => ln.setAttribute(k, v));
-      svg.appendChild(ln);
-    });
-    el.appendChild(svg);
-    (d.img || []).forEach(([src,x,y,w,h,op,crop]) => {
-      const box = document.createElement('div');
-      box.className = 'abs crop'; box.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;opacity:${op}`;
-      const im = document.createElement('img'); im.src = `assets/${src}.webp`; im.alt = '';
-      im.style.cssText = crop || 'inset:0;width:100%;height:100%;object-position:bottom';
-      box.appendChild(im); el.appendChild(box);
-    });
-    d.sq.forEach(([x,y,k]) => { const s = document.createElement('span'); s.className = 'sq ' + k; s.style.cssText = `left:${x}px;top:${y}px`; el.appendChild(s); });
-    d.lbl.forEach(([x,y,t,o]) => { const s = document.createElement('span'); s.className = 'lbl'; s.style.cssText = `left:${x}px;top:${y}px;opacity:${o}`; s.textContent = t; el.appendChild(s); });
-  });
-
-  /* ---------- Intro → hero entrance ----------
-     The hero section is INTRO_LEN viewports taller than the screen and its stage stays pinned. Scroll progress q (0 → 1):
-     0–.4    intro reliefs drift outward and fade, medallion holds        .32–.52  medallion recedes
-     ≥ .5    hero entrance plays on its own clock (reverses if you scroll back up) */
+  /* ---------- Hero: pinned scroll story (Figma 6899:1859) ----------
+     The canvas is the 1920×1080 design frame. Scroll progress p (0 → 1 across the pinned stretch) runs frames 1–8:
+       1→4  copy fades out, statue drifts left        4→5  statue grows to centre
+       5→8  cards fall in around the statue           7→8  toggle fades in
+     Once settled the deck orbits the statue in steps; the toggle scatters it outward and gathers the other set in (Figma 6899:1909). */
   const hero = document.getElementById('hero'), stage = document.getElementById('stage');
   const canvas = document.getElementById('canvas'), ui = document.getElementById('ui');
+  const statue = document.getElementById('statue'), deck = document.getElementById('deck');
+  const heroTitle = document.getElementById('heroTitle'), bodyParas = [...document.querySelectorAll('#heroBody p')];
   const facts = document.getElementById('heroFacts'), navWrap = document.querySelector('.nav-wrap');
+  const segBar = document.getElementById('seg'), segBtns = [...segBar.querySelectorAll('button')];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a=0, b=1) => Math.min(b, Math.max(a, v));
   const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-  const easeOut = t => 1 - Math.pow(1 - t, 4);
   const lerp = (a, b, t) => a + (b - a) * t;
   const seg = (p, a, b) => clamp((p - a) / (b - a));
-  // depth: >1 reads as closer to camera (travels, grows and blurs more)
-  const DEPTH = { N_L: .8, N_TL: .6, N_R: .7, N_BR: .9, FRAME: .15, C: .2, TL: .8, BL: .9, TR: .7, BR: .9, MED: .35 };
-  const INTRO_LEN = 1.6;
-  let S = 1, vh = innerHeight, cur = 0;
-  const t0 = performance.now();
-  let mx = 0, my = 0, smx = 0, smy = 0;
-  addEventListener('pointermove', e => { mx = e.clientX / innerWidth * 2 - 1; my = e.clientY / innerHeight * 2 - 1; }, { passive: true });
+  // piecewise-linear keyframes: keys ascending, vals same length
+  const kf = (keys, vals, p) => {
+    if (p <= keys[0]) return vals[0];
+    for (let i = 1; i < keys.length; i++) if (p <= keys[i]) return lerp(vals[i - 1], vals[i], (p - keys[i - 1]) / (keys[i] - keys[i - 1]));
+    return vals[vals.length - 1];
+  };
 
-  const heroTitle = document.getElementById('heroTitle');
-  const bodyParas = [...document.querySelectorAll('#heroBody p')];
+  // card sets (Figma 역량Card 6899:2862 / 태도 Phi OS 6899:2864)
+  // descriptions from the detail cards (Figma 6899:3374); 언어화 copy supplied directly (the Figma layer duplicated 무지를 발굴하기)
+  const SETS = [
+    ['역량 Competency', [
+      ['Aesthetic Sense', '심미안', '디자이너에게 가장 중요한 역량을 고르라면 아름다움을 인식하는 능력 아닐까? 대상을 보았을 때 구체적으로 부분을 인식하고, 미추를 판단하며, 그 미추의 정도를 가늠할 수 있는 예리한 감각을 훈련한다.'],
+      ['Articulation', '언어화', '언어는 곧 사고의 천장이다. 내가 다룰 수 있는 어휘의 질과 양이 나의 사고방식의 높이를 결정한다. 타인에게 내 생각을 전달하는 것은 물론, 스스로를 설득할 수 있는 언어 체계를 갖춘다.'],
+      ['Structural Thinking', '구조화', '나무를 보는 것만큼 숲을 보는 일도 중요하다. 구체와 추상을 오가며 현재 다루고 있는 문제가 전체 그림에서 어느 위치성을 지니는지 이해하고, 파편화된 분야들을 하나로 엮어내는 구조적 사고를 훈련한다.'],
+      ['Reframing', '관점전환', '혁신적인 해결책은 같은 문제를 다른 관점으로 바라보았을 때 나온다. 특정 문제를 그 분야의 문법으로만 정의하는 것이 아니라, 다른 분야의 레퍼런스도 내 문제에 적용할 수 있는 관점을 지니기 위해 유연한 관점 전환을 훈련한다.'],
+      ['Problem Definition', '문제 정의', '많은 디자인이 실패하는 이유는 틀린 문제를 풀었기 때문이다. 증상을 문제로 오독하지 않고, 본질이 무엇인지 파악함으로써 정확한 문제 정의를 추구한다.']]],
+    ['태도 Phi OS', [
+      ['Active Learning', '능동적으로 학습하기', 'Phi의 전체 교육 과정은 학습자의 능동성을 중요시한다. 교사는 가르치고, 학생은 배우는 구조가 아닌 학습자 스스로 동기를 부여하고 배움을 설계하는 방식을 전제로 한다.'],
+      ['Discovering Unknowns', '무지를 발굴하기', 'Phi에서는 질문하는 것, 못하는 상태에서 내 결과물을 내놓는 것을 권장한다. 자신의 현재 상태를 꺼내놓음으로써 자신이 정확하게 무엇을 모르는지 발견할 수 있는 기회가 되기 때문이다.'],
+      ['Unpacking the Compression', '압축된 사고 분석하기', '사고 과정을 관찰하는 훈련이 되어있다면, 교실은 물론 교실 밖 일상에서도 전문성을 추출해낼 수 있다. Phi에서는 지식을 전달 받기를 기다리지 않고, 먼저 추출하는 태도와 기술을 연습한다.'],
+      ['Dissatisfaction Sensor', '불만족에 민감해지기', '문제 정의의 출발은 문제 감지에서 시작된다. 완성도를 타협하지 않는 이들은 쉽게 만족하지 않고 불만족을 민감하게 알아차린다. 좋은 것을 만들기 위해서는 좋지 않음을 느낄 수 있어야 한다.'],
+      ['Learning by Sharing', '공유하며 배우기', '가장 잘 배우는 방법은 남에게 가르쳐 보는 것이다. 이미 충분히 이해했다고 생각하는 것도 타인에게 설명해보고, 설득해보면 공백이 있다는 것을 깨닫게 된다. 이 메커니즘을 이해하고, 자신의 지식을 적극적으로 공유할 수 있어야 한다.']]]
+  ];
+  /* Deck: cards orbit the statue's vertical axis (reference: screen recording).
+     The frame-8 positions sit on rings around the axis (x = CX + R·sinθ, depth c = cosθ). Each turn every card travels
+     along its ring to the next position: front (c > 0) passes in front of the statue, back (c < 0) behind it.
+     Size, height and shade blend between positions, so at rest the deck is always the frame-8 composition. */
+  const FRAME8 = [ // [x, y, width, opacity, shade, front] — 0–4 numbered cards, 5–8 Phi-mark backs
+    [225, -61, 385, 1, 0, 1],
+    [1158, 142, 326, .8, 0, 0],
+    [111, 547, 286, 1, .42, 0],
+    [564, 699, 366.4, 1, 0, 1],
+    [1338, 713, 243.2, 1, 0, 1],
+    [1782, 568, 281.6, .2, 0, 0], // the two faintest, smallest backs read as far side of the ring: behind the statue
+    [878, -32, 185.6, .1, 0, 0],
+    [1710, 66, 281.6, .8, 0, 1],
+    [-122, 157, 281.6, .5, 0, 1]
+  ];
+  const CX = 913, CY = 540, RX = 1060; // statue axis in frame 8, nominal ring radius (design px)
+  const TILT = 300; // the ring is tilted: mid-turn, the far side rises behind the head and the near side dips in front of the body
+  // cards stay opaque so overlaps read cleanly; frame 8's translucency becomes an equivalent black shade (white at 20% on black ≈ 80% shade)
+  const POS = FRAME8.map(([x, y, w, op, shade, front]) => {
+    const dx = x + w / 2 - CX, sn = clamp(dx / RX, -.97, .97);
+    const th = Math.atan2(sn, (front ? 1 : -1) * Math.sqrt(1 - sn * sn));
+    return { th, r: Math.abs(sn) > .01 ? dx / Math.sin(th) : RX, cy: y + w * .625, s: w / 480, shade: 1 - op * (1 - shade) };
+  });
+  // two rings on the same axis so numbered cards keep to readable positions: numbered 0–4, Phi-mark backs 5–8
+  const RINGS = [[0, 1, 2, 3, 4], [5, 6, 7, 8]].map(g => g.sort((a, b) => POS[a].th - POS[b].th)); // orbit order
+  const ringOf = i => RINGS[i < 5 ? 0 : 1];
+  const at = POS.map((_, i) => ringOf(i).indexOf(i)); // card i → its index on its ring
+  const TAU = Math.PI * 2;
+
+  deck.innerHTML = FRAME8.map((_, i) => i < 5
+    ? `<div class="kw"><article class="k"><div class="lb"><small></small><b></b></div><span class="n"></span></article></div>`
+    : `<div class="kw" aria-hidden="true"><div class="k back"><img class="fr" src="assets/card-frame.svg" alt=""><img class="mk" src="assets/phi-mark.png" alt=""></div></div>`).join('');
+  const wraps = [...deck.children], cards = wraps.map(w => w.firstElementChild);
+  let setIdx = 0, scatter = 0;
+
+  function fillSet(n) {
+    const [label, items] = SETS[n];
+    items.forEach(([en, ko], i) => {
+      const c = cards[i], num = String(n * 5 + i + 1).padStart(2, '0');
+      c.querySelector('small').textContent = label;
+      c.querySelector('b').innerHTML = `${en}<br>${ko}`;
+      c.querySelector('.n').textContent = num;
+      c.setAttribute('aria-label', `${label} ${num} ${en} ${ko}`);
+    });
+  }
+  fillSet(0);
+
+  // place every card: e = progress of the current turn (0 at rest), plus scatter and the fall-in offset dy
+  let turnE = 0;
+  function drawDeck(dy) {
+    cards.forEach((card, i) => {
+      const R = ringOf(i), A = POS[R[at[i]]], B = POS[R[(at[i] + 1) % R.length]], e = turnE;
+      const th = A.th + e * (((B.th - A.th) % TAU + TAU) % TAU), c = Math.cos(th);
+      const r = lerp(A.r, B.r, e), s = lerp(A.s, B.s, e);
+      // mid-turn, cards swinging through the back shrink and darken a little more than either end
+      const depth = 1 - .12 * Math.max(0, -c) * Math.sin(Math.PI * e);
+      let cx = CX + r * Math.sin(th), cy = lerp(A.cy, B.cy, e) + TILT * Math.sin(Math.PI * e) * c;
+      if (scatter > 0) { // push straight out from the statue until off screen (전환 frames 2–3)
+        const vx = cx - CX, vy = cy - CY, len = Math.hypot(vx, vy) || 1, push = 1700 * scatter;
+        cx += vx / len * push; cy += vy / len * push;
+      }
+      const sc = s * depth;
+      card.style.transform = `translate3d(${(cx - 240 * sc).toFixed(1)}px, ${(cy - 300 * sc + dy).toFixed(1)}px, 0) scale(${sc.toFixed(4)})`;
+      card.style.opacity = (1 - scatter).toFixed(3);
+      card.style.setProperty('--shade', clamp(lerp(A.shade, B.shade, e) + (1 - depth) * 2, 0, .9).toFixed(3));
+      wraps[i].style.zIndex = c >= 0 ? 10 + Math.round(c * 20) : (c > -.5 ? 1 : 0); // statue sits at 2
+    });
+  }
+
+  // turns: hold, then every card moves one position along its ring.
+  // Curve measured off the reference recording (60 fps, six turns): progress fits cubic-bezier(.15, 0, .4, 1) —
+  // a brief ease-in, then a long ease-out settle (rmse .005). The reference ran 950 ms move + 1550 ms hold;
+  // slowed here to 1700 ms + 1700 ms (3.4 s cycle) on request, same curve.
+  const HOLD_MS = 1685, TURN_MS = 1700; // hold is checked per frame, so 1685 lands the cycle on 3.4 s
+  let turn = null, swap = null, lastTurn = 0, paused = false; // paused while the detail view is open
+  const bezier = (x1, y1, x2, y2) => {
+    const B = (a, b, u) => 3 * (1 - u) * (1 - u) * u * a + 3 * (1 - u) * u * u * b + u * u * u;
+    const dB = (a, b, u) => 3 * (1 - u) * (1 - u) * a + 6 * (1 - u) * u * (b - a) + 3 * u * u * (1 - b);
+    return t => {
+      let u = t;
+      for (let k = 0; k < 6; k++) { const d = dB(x1, x2, u); if (Math.abs(d) < 1e-6) break; u = clamp(u - (B(x1, x2, u) - t) / d); }
+      return B(y1, y2, u);
+    };
+  };
+  const turnEase = bezier(.15, 0, .4, 1);
+  const easeIn = t => t * t * t, easeOutQ = t => 1 - Math.pow(1 - t, 4);
+
+  // toggle: scatter outward (ease-in) → empty beat → the other set gathers back in (ease-out)
+  const OUT_MS = 450, GAP_MS = 150, IN_MS = 850;
+  function swapSet(n) {
+    if (n === setIdx || swap) return;
+    setIdx = n; segBtns.forEach((b, i) => b.setAttribute('aria-selected', i === n));
+    if (reduce) { fillSet(n); return; }
+    swap = { t0: performance.now(), n, filled: false };
+  }
+  segBtns.forEach((b, i) => b.addEventListener('click', () => swapSet(i)));
+
+  /* ---------- Card detail (Figma 6899:3374) ----------
+     A numbered card opens its set as a carousel (active card centred, neighbours dimmed, pill pagination);
+     the orbit holds still until it closes. Arrows / swipe / dots move between the five; Esc, ✕ or the backdrop close. */
+  const dk = document.getElementById('dk'), dkView = document.getElementById('dkView');
+  const dkTrack = document.getElementById('dkTrack'), dkDots = document.getElementById('dkDots'), dkX = dk.querySelector('.dk-x');
+  let dkOpen = false, dkIdx = 0, dkFrom = null;
+  function dkBuild(n) {
+    const [label, items] = SETS[n];
+    dkTrack.innerHTML = items.map(([en, ko, desc], i) =>
+      `<article class="dkc" data-i="${i}" aria-roledescription="slide" aria-label="${i + 1} / ${items.length}"><div><small>${label}</small><b>${en}<br>${ko}</b></div><p>${desc}</p></article>`).join('');
+    dkDots.innerHTML = items.map(([en], i) => `<button type="button" data-i="${i}" aria-label="${en}"></button>`).join('');
+  }
+  function dkGo(i, instant) {
+    dkIdx = clamp(i, 0, dkTrack.children.length - 1);
+    [...dkTrack.children].forEach((c, k) => c.classList.toggle('on', k === dkIdx));
+    [...dkDots.children].forEach((d, k) => d.setAttribute('aria-current', k === dkIdx));
+    const c0 = dkTrack.children[0], w = c0.offsetWidth, gap = parseFloat(getComputedStyle(dkTrack).columnGap) || 0;
+    if (instant) dkTrack.style.transition = 'none';
+    dkTrack.style.transform = `translateX(${(dkView.clientWidth / 2 - (dkIdx * (w + gap) + w / 2)).toFixed(1)}px)`;
+    if (instant) { dkTrack.offsetWidth; dkTrack.style.transition = ''; }
+  }
+  function dkShow(i) {
+    if (dkOpen || swap) return;
+    dkFrom = document.activeElement; dkBuild(setIdx); dkGo(i, true);
+    dk.classList.add('open'); dkOpen = true; paused = true;
+    dkX.focus({ preventScroll: true });
+  }
+  function dkHide() {
+    if (!dkOpen) return;
+    dk.classList.remove('open'); dkOpen = false; paused = false; lastTurn = performance.now();
+    dkFrom && dkFrom.focus && dkFrom.focus({ preventScroll: true });
+  }
+  cards.slice(0, 5).forEach((c, i) => {
+    c.tabIndex = 0; c.setAttribute('role', 'button');
+    c.addEventListener('click', () => dkShow(i));
+    c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dkShow(i); } });
+  });
+  dkX.addEventListener('click', dkHide);
+  dk.addEventListener('click', e => {
+    const card = e.target.closest('.dkc'), dot = e.target.closest('.dk-dots button');
+    if (card) { if (+card.dataset.i !== dkIdx) dkGo(+card.dataset.i); }
+    else if (dot) dkGo(+dot.dataset.i);
+    else if (!e.target.closest('.dk-x')) dkHide(); // backdrop
+  });
+  // hold the page still while open by swallowing scroll input — overflow:hidden on <html> would re-root the sticky stage
+  const dkBlock = e => { if (dkOpen) e.preventDefault(); };
+  addEventListener('wheel', dkBlock, { passive: false });
+  addEventListener('touchmove', dkBlock, { passive: false });
+  addEventListener('keydown', e => {
+    if (!dkOpen) return;
+    if ([' ', 'PageDown', 'PageUp', 'Home', 'End', 'ArrowDown', 'ArrowUp'].includes(e.key) && !e.target.closest('input, textarea')) e.preventDefault();
+    if (e.key === 'Escape') dkHide();
+    else if (e.key === 'ArrowRight') dkGo(dkIdx + 1);
+    else if (e.key === 'ArrowLeft') dkGo(dkIdx - 1);
+  });
+  let dkX0 = null;
+  dkView.addEventListener('pointerdown', e => { dkX0 = e.clientX; });
+  dkView.addEventListener('pointerup', e => {
+    if (dkX0 == null) return; const dx = e.clientX - dkX0; dkX0 = null;
+    if (Math.abs(dx) > 50) { dkGo(dkIdx + (dx < 0 ? 1 : -1)); dk.dataset.swiped = '1'; setTimeout(() => delete dk.dataset.swiped, 0); }
+  });
+  dkView.addEventListener('click', e => { if (dk.dataset.swiped) e.stopPropagation(); }, true);
+  addEventListener('resize', () => { if (dkOpen) dkGo(dkIdx, true); });
+  function animateDeck(now, settled, inView) {
+    if (turn) {
+      const t = clamp((now - turn) / TURN_MS);
+      turnE = turnEase(t);
+      if (t >= 1) { turnE = 0; turn = null; lastTurn = now; at.forEach((p, i) => { at[i] = (p + 1) % ringOf(i).length; }); }
+    } else if (settled && inView && !swap && !paused && !reduce && !document.hidden && now - lastTurn > HOLD_MS) turn = now;
+    if (!settled && !turn) lastTurn = now - HOLD_MS; // no dead beat on landing: the first turn starts the moment the deck settles
+    if (swap) {
+      const t = now - swap.t0;
+      if (t < OUT_MS) scatter = easeIn(t / OUT_MS);
+      else if (t < OUT_MS + GAP_MS) { scatter = 1; if (!swap.filled) { fillSet(swap.n); swap.filled = true; } }
+      else {
+        if (!swap.filled) { fillSet(swap.n); swap.filled = true; }
+        scatter = 1 - easeOutQ(clamp((t - OUT_MS - GAP_MS) / IN_MS));
+        if (t >= OUT_MS + GAP_MS + IN_MS) { scatter = 0; swap = null; lastTurn = now; }
+      }
+    }
+  }
+
+  // p = viewport heights scrolled into the hero. Frame keys along p; per-frame values read off the Figma frames.
+  // F: intro frames 1–8 (6899:1859) · settled orbit until O[0] · O: outro frames 1–5 (아웃 6906:4348).
+  // At O[4] the pin releases and the stage scrolls away with the page — 아웃 frame 6, statue base above 주요 수업들.
+  const F = [0, .4, .8, 1.2, 1.8, 2.28, 2.76, 3.2];
+  const O = [4, 4.4, 4.8, 5.2, 5.6];
+  const RUN = O[4]; // viewport heights of scroll through the story
+  let S = 1, vh = innerHeight, portrait = false, sp = 0, clock = 0, lastNow = null, lastY = scrollY;
 
   function layout() {
     const vw = document.documentElement.clientWidth; vh = innerHeight;
-    const portrait = vw / vh < .9;
+    portrait = vw / vh < .9;
     stage.classList.toggle('portrait', portrait);
-    S = portrait ? (vh * .62) / 1080 : Math.min(vw / 1920, vh / 1077);
-    const left = (vw - 1920 * S) / 2, top = (vh - 1077 * S) / 2;
+    // portrait: frame the centre ~1150 design px so the statue and most of the deck stay on screen
+    S = portrait ? Math.min(vw / 1150, (vh * .8) / 1080) : Math.min(vw / 1920, vh / 1080);
+    const left = (vw - 1920 * S) / 2, top = (vh - 1080 * S) / 2;
     canvas.style.transform = ui.style.transform = `translate(${left}px, ${top}px) scale(${S})`;
-    hero.style.height = (vh * (reduce ? 1 : 1 + INTRO_LEN)) + 'px';
+    hero.style.height = (vh * (1 + RUN)) + 'px';
   }
-  const HOLD = .25, PLAY = 2.9;
-  let clock = 0, lastNow = null;
+  const fade = (el, a, dy) => { el.style.opacity = a.toFixed(3); el.style.transform = `translateY(${((1 - a) * dy).toFixed(2)}px)`; };
 
-  /* Timeline along p (0 → 1 over PLAY seconds, starting HOLD s after load):
-     0–.5    edge reliefs fly in and sharpen      .08–.5  frame nodes appear, lines draw out
-     Copy uses seconds (quarter speed): title (block) .93–2.79s, body paragraphs 1.4–3.4s / 2.6–4.6s, facts 2.09–4.17s */
-  function setLayer(L, x, y, sc, o, blur, dim) {
-    if (o <= .002) { if (L.style.visibility !== 'hidden') L.style.visibility = 'hidden'; return; }
-    L.style.visibility = '';
-    L.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
-    L.style.opacity = o.toFixed(3);
-    L.style.filter = blur > .15 ? `blur(${blur.toFixed(2)}px) brightness(${dim.toFixed(3)})` : 'none';
-  }
-  const idle = (time, z, k=1) => reduce ? [0, 0] : [
-    (Math.sin(time * .5 + z * 3) * 5 * z - smx * 18 * z) * k,
-    (Math.cos(time * .42 + z * 2) * 7 * z - smy * 12 * z) * k];
-  function renderIntro(q, time) {
-    if (reduce) { Object.values(introLayers).forEach(L => setLayer(L, 0, 0, 1, 0, 0, 1)); return; }
-    // on load the groups gather in from their drift direction; scrolling sends them back out
-    ['C', 'TL', 'BL', 'TR', 'BR'].forEach((g, i) => {
-      const enter = easeOut(seg(time, .15 + i * .07, 1.5 + i * .07));
-      const out = ease(seg(q, 0, .4));
-      const k = (1 - enter) * .5 + out;
-      const [dx, dy] = DRIFT[g], [ix, iy] = idle(time, DEPTH[g]);
-      setLayer(introLayers[g], dx * k + ix, dy * k + iy, 1 + .06 * k, enter * (1 - out), 4 * Math.min(1, k), 1);
-    });
-    const me = ease(seg(time, .1, 1.4)), mo = ease(seg(q, .32, .52));
-    const [ix, iy] = idle(time, DEPTH.MED);
-    setLayer(introLayers.MED, ix, iy, 1.04 - .04 * me - .1 * mo, me * (1 - mo), 10 * mo, 1);
-  }
-  function render(p, time, ts) {
-    const idle2 = (z, k) => idle(time, z, k);
+  function render(p, ts) {
+    // entrance on load (seconds), multiplied by the scroll fade
+    const enter = (a, b) => reduce ? 1 : ease(seg(ts, a, b));
+    const copyA = kf(F.slice(0, 4), [1, .45, .12, 0], p);
+    fade(heroTitle, enter(.25, 1.1) * copyA, 18);
+    bodyParas.forEach((el, i) => fade(el, enter(.5 + i * .3, 1.4 + i * .3) * copyA, 14));
+    fade(facts, enter(1, 1.9) * copyA, 20);
+    ui.style.visibility = copyA <= .002 ? 'hidden' : '';
 
-    // edge reliefs fly in from outside, sharpen as they land
-    const order = ['N_L', 'N_TL', 'N_R', 'N_BR'];
-    order.forEach((c, i) => {
-      const t = easeOut(seg(p, i * .05, .42 + i * .03));
-      const [fx, fy2] = ENTER_FROM[c];
-      const [ix, iy] = idle2(DEPTH[c], t);
-      setLayer(layers[c], fx * (1 - t) + ix, fy2 * (1 - t) + iy, 1 + .08 * (1 - t), t, reduce ? 0 : 6 * (1 - t), 1);
-    });
-    // frame: corner nodes first, then lines draw out from them
-    const ft = seg(p, .08, .5);
-    setLayer(layers.FRAME, 0, 0, 1, Math.min(1, ft * 4), 0, 1);
-    const g = ease(ft);
-    frameLines.forEach(({ ln, x1, y1, x2, y2 }) => {
-      ln.setAttribute('x1', lerp(x2, x1, g)); ln.setAttribute('y1', lerp(y2, y1, g));
-    });
+    // statue: frames 1–2 hold, 3–4 drift left, 5 grows to its centred size
+    const sIn = enter(0, 1.3);
+    const x = kf(F.slice(0, 5), [470, 470, 286, 62, -73], p) + (1 - sIn) * 80;
+    // outro: holds while the cards lift away, then rises 290 → 1177 (아웃 frames 4–5) to bring its base up
+    const y = kf(F.slice(0, 5), [-210, -210, -210, -210, -280], p) + kf(O, [0, 0, 0, -290, -1177], p);
+    const sc = kf(F.slice(0, 5), [1, 1, 1, 1, 1973 / 1858.6], p);
+    statue.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
+    statue.style.opacity = (sIn * (portrait ? lerp(.4, 1, seg(p, F[1], F[3])) : 1)).toFixed(3);
 
-    // copy: title then body light up word by word, facts rise last
-    // text runs on its own clock at quarter speed (seconds since the entrance started)
-    // title fades in as one block
-    const ta = reduce ? 1 : ease(seg(ts, .93, 2.79));
-    heroTitle.style.opacity = ta.toFixed(3);
-    heroTitle.style.transform = `translateY(${((1 - ta) * 18).toFixed(2)}px)`;
-    // body paragraphs fade in as whole blocks, one after the other
-    bodyParas.forEach((el, i) => {
-      const a = reduce ? 1 : ease(seg(ts, 1.4 + i * 1.2, 3.4 + i * 1.2));
-      el.style.opacity = a.toFixed(3);
-      el.style.transform = `translateY(${((1 - a) * 14).toFixed(2)}px)`;
-    });
-    const fa = reduce ? 1 : ease(seg(ts, 2.09, 4.17));
-    facts.style.opacity = fa.toFixed(3);
-    facts.style.transform = `translateY(${((1 - fa) * 24).toFixed(2)}px)`;
+    // cards fall in as one group (frames 5–8); in the outro they lift away ahead of the statue (아웃 frames 2–5)
+    const dy = kf(F.slice(3), [-1300, -917, -393, -142, 0], p) + kf(O, [0, -262, -589, -1002, -1500], p);
+    const show = p > F[3] && p < O[4] - .02;
+    wraps.forEach(w => { w.style.visibility = show ? '' : 'hidden'; });
+    drawDeck(dy);
+
+    // toggle: frame 7 at 60%, frame 8 full; gone by 아웃 frame 3
+    const tA = kf(F.slice(5), [0, .6, 1], p) * kf(O.slice(1, 3), [1, 0], p);
+    segBar.style.opacity = tA.toFixed(3);
+    segBar.style.visibility = tA <= .01 ? 'hidden' : 'visible';
+    segBar.style.transform = `translateX(-50%) translateY(${((1 - tA) * 16).toFixed(1)}px)`;
   }
-  let lastY = scrollY;
+
   function tick(now) {
-    const time = (now - t0) / 1000;
+    // scrolling during the entrance fast-forwards it rather than leaving it half-played
     const dt = lastNow == null ? 0 : Math.min(.1, (now - lastNow) / 1000); lastNow = now;
-    smx += (mx - smx) * .05; smy += (my - smy) * .05;
-    const pin = hero.offsetHeight - vh, q = pin > 0 ? clamp(scrollY / pin) : 1;
-    renderIntro(q, time);
-    // the hero entrance runs forward once the intro is past halfway and rewinds (faster) when scrolled back;
-    // scrolling on past the pin fast-forwards it rather than leaving it half-played
-    if (q >= .5) clock += dt * (q >= 1 ? 4 : 1); else clock = Math.max(0, Math.min(clock, HOLD + PLAY) - dt * 8);
-    cur = reduce ? 1 : clamp((clock - HOLD) / PLAY);
-    render(cur, time, clock - HOLD);
+    clock += dt * (scrollY > 10 ? 4 : 1);
+    const target = clamp((scrollY - hero.offsetTop) / vh, 0, RUN);
+    sp = reduce ? target : sp + (target - sp) * .14; // a little inertia on the scrub
+    if (Math.abs(target - sp) < .002) sp = target;
+    // the orbit turns only while the deck is fully landed and not yet lifting away
+    const settled = sp >= F[7] - .02 && sp <= O[0] + .02, inView = scrollY < hero.offsetTop + hero.offsetHeight;
+    animateDeck(now, settled, inView);
+    render(sp, clock);
     const y = scrollY;
-    if (Math.abs(y - lastY) > 6) { navWrap.classList.toggle('tuck', y > lastY && y > pin + vh * .6); lastY = y; }
+    if (Math.abs(y - lastY) > 6) { navWrap.classList.toggle('tuck', y > lastY && y > vh * .6); lastY = y; }
     requestAnimationFrame(tick);
   }
   addEventListener('resize', layout);
@@ -923,7 +1144,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
   layout(); requestAnimationFrame(tick);
 
   /* ---------- Content reveal (cards rise in as their band enters) ---------- */
-  const rv = document.querySelectorAll('.term, .hire-card, .cf, .cap-card, .ps-other article');
+  const rv = document.querySelectorAll('.term, .hire-card, .ps2-item');
   if (!reduce && 'IntersectionObserver' in window) {
     rv.forEach(el => {
       el.classList.add('rv');
@@ -934,124 +1155,158 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
     rv.forEach(el => io.observe(el));
   }
 
-  /* ---------- 주요 수업들: flip cards → Course Profile modal ----------
-     [title, 한글명, 전문가, 수업 개요, dedicated modal id] — copy from the Figma course map (6542:191) */
+  /* ---------- 주요 수업들: tabs + accordion carousel ----------
+     Grouping per the course map (Fundamentals / Domain / Ritual(LD)); copy from phi.design/programs */
   const COURSES = [
-    ['Iterative<br>Problem Solving', '파고드는 문제 해결', '박종민 · 정신재', '처음 발견한 문제의 해결책은 사용자의 문제를 해소하지 못할 때가 많다. 이 수업에서는 표면적인 현상 너머의 근본 원인을 집요하게 파고들어, 해결책을 만들어 검증할 때마다 문제를 더 깊이 다시 정의한다. 문제의 해상도를 높여가며 가치 있는 문제에 도달하고, 그것을 디자인으로 해결하는 법을 체화하게 된다.', 'm-ips'],
-    ['Typography<br>as Foundation', '기본기로서의 타이포그래피', '구모아 · 심우진', '많은 디자이너들이 디자인의 기본으로 타이포그래피를 손꼽는 이유는 무얼까. 이 수업에서는 스타일을 만드는 조형 원리를 그래픽의 1차 언어인 글자를 가지고 학습한다. 흑과 백을 구사하여 공간을 창출하는 원리와 감각을 익히고, 보이지 않던 것을 보는 눈을 기른다.'],
-    ['Visual<br>Translation', '시각적 번역', '서정민 · 이주연', '언어와 생각은 어떻게 시각적 형태가 될 수 있을까? 이 수업에서는 텍스트에 담긴 의미와 감정, 맥락을 읽고, 이를 자신만의 시각언어로 해석하고 재구성하는 과정을 훈련한다. 다양한 매체와 상황을 오가며 의미와 조형 사이의 연결을 탐색하고, 기획을 설득력 있고 고유한 시각적 결과로 발전시키는 역량을 기른다.'],
-    ['Art of<br>Reading', '읽기의 기술', '이연숙(리타)', '우리는 정말 읽고 있을까? 보는 것과 읽는 것은 다르고, 우리는 자주 오독한다. 넘겨짚고, 보고 싶은 것만 보고, 아는 분야 안에서만 읽는다. 이 수업에서는 내가 무엇을 읽었는가가 아니라 그가 무엇을 썼는가를 묻는다.'],
-    ['Beautiful<br>Interface', '아름다운 인터페이스 디자인', '김영준', '완성도 120%의 인터페이스란 어떤 것일까? 이 수업에서는 다양한 인터페이스 요소들을 끝까지 파고들었을 때 어떤 결과물을 만들어낼 수 있는지 실험해본다. 집착적으로 높은 완성도를 추구하는 경험을 해본 후, 일상에서도 높은 기준으로 아름다움을 인지하게 된다.'],
-    ['Interviewing<br>as exploration', '탐험으로서의 인터뷰', '최성운', '답은 타인의 세계 안에 있다. 이 수업에서는 질문의 각을 날카롭게 다듬고, 상대의 말과 침묵 속에서 단서를 발견하며, 대화의 결을 따라 그 세계 깊숙이 들어가는 연습을 반복한다. 낯선 문제 앞에서도 대화로 핵심 단서를 찾아 들어가는 감각, 그리고 그 과정에서 말의 아름다움을 알아보는 안목을 훈련한다.'],
-    ['Engaging<br>with AI', '생산적 마찰이 있는 AI', '최승준', 'AI를 쓸수록 탐구는 넓어지지만, 마찰 없이 얻은 것은 좀처럼 내 것이 되지 않는다. 이 수업에서는 AI와, 그리고 사람들과 마찰 있게 탐구하기를 반복한다. 학습자는 결과물만 만들지 않고, AI와 맞붙은 시간을 자신의 학습 경험으로 펼쳐낸다.'],
-    ['Peer<br>coaching', '상호 코칭', 'Learning Design(LD) Team', '누군가 고민을 털어놓으면 우리는 충고하고, 평가하고, 대신 풀어주려 한다. 하지만 그 문제를 가장 잘 아는 사람은 언제나 문제의 당사자이다. 이 수업에서는 동료의 말 너머까지 듣고, 결정적인 것을 묻고, 스스로 전략을 세우도록 안내하는 대화를 반복하여 훈련한다.'],
-    ['Readable<br>Writing', '읽음직한 글쓰기', '김자유', '읽기 쉽고 읽고 싶은, 즉 읽음직한 글을 쓰는 일은 중요하다. 이 수업에서는 내 글을 읽을 독자가 누구인지 설정하고, 그 독자에게 유용하고 흥미로운 메시지를 설계하고, 그 메시지가 잘 전달되도록 표현하는 훈련을 한다.'],
-    ['Self-<br>Introduction', '자기소개', '민구홍', '우리가 만든 결과물은 물론, 행동, 생각, 발언... 무엇이든 자기소개의 재료가 될 수 있다. 이 수업에서는 익숙한 방식이 금지된 조건 속에서 매주 다른 제약으로 자기소개에 접근한다. 주어진 자기소개 방식 중 하나를 채택하는 것이 아닌, 스스로를 가장 잘 설명할 수 있는 자기소개 방식을 설계한다.'],
-    ['What If?', '만약에 ~라면?', 'Learning Design(LD) Team', '창의성은 훈련 가능한 역량일까? 가장 처음 떠올린 해결책이 너무나도 자명해 보여서 다른 해결책은 절대 없을 것 같은 느낌이 들 때, 어떻게 접근해볼 수 있을까. 이 수업에서는 동일한 문제를 다양한 분야의 전문가들이 어떻게 풀어나가는지를 비교 분석하면서 그들의 전문성을 추출하고, 내 작업에 이식해보는 방법을 배운다.'],
-    ['What If?', '미감은 타고나는 감각일까?', 'Learning Design(LD) Team', '아름다움을 알아보는 능력, 즉 미감은 타고나는 감각일까? 이 수업은 미감을 훈련 가능한 기술로 정의한다. 일상에서 아름다운 이미지를 수집하고, 그것이 왜 아름다운지 객관적인 언어로 해부한 뒤, 자신만의 취향으로 전개하는 훈련을 거친다.']
+    [ ['Iterative<br>Problem Solving', '파고드는 문제 해결', '처음 발견한 문제의 해결책은 사용자의 문제를 해소하지 못할 때가 많다. 이 수업에서는 표면적인 현상 너머의 근본 원인을 집요하게 파고들어, 해결책을 만들어 검증할 때마다 문제를 더 깊이 다시 정의한다. 문제의 해상도를 높여가며 가치 있는 문제에 도달하고, 그것을 디자인으로 해결하는 법을 체화하게 된다.', 'm-ips'],
+      ['Typography<br>as Foundation', '기본기로서의 타이포그래피', '많은 디자이너들이 디자인의 기본으로 타이포그래피를 손꼽는 이유는 무얼까. 이 수업에서는 스타일을 만드는 조형 원리를 그래픽의 1차 언어인 글자를 가지고 학습한다. 흑과 백을 구사하여 공간을 창출하는 원리와 감각을 익히고, 보이지 않던 것을 보는 눈을 기른다.'],
+      ['Visual<br>Translation', '시각적 번역', '언어와 생각은 어떻게 시각적 형태가 될 수 있을까? 이 수업에서는 텍스트에 담긴 의미와 감정, 맥락을 읽고, 이를 자신만의 시각언어로 해석하고 재구성하는 과정을 훈련한다. 다양한 매체와 상황을 오가며 의미와 조형 사이의 연결을 탐색하고, 기획을 설득력 있고 고유한 시각적 결과로 발전시키는 역량을 기른다.'] ],
+    [ ['Art of Reading', '읽기의 기술', '우리는 정말 읽고 있을까? 보는 것과 읽는 것은 다르고, 우리는 자주 오독한다. 넘겨짚고, 보고 싶은 것만 보고, 아는 분야 안에서만 읽는다. 이 수업에서는 내가 무엇을 읽었는가가 아니라 그가 무엇을 썼는가를 묻는다.'],
+      ['Beautiful<br>Interface', '아름다운 인터페이스 디자인', '완성도 120%의 인터페이스란 어떤 것일까? 이 수업에서는 다양한 인터페이스 요소들을 끝까지 파고들었을 때 어떤 결과물을 만들어낼 수 있는지 실험해본다. 집착적으로 높은 완성도를 추구하는 경험을 해본 후, 일상에서도 높은 기준으로 아름다움을 인지하게 된다.'],
+      ['Interviewing<br>as exploration', '탐험으로서의 인터뷰', '답은 타인의 세계 안에 있다. 이 수업에서는 질문의 각을 날카롭게 다듬고, 상대의 말과 침묵 속에서 단서를 발견하며, 대화의 결을 따라 그 세계 깊숙이 들어가는 연습을 반복한다. 낯선 문제 앞에서도 대화로 핵심 단서를 찾아 들어가는 감각, 그리고 그 과정에서 말의 아름다움을 알아보는 안목을 훈련한다.'] ],
+    [ ['Engaging<br>with AI', '생산적 마찰이 있는 AI', 'AI를 쓸수록 탐구는 넓어지지만, 마찰 없이 얻은 것은 좀처럼 내 것이 되지 않는다. 이 수업에서는 AI와, 그리고 사람들과 마찰 있게 탐구하기를 반복한다. 학습자는 결과물만 만들지 않고, AI와 맞붙은 시간을 자신의 학습 경험으로 펼쳐낸다.'],
+      ['Peer<br>coaching', '상호 코칭', '누군가 고민을 털어놓으면 우리는 충고하고, 평가하고, 대신 풀어주려 한다. 하지만 그 문제를 가장 잘 아는 사람은 언제나 문제의 당사자이다. 이 수업에서는 동료의 말 너머까지 듣고, 결정적인 것을 묻고, 스스로 전략을 세우도록 안내하는 대화를 반복하여 훈련한다.'],
+      ['Readable<br>Writing', '읽음직한 글쓰기', '읽기 쉽고 읽고 싶은, 즉 읽음직한 글을 쓰는 일은 중요하다. 이 수업에서는 내 글을 읽을 독자가 누구인지 설정하고, 그 독자에게 유용하고 흥미로운 메시지를 설계하고, 그 메시지가 잘 전달되도록 표현하는 훈련을 한다.'],
+      ['Self-<br>Introduction', '자기소개', '우리가 만든 결과물은 물론, 행동, 생각, 발언... 무엇이든 자기소개의 재료가 될 수 있다. 이 수업에서는 익숙한 방식이 금지된 조건 속에서 매주 다른 제약으로 자기소개에 접근한다. 주어진 자기소개 방식 중 하나를 채택하는 것이 아닌, 스스로를 가장 잘 설명할 수 있는 자기소개 방식을 설계한다.'],
+      ['What If?', '만약에 ~라면?', '창의성은 훈련 가능한 역량일까? 가장 처음 떠올린 해결책이 너무나도 자명해 보여서 다른 해결책은 절대 없을 것 같은 느낌이 들 때, 어떻게 접근해볼 수 있을까. 이 수업에서는 동일한 문제를 다양한 분야의 전문가들이 어떻게 풀어나가는지를 비교 분석하면서 그들의 전문성을 추출하고, 내 작업에 이식해보는 방법을 배운다.'] ]
   ];
-  const mcGrid = document.getElementById('mcGrid');
-  mcGrid.innerHTML = COURSES.map(([title, sub, who, desc], i) => `
-    <div class="cf" data-i="${i}">
-      <div class="cf-in">
-        <div class="cf-face cf-front"><h3>${title}</h3><div><span>${sub}</span><b>${who}</b></div></div>
-        <div class="cf-face cf-back"><div class="t"><small>${sub}</small><p>${desc}</p></div><button type="button" aria-label="${title.replace(/<br>/g, ' ')} Course Profile 보기">Course Profile</button></div>
-      </div>
-    </div>`).join('');
-  function mcOpen(i) {
-    const [title, sub, who, desc, modal] = COURSES[i];
+  // grid (Figma 6906:4503): [title, ko, instructors, index into COURSES for the description modal (-1 = none yet)]
+  const GRID = [
+    ['Iterative<br>Problem Solving', '파고드는 문제 해결', '박종민 · 정신재', [0, 0]],
+    ['Typography<br>as Foundation', '기본기로서의 타이포그래피', '구모아 · 심우진', [0, 1]],
+    ['Visual<br>Translation', '시각적 번역', '서정민 · 이주연', [0, 2]],
+    ['Art of<br>Reading', '읽기의 기술', '이연숙(리타)', [1, 0]],
+    ['Beautiful<br>Interface', '아름다운 인터페이스 디자인', '김영준', [1, 1]],
+    ['Interviewing<br>as exploration', '탐험으로서의 인터뷰', '최성운', [1, 2]],
+    ['Engaging<br>with AI', '생산적 마찰이 있는 AI', '최승준', [2, 0]],
+    ['Peer<br>coaching', '상호 코칭', 'Learning Design(LD) Team', [2, 1]],
+    ['Readable<br>Writing', '읽음직한 글쓰기', '김자유', [2, 2]],
+    ['Self-<br>Introduction', '자기소개', '민구홍', [2, 3]],
+    ['What If?', '만약에 ~라면?', 'Learning Design(LD) Team', [2, 4]],
+    ['What If?', '미감은 타고나는 감각일까?', 'Learning Design(LD) Team', null]
+  ];
+  const cgGrid = document.getElementById('cgGrid');
+  cgGrid.innerHTML = GRID.map(([t, ko, who, ref], i) => {
+    const tag = ref ? 'button' : 'div';
+    return `<${tag} class="cgc"${ref ? ` type="button" data-i="${i}" aria-label="${t.replace('<br>', ' ')} 자세히 보기"` : ''}><h3>${t}</h3><div class="m"><span>${ko}</span><b>${who}</b></div></${tag}>`;
+  }).join('');
+  function courseOpen([g, k]) {
+    const [title, sub, desc, modal] = COURSES[g][k];
     if (modal) return openModal(modal);
-    document.getElementById('m-course-t').innerHTML = title.replace(/<br>/g, ' ');
+    document.getElementById('m-course-t').innerHTML = title.replace('<br>', ' ');
     document.getElementById('m-course-s').textContent = sub;
-    document.getElementById('m-course-w').textContent = who;
     document.getElementById('m-course-d').textContent = desc;
     openModal('m-course');
   }
-  mcGrid.addEventListener('click', e => {
-    const card = e.target.closest('.cf'); if (!card) return;
-    if (e.target.closest('button')) return mcOpen(+card.dataset.i);
-    // touch: first tap flips the card, a second tap flips it back
-    mcGrid.querySelectorAll('.cf.flip').forEach(c => c !== card && c.classList.remove('flip'));
-    card.classList.toggle('flip');
+  cgGrid.addEventListener('click', e => { const c = e.target.closest('button.cgc'); if (c) courseOpen(GRID[+c.dataset.i][3]); });
+  // classroom photo: the veil slides up from fully dark (pin start) to clear (pin end)
+  const cgPhoto = document.getElementById('cgPhoto'), cgVeil = document.getElementById('cgVeil');
+  function cgLift() {
+    // rect-based: offsetTop would be relative to the .band section, not the page
+    const r = cgPhoto.getBoundingClientRect(), run = r.height - innerHeight;
+    const t = clamp(-r.top / run);
+    cgVeil.style.transform = `translate3d(0, ${(-t * 100).toFixed(2)}%, 0)`;
+  }
+  addEventListener('scroll', cgLift, { passive: true }); addEventListener('resize', cgLift); cgLift();
+  // "역량과 태도" link: back up to the settled orbit in the hero
+  document.getElementById('toCompetencies').addEventListener('click', e => {
+    e.preventDefault(); scrollTo({ top: hero.offsetTop + (F[7] + .3) * vh, behavior: 'smooth' });
   });
 
-  /* ---------- 역량과 태도: arrow-driven track ---------- */
-  const capTrack = document.getElementById('capTrack'), capPrev = document.getElementById('capPrev'), capNext = document.getElementById('capNext');
-  const capCards = [...capTrack.children];
-  function capSync() {
-    capPrev.disabled = capTrack.scrollLeft < 4;
-    capNext.disabled = capTrack.scrollLeft > capTrack.scrollWidth - capTrack.clientWidth - 4;
-  }
-  function capStep(dir) {
-    const pad = parseFloat(getComputedStyle(capTrack).scrollPaddingLeft) || 0;
-    const x = capTrack.scrollLeft + pad;
-    const target = dir > 0 ? capCards.find(c => c.offsetLeft > x + 4) : [...capCards].reverse().find(c => c.offsetLeft < x - 4);
-    if (target) capTrack.scrollTo({ left: target.offsetLeft - pad });
-  }
-  capPrev.addEventListener('click', () => capStep(-1));
-  capNext.addEventListener('click', () => capStep(1));
-  capTrack.addEventListener('scroll', capSync, { passive: true });
-  addEventListener('resize', capSync);
-  capSync();
-
-  /* ---------- 수업을 관통하는 접근: pinned slides, scroll steps through them ----------
-     [name, copy, photo, left shade strength] */
-  const AP = [
-    ['라이브데모', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는 문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다.", 'ap1', .24],
-    ['피어크리틱', '모든 코스에는 관찰 가능한 평가 기준, 즉 루브릭이 있습니다. 전문가는 매주 Learning Design팀과 학습자의 결과물을 리뷰하고, 루브릭 기반으로 주로 하는 실수 패턴을 정의합니다. 학습자는 매 세션 이 패턴을 기준으로 구체적인 피드백을 주고받습니다.', 'ap2', .23],
-    ['셀프피드백', 'Phi에는 별도의 평가 시스템이 없습니다. 하지만, 학습자 역시 전문가와 동일한 기준으로 자신의 작업을 판단할 수 있도록, 모든 코스에는 정교하게 설계된 루브릭이 있습니다. 시작 전과 진행 중 매주, 학습 목표를 어느 정도 달성했고 그 이유가 무엇인지 루브릭 기반으로 작성합니다. 코스가 끝난 뒤에는 시작 전과 후의 자신을 현재의 언어로 다시 평가합니다.', 'ap3', .58],
-    ['워크숍', '정해진 코스 외에도, 학기 중 학습자의 이해도를 높이는 워크숍이 열립니다. 주제는 다양하고, 매 기수 학습자들의 상태를 반영합니다. 예를 들어 Phi의 세션은 시연 위주라 능동적 관찰이 중요한데, 전문가의 암묵지를 분석하고 분해하는 법은 코스 밖 워크숍에서 따로 배웁니다.', 'ap4', .58],
-    ['공유회', '가장 잘 배우는 방법은 남에게 가르쳐보는 것입니다. 워크숍은 매회 정해진 인원만 들을 수 있습니다. 서로 다른 주제의 워크숍을 들은 동기들은 자연스럽게 배운 것을 나눕니다. 설명하는 사람은 자신이 이해하지 못한 부분을 발견하고, 듣는 사람은 놓친 주제를 얻으면서 자발적인 공유회가 일상적으로 일어납니다.', 'ap5', .58],
-    ['저널링', '매주 혹은 매일 배운 점이나 느낀 점 등을 4F(Fact/Feeling/Finding/Future Item)양식으로 회고합니다. 스스로 수업을 정리해보기도 하고, 동기의 저널링을 보면서 깨달음이나 동기를 얻기도 합니다. 쌓인 저널링은 학기별로 Phi만의 회고 방식을 담은 러닝 리포트로 정리해 드립니다.', 'ap6', .58]
+  /* ---------- 수업을 관통하는 접근 (Figma 6906:6568) ----------
+     Run (sticky stage): 0 → EXPAND  the rounded card grows to full screen (inset 160 → 0, radius 40 → 0, Figma frames 1 → 2 → 01)
+                         → +UI_IN    nav + copy fade in
+                         then STEP per item, 01 → 06. All lengths in viewport heights of scroll. */
+  const AP = [ // 01 copy: the Figma layer repeats the section intro, so the original 라이브데모 text is kept; 06 drops a stray trailing "주요"
+    ['라이브데모', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는 문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다."],
+    ['피어크리틱', '모든 코스에는 관찰 가능한 평가 기준, 즉 루브릭이 있습니다. 전문가는 매주 Learning Design팀과 학습자의 결과물을 리뷰하고, 루브릭 기반으로 주로 하는 실수 패턴을 정의합니다. 학습자는 매 세션 이 패턴을 기준으로 구체적인 피드백을 주고받습니다.'],
+    ['셀프피드백', 'Phi에는 별도의 평가 시스템이 없습니다. 하지만, 학습자 역시 전문가와 동일한 기준으로 자신의 작업을 판단할 수 있도록, 모든 코스에는 정교하게 설계된 루브릭이 있습니다. 시작 전과 진행 중 매주, 학습 목표를 어느 정도 달성했고 그 이유가 무엇인지 루브릭 기반으로 작성합니다. 코스가 끝난 뒤에는 시작 전과 후의 자신을 현재의 언어로 다시 평가합니다.'],
+    ['워크숍', '정해진 코스 외에도, 학기 중 학습자의 이해도를 높이는 워크숍이 열립니다. 주제는 다양하고, 매 기수 학습자들의 상태를 반영합니다. 예를 들어 Phi의 세션은 시연 위주라 능동적 관찰이 중요한데, 전문가의 암묵지를 분석하고 분해하는 법은 코스 밖 워크숍에서 따로 배웁니다.'],
+    ['공유회', '가장 잘 배우는 방법은 남에게 가르쳐보는 것입니다. 워크숍은 매회 정해진 인원만 들을 수 있습니다. 서로 다른 주제의 워크숍을 들은 동기들은 자연스럽게 배운 것을 나눕니다. 설명하는 사람은 자신이 이해하지 못한 부분을 발견하고, 듣는 사람은 놓친 주제를 얻으면서 자발적인 공유회가 일상적으로 일어납니다.'],
+    ['저널링', '매주 혹은 매일 배운 점이나 느낀 점 등을 4F(Fact/Feeling/Finding/Future Item)양식으로 회고합니다. 스스로 수업을 정리해보기도 하고, 동기의 저널링을 보면서 깨달음이나 동기를 얻기도 합니다. 쌓인 저널링은 학기별로 Phi만의 회고 방식을 담은 러닝 리포트로 정리해 드립니다.']
   ];
-  const ap = document.getElementById('approach'), apStage = document.getElementById('apStage'), apNav = document.getElementById('apNav');
-  const num = i => String(i + 1).padStart(2, '0');
-  apStage.insertAdjacentHTML('afterbegin', AP.map(([t, d, img, side], i) => `
-    <div class="ap-slide${i === 0 ? ' on' : ''}" style="--side:${side}"><img src="assets/${img}.webp" alt="" loading="${i === 0 ? 'eager' : 'lazy'}">
-      <div class="ap-cap"><span><b>${num(i)}</b><b>${t}</b></span><p>${d}</p></div></div>`).join(''));
-  apNav.innerHTML = AP.map(([t], i) =>
-    `<li><button type="button" data-i="${i}"${i === 0 ? ' aria-current="true"' : ''}><i></i><span>${num(i)} ${t}</span></button></li>`).join('');
-  const apSlides = [...apStage.querySelectorAll('.ap-slide')], apBtns = [...apNav.querySelectorAll('button')];
-  const AP_STEP = .75; // viewport heights of scroll per slide
-  let apIdx = 0;
-  function apLayout() { ap.style.height = (innerHeight * (1 + AP_STEP * (AP.length - 1))) + 'px'; }
-  function apSet(i) {
-    if (i === apIdx) return; apIdx = i;
-    apSlides.forEach((s, k) => s.classList.toggle('on', k === i));
-    apBtns.forEach((b, k) => k === i ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'));
+  const ap2Run = document.getElementById('ap2Run'), ap2Card = document.getElementById('ap2Card');
+  const ap2Imgs = document.getElementById('ap2Imgs'), ap2Nav = document.getElementById('ap2Nav'), ap2Copy = document.getElementById('ap2Copy');
+  ap2Imgs.innerHTML = AP.map((_, i) => `<img src="assets/ap-${i + 1}.webp" alt=""${i ? ' loading="lazy"' : ''}${i === 0 ? ' class="on"' : ''}>`).join('');
+  ap2Nav.innerHTML = AP.map(([t], i) => `<li><button type="button" data-i="${i}" aria-label="${String(i + 1).padStart(2, '0')} ${t}"${i === 0 ? ' aria-current="true"' : ''}></button></li>`).join('');
+  ap2Copy.innerHTML = AP.map(([t, d], i) => `<div class="ap2-item${i === 0 ? ' on' : ''}"><h3><span>${String(i + 1).padStart(2, '0')}</span>${t}</h3><p>${d}</p></div>`).join('');
+  const ap2ImgEls = [...ap2Imgs.children], ap2Btns = [...ap2Nav.querySelectorAll('button')], ap2Items = [...ap2Copy.children];
+  const AP_EXPAND = .7, AP_UI = .15, AP_STEP = .75;
+  let ap2Idx = 0;
+  const ap2Top = () => ap2Run.getBoundingClientRect().top + scrollY;
+  function ap2Layout() { ap2Run.style.height = (innerHeight * (1 + AP_EXPAND + AP_UI + AP_STEP * AP.length)) + 'px'; }
+  function ap2Set(i) {
+    if (i === ap2Idx) return; ap2Idx = i;
+    ap2ImgEls.forEach((el, k) => el.classList.toggle('on', k === i));
+    ap2Items.forEach((el, k) => el.classList.toggle('on', k === i));
+    ap2Btns.forEach((b, k) => k === i ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'));
   }
-  function apScroll() {
-    const y = scrollY - ap.offsetTop, step = innerHeight * AP_STEP;
-    apSet(Math.max(0, Math.min(AP.length - 1, Math.floor((y + step * .5) / step))));
+  function ap2Scroll() {
+    const vh = innerHeight, u = (scrollY - ap2Top()) / vh; // viewport heights into the run
+    const k = document.documentElement.clientWidth / 1920;
+    const e = ease(clamp(u / AP_EXPAND));
+    ap2Card.style.setProperty('--m', (Math.max(16, 160 * k) * (1 - e)).toFixed(1) + 'px');
+    ap2Card.style.setProperty('--r', (Math.max(16, 40 * k) * (1 - e)).toFixed(1) + 'px');
+    const ui = clamp((u - AP_EXPAND) / AP_UI);
+    ap2Card.style.setProperty('--ui', ui.toFixed(3));
+    ap2Card.style.setProperty('--uiv', ui > .01 ? 'visible' : 'hidden');
+    ap2Set(Math.max(0, Math.min(AP.length - 1, Math.floor((u - AP_EXPAND - AP_UI) / AP_STEP))));
   }
-  apBtns.forEach((b, i) => b.addEventListener('click', () => scrollTo({ top: ap.offsetTop + i * innerHeight * AP_STEP, behavior: 'smooth' })));
-  addEventListener('scroll', apScroll, { passive: true });
-  addEventListener('resize', () => { apLayout(); apScroll(); });
-  apLayout(); apScroll();
+  const ap2Go = i => scrollTo({ top: ap2Top() + (AP_EXPAND + AP_UI + AP_STEP * i + .05) * innerHeight, behavior: 'smooth' });
+  ap2Btns.forEach((b, i) => b.addEventListener('click', () => ap2Go(i)));
+  document.getElementById('ap2Down').addEventListener('click', () => ap2Go(0));
+  addEventListener('scroll', ap2Scroll, { passive: true });
+  addEventListener('resize', () => { ap2Layout(); ap2Scroll(); });
+  ap2Layout(); ap2Scroll();
 
-  /* ---------- Curriculum tabs (연간 구조 ↔ 주간 시간표) ---------- */
-  const tY = document.getElementById('tYear'), tW = document.getElementById('tWeek');
-  const pY = document.getElementById('pYear'), pW = document.getElementById('pWeek'), cap = document.getElementById('curCap');
-  const CAP = { y: '1년제 프로그램은 아래 요소들로 구성되어있습니다.', w: '매주 월-금 수업이 진행됩니다. 화, 수, 목은 오전-오후 풀타임으로 진행되며 월, 금은 학기 수업 스케줄에 따라 유동적으로 진행됩니다.' };
-  function setCur(week) {
-    tY.setAttribute('aria-selected', !week); tW.setAttribute('aria-selected', week);
-    pY.hidden = week; pW.hidden = !week; cap.textContent = week ? CAP.w : CAP.y;
+  /* ---------- 커리큘럼 (Figma 6892:1052) ----------
+     Period tabs + arrows switch the left copy and the photo. 1학기 copy is from Figma ("B/24" read as "8/24");
+     방학 + 캠프 / 2학기 / 수료 & 졸업 copy and photos come from the reference screens supplied with the design. */
+  const CU = [
+    { tab: ['1학기', '4개월'], grow: 4, title: '1학기', date: '2026년 8월 24일 - 12월 24일',
+      desc: 'Warm-up Week(8/24-8/28)를 시작으로 개강.<br>매주 월-금 수업이 진행되며, 오전/오후 각 세션으로 나뉘어<br>전문가 수업이 이어집니다.',
+      list: [['장소', 'Phi 성수 오프라인 공간', '서울 성동구 왕십리로14길 36, 프리센스빌딩 1층 (뚝섬역 도보 3분)'],
+             ['클래스', '30명씩 2개 클래스', '총 60명이 2개 클래스로 나뉘어 진행됩니다.'],
+             ['수업 시간', '10:00 – 18:00', '화·수·목은 오전·오후 풀타임, 월·금은 오전에만 수업이 진행됩니다.<br>(점심시간 13:00–15:00)']] },
+    { tab: ['방학 + 캠프', '2개월'], grow: 2, title: '방학 + 캠프', date: '2027년 1월 - 2월',
+      desc: '4개월의 루틴에서 벗어나 휴식과 함께 복수의 워크숍 프로그램이 진행됩니다. 각 학습자의 성취와 보완이 필요한 부분을 바탕으로 구성됩니다.',
+      list: [['예정', 'Practical Camp (토스)'], ['예정', '디지털 타이포그래피 워크숍'], ['예정', 'Skills Boost']] },
+    { tab: ['2학기', '4개월'], grow: 4, title: '2학기', date: '2027년 3월 2일 - 6월 24일', badge: '수료',
+      desc: '1학기에서 쌓은 역량을 심화하고 통합하는 시간.<br>전문가 라인업이 일부 교체되며, 학습자가 자신만의 방향을 구체화합니다.',
+      list: [['수업 구성', '1학기의 성취에 맞춰 준비', '1학기의 성취에 따라 학습 효과를 보완, 증폭할 수 있는 방향으로 준비됩니다.'],
+             ['수료 기준', '예정된 모든 수업 이수', '2026년 8월부터 2027년 6월까지 예정된 모든 수업을 이수하면 수료합니다.']] },
+    { tab: ['수료 & 졸업', '2개월'], grow: 2, title: '수료 & 졸업', date: '2027년 7월 - 8월', badge: '졸업',
+      desc: '수료(전 과정 이수) 후 졸업 프로젝트를 완성합니다.<br>졸업 프로젝트는 외부에 실제 발표 또는 출시되어야 합니다.',
+      list: [['2027년 8월', '토스 별도 채용 전형', 'Phi 1년제 1기 졸업자를 위해 토스의 일반 채용과 별도로 채용 전형이 마련됩니다.'],
+             ['우수 졸업자', '입사 특전', '우수 졸업자에게는 채용 전형에 더해 별도의 입사 특전이 제공됩니다.'],
+             ['증명서', '수료증 · 졸업증 발급', '수료·졸업 기준을 충족하면 각각 발급됩니다.']] }
+  ];
+  const cuTabs = document.getElementById('cuTabs'), cuPanels = document.getElementById('cuPanels'), cuPhoto = document.getElementById('cuPhoto');
+  const cuPrev = document.getElementById('cuPrev'), cuNext = document.getElementById('cuNext');
+  cuTabs.innerHTML = CU.map((c, i) => `<button class="cu-tab" type="button" role="tab" id="cuTab${i}" aria-controls="cuPanel${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" style="--g:${c.grow}">${c.tab[0]}<i aria-hidden="true"></i>${c.tab[1]}</button>`).join('');
+  cuPanels.innerHTML = CU.map((c, i) => `<div class="cu-panel${i === 0 ? ' on' : ''}" role="tabpanel" id="cuPanel${i}" aria-labelledby="cuTab${i}">
+      <div><h3>${c.title}</h3><p class="cu-date">${c.date}${c.badge ? `<b>${c.badge}</b>` : ''}</p><p class="cu-desc">${c.desc}</p></div>
+      <div class="cu-list">${c.list.map(([k, t, d]) => `<div><small>${k}</small><strong>${t}</strong>${d ? `<span>${d}</span>` : ''}</div>`).join('')}</div>
+    </div>`).join('');
+  cuPhoto.innerHTML = CU.map((_, i) => `<img src="assets/cur-${i + 1}.webp" alt=""${i ? ' loading="lazy"' : ' class="on"'}>`).join('');
+  const cuTabEls = [...cuTabs.children], cuPanelEls = [...cuPanels.children], cuImgs = [...cuPhoto.children];
+  let cuIdx = 0;
+  function cuGo(i, focus) {
+    cuIdx = clamp(i, 0, CU.length - 1);
+    cuTabEls.forEach((t, k) => { t.setAttribute('aria-selected', k === cuIdx); t.tabIndex = k === cuIdx ? 0 : -1; });
+    cuPanelEls.forEach((p, k) => p.classList.toggle('on', k === cuIdx));
+    cuImgs.forEach((m, k) => m.classList.toggle('on', k === cuIdx));
+    cuPrev.disabled = cuIdx === 0; cuNext.disabled = cuIdx === CU.length - 1;
+    if (focus) cuTabEls[cuIdx].focus();
   }
-  tY.onclick = () => setCur(false); tW.onclick = () => setCur(true);
-
-  // weekly grid: 10:00–18:00, 44.5px per hour
-  const tt = document.getElementById('tt'), Y0 = 49.26, PH = 44.5;
-  for (let h = 10; h <= 18; h++) {
-    const y = Y0 + (h - 10) * PH;
-    tt.insertAdjacentHTML('beforeend', `<span class="hl" style="top:${y}px">${h}</span><span class="hr${h % 2 === 0 ? ' b' : ''}" style="top:${y}px"></span>`);
-  }
-  const DAYS = ['월','화','수','목','금'];
-  const SES = [[['10:00 – 13:00','세션 1']],[['10:00 – 13:00','세션 2'],['15:00 – 18:00','세션 3']],[['10:00 – 13:00','세션 4'],['15:00 – 18:00','세션 5']],[['10:00 – 13:00','세션 6'],['15:00 – 18:00','세션 7']],[['10:00 – 13:00','세션 8']]];
-  tt.insertAdjacentHTML('beforeend', `<div class="days">${DAYS.map(d => `<span>${d}</span>`).join('')}</div>`);
-  tt.insertAdjacentHTML('beforeend', `<div class="slots">${SES.map(day => `<div class="day">${day.map(([t,n]) => {
-    const start = parseInt(t); const top = Y0 + (start - 10) * PH;
-    return `<div class="ses" style="top:${top}px;height:${3 * PH}px"><span>${t}</span><b>${n}</b></div>`;
-  }).join('')}</div>`).join('')}</div><div class="lunch">점심시간</div>`);
+  cuTabEls.forEach((t, i) => t.addEventListener('click', () => cuGo(i)));
+  cuTabs.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); cuGo(cuIdx + 1, true); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); cuGo(cuIdx - 1, true); }
+  });
+  cuPrev.addEventListener('click', () => cuGo(cuIdx - 1));
+  cuNext.addEventListener('click', () => cuGo(cuIdx + 1));
+  cuGo(0);
 
   /* ---------- Modals ---------- */
   let lastFocus = null;
