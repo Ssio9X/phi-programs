@@ -81,39 +81,49 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .nav .cta:hover { transform: scale(1.03); }
 
-/* ---------- Hero (pinned scroll story, Figma 6899:1859 "Hero 모션 가이드") ----------
-   Frames 1–4: copy fades while the statue drifts left and grows · 5–8: cards fall in around it, then the toggle appears.
-   Settled: the deck orbits the statue's vertical axis in steps; the toggle scatters it outward and gathers the other set in (Figma 6899:1909). */
-.hero { position: relative; background: var(--black); }
+/* ---------- Hero (pinned scroll story, Figma 시나리오 7013:1724, frames Hero → 20) ----------
+   Copy + FUNDAMENTALS OVER TOOLS over the turning statue → the five Phi OS principles → the card orbit → close-up → PHI OPERATING SYSTEM.
+   Settled: the deck orbits the statue; the toggle scatters it outward and gathers the other set in (Figma 6899:1909). */
+.hero { position: relative; background: #0d0d0d; }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; z-index: 0; }
 .canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
-.statue { position: absolute; z-index: 2; left: 0; top: 0; width: 1858.6px; height: 2489.5px; transform-origin: 0 0; will-change: transform, opacity; pointer-events: none; }
-.statue img { width: 100%; height: 100%; max-width: none; transform: scaleX(-1); }
+.statue { position: absolute; z-index: 2; left: 0; top: 0; width: 1800px; height: 2000px; transform-origin: 0 0; will-change: transform, opacity; pointer-events: none; }
+.statue img, .statue canvas { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; transform: scaleX(-1); visibility: hidden; }
+/* the two poses the page rests on are plain 4500×5000 images (sharp at any size, no canvas limits); the canvas only shows the turn between them */
+.statue[data-show="a"] .st-a, .statue[data-show="b"] .st-b, .statue[data-show="seq"] canvas { visibility: visible; }
+
+/* FUNDAMENTALS OVER TOOLS (frames Hero → 6) sits behind the statue; the principles (8 → 13) are windows onto one vector group
+   (Figma Group 35), each showing a number and a word; PHI OPERATING SYSTEM (19 → 20) sits above everything */
+/* no will-change on these vectors: a promoted layer is rasterised once at the scaled-down size and then blurs when stretched */
+.fot { position: absolute; z-index: 1; left: 0; top: 0; width: 922px; height: 506px; max-width: none; }
+.pr-w { position: absolute; z-index: 1; overflow: hidden; opacity: 0; }
+.phios { position: absolute; z-index: 25; left: 451.7px; top: 321px; width: 1016.6px; height: 437.6px; max-width: none; opacity: 0; }
 
 /* cards: positioned every frame from JS (ring angle + fall-in offset); the wrapper only carries depth order */
 .kw { position: absolute; left: 0; top: 0; will-change: transform; }
+/* front 380×460 (Figma 역량 Competency_1 6971:2763): label + title on top, description at the foot */
 .k {
-  position: absolute; left: 0; top: 0; width: 480px; height: 600px; border-radius: 24px; overflow: hidden;
-  background: var(--kbg, #fff); color: #0d0d0d; transform-origin: 0 0; will-change: transform, opacity;
+  position: absolute; left: 0; top: 0; width: 380px; height: 460px; padding: 32px 30px; border-radius: 24px; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: #fff; color: #0d0d0d; box-shadow: 0 4px 17.3px rgba(21,21,21,.2); transform-origin: 0 0; will-change: transform, opacity;
 }
 .k::after { content: ""; position: absolute; inset: 0; background: #000; opacity: var(--shade, 0); pointer-events: none; } /* depth shading */
-.k .lb { position: absolute; left: 36px; top: 36px; width: 408px; display: flex; flex-direction: column; gap: 8px; white-space: nowrap; }
-.k .lb small { font-family: var(--font-latin); font-size: 20px; font-weight: 500; line-height: 1; color: #000; }
-.k .lb b { font-family: var(--font-latin); font-size: 32px; font-weight: 700; line-height: 1.3; }
-.k .n { position: absolute; left: 36px; top: 328px; font-size: 240px; font-weight: 860; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.k.back .fr { position: absolute; left: 24.5px; top: 15.9px; width: 431px; height: 568.15px; max-width: none; }
-.k.back .mk { position: absolute; left: 45.77px; top: 119px; width: 387.46px; height: 361px; max-width: none; }
+.k .lb { display: flex; flex-direction: column; gap: 8px; white-space: nowrap; }
+.k .lb small { font-family: var(--font-latin); font-size: 20px; font-weight: 500; line-height: 1; color: #8d8d8d; }
+.k .lb b { font-family: var(--font-latin); font-size: 32px; font-weight: 700; line-height: 1.3; letter-spacing: -.02em; } /* Inter runs wider than the Figma SF Pro: keeps "Dissatisfaction Sensor" on one line */
+.k .ds { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.6; color: #8d8d8d; }
 
 /* copy (frame 1) */
 .ui { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; pointer-events: none; z-index: 3; }
-.copy { position: absolute; left: 151px; top: 251px; width: 740px; display: flex; flex-direction: column; gap: 40px; color: #fff; }
+.copy { position: absolute; left: 151px; top: 244px; width: 740px; display: flex; flex-direction: column; gap: 32px; color: #fff; }
 .copy h1 { margin: 0; font-size: 42px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .copy .paras { display: flex; flex-direction: column; gap: 36px; }
 .copy .paras p { font-size: 20px; line-height: 1.6; color: var(--mute); }
 .hfacts { position: absolute; left: 151px; top: 650px; width: 426px; }
-.hfacts > div { display: grid; grid-template-columns: 136px 1fr; align-items: center; padding: 12px 0; border-bottom: 1px solid #30333a; }
+.hfacts > div { display: grid; grid-template-columns: 134px 1fr; align-items: center; padding: 12px 0; border-bottom: .8px solid rgba(239,233,221,.4); }
+.hfacts > div:last-child { border-bottom: 0; }
 .hfacts dt { font-size: 14px; line-height: 1.5; color: #7a7c83; }
-.hfacts dd { margin: 0; font-size: 16px; line-height: 1.6; color: #f2f2f4; }
+.hfacts dd { margin: 0; font-size: 16px; line-height: 1.6; color: #fff; }
 dl { margin: 0; }
 .copy h1, .copy .paras p, .hfacts { will-change: opacity, transform; }
 
@@ -423,16 +433,16 @@ footer { position: sticky; bottom: 0; z-index: 0; background: var(--panel); padd
 
 /* ---------- 주요 수업들 grid (Figma 6906:4503) ---------- */
 /* hero stage is #000, this section #0d0d0d: blend the first stretch so the hand-off has no seam */
-.cg { background: linear-gradient(#000, #0d0d0d 240px); color: #fff; }
+.cg { background: #0d0d0d; color: #fff; }
 .cg-col { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
-.cg-head { padding-top: 120px; display: flex; flex-direction: column; gap: 24px; }
+.cg-head { display: flex; flex-direction: column; gap: 24px; } /* no top padding: the hero hands over with 주요 수업들 518 design px under the PHI OS logo */
 .cg-head h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1.2; }
 .cg-head p { max-width: 800px; font-size: var(--lead); line-height: 1.6; color: #8d8d8d; text-wrap: pretty; }
 .cg-head a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .cg-head a:hover { color: #d5d5d5; }
-.cg-grid { padding-top: 75px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; }
+.cg-grid { padding-top: 60px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; }
 .cgc {
-  aspect-ratio: 384 / 376; padding: 36px; border-radius: 24px; background: #fff; color: #0d0d0d; text-align: center;
+  aspect-ratio: 384 / 376; padding: 36px; border-radius: 24px; background: #f2efe6; color: #0d0d0d; text-align: center;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
   transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s;
 }
@@ -445,11 +455,11 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
 .cg-photo { --lift: 2; position: relative; margin-top: 409px; height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
 .cg-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; }
-/* two viewports tall: top half solid #0d0d0d, bottom half the Figma fade (#0d0d0d → clear); JS slides it up as you scroll */
-.cg-veil { position: absolute; left: 0; right: 0; top: 0; height: 200%; will-change: transform;
-  background: linear-gradient(#0d0d0d 50%, rgba(13,13,13,.84) 59%, rgba(13,13,13,.41) 69%, rgba(13,13,13,.05) 83%, rgba(13,13,13,0) 96%); }
+/* dark → light: a solid #0d0d0d veil (same as the section, so the photo arrives unseen) fades out while the room eases back into frame; JS drives --o and the image scale */
+.cg-pin img { will-change: transform; }
+.cg-veil { position: absolute; inset: 0; background: #0d0d0d; opacity: 1; will-change: opacity; }
 @media (max-width: 1000px) { .cg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .cg-photo { margin-top: 200px; } }
-@media (max-width: 560px) { .cg-head { padding-top: 96px; } .cg-grid { grid-template-columns: 1fr; padding-top: 48px; } .cgc { aspect-ratio: auto; min-height: 240px; padding: 28px; } .cg-photo { margin-top: 120px; } }
+@media (max-width: 560px) { .cg-grid { grid-template-columns: 1fr; padding-top: 48px; } .cgc { aspect-ratio: auto; min-height: 240px; padding: 28px; } .cg-photo { margin-top: 120px; } }
 
 /* ---------- 프로그램 구조 (Figma 6891:839) ---------- */
 .ps2 { background: #fff; color: #0d0d0d; padding: 100px 0; }
@@ -477,40 +487,35 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   .ps2-other { grid-template-columns: 1fr; max-width: 480px; }
 }
 
-/* ---------- 수업을 관통하는 접근 (Figma 6906:6568) ---------- */
+/* ---------- 수업을 관통하는 접근 (Figma 6906:6568, rev. 7013) ---------- */
 .ap2 { background: #f6f6f6; color: #000; }
-.ap2-head { width: calc(100vw - 2 * clamp(16px, 8.33vw, 160px)); margin-inline: auto; padding-top: clamp(96px, 9.4vw, 180px); }
+.ap2-head { width: calc(100vw - 2 * clamp(16px, 8.33vw, 160px)); margin-inline: auto; padding: clamp(96px, 9.4vw, 180px) 0 52px; }
 .ap2-kicker { font-size: 21px; font-weight: 700; line-height: 1.2; }
-.ap2-head h2 { margin: 28px 0 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1.2; }
-.ap2-row { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 52px 0 80px; }
-.ap2-down { flex: 0 0 52px; width: 52px; height: 52px; border-radius: 8px; transition: transform .25s; }
-.ap2-down:hover { transform: translateY(3px); }
-.ap2-row p { max-width: 740px; font-size: 17px; font-weight: 700; line-height: 1.6; color: #8d8d8d; text-align: right; }
+.ap2-head h2 { margin: 24px 0 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1; }
+.ap2-head > p:last-child { margin-top: 16px; font-size: clamp(16px, 1.05vw, 20px); line-height: 1.6; color: #8d8d8d; }
 .ap2-run { position: relative; }
 .ap2-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 /* card geometry is driven from JS: --m (side inset, px) and --r (corner radius, px) shrink to 0 as it grows */
 .ap2-card { position: absolute; top: 0; bottom: 0; left: var(--m, 160px); right: var(--m, 160px); border-radius: var(--r, 40px); overflow: hidden; background: #0d0d0d; will-change: left, right; }
 .ap2-imgs img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; opacity: 0; transform: scale(1.04); transition: opacity .8s ease, transform 1.4s cubic-bezier(.2,.8,.2,1); }
+.ap2-imgs img:first-child { object-position: 0 0; } /* the rounded card shows the photo's left 1600 (Figma 6892:1007) */
 .ap2-imgs img.on { opacity: 1; transform: none; }
-.ap2-shade { position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.24) 100%), linear-gradient(180deg, rgba(197,196,194,0) 0%, rgba(179,176,176,.27) 52.3%, rgba(112,112,112,.666) 74.9%, #444 100%); }
-/* nav + copy: hidden on the rounded card, fade in once it is full screen */
-.ap2-nav, .ap2-copy { opacity: var(--ui, 0); visibility: var(--uiv, hidden); }
-.ap2-nav { position: absolute; left: clamp(24px, 8.33vw, 160px); top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.ap2-nav button { display: block; width: 76px; height: 16px; position: relative; }
-.ap2-nav button::before { content: ""; position: absolute; left: 0; top: 50%; width: 24px; height: 1.6px; margin-top: -.8px; background: #fff; opacity: .6; transition: width .45s cubic-bezier(.2,.8,.2,1), opacity .3s; }
-.ap2-nav button[aria-current="true"]::before { width: 40px; opacity: 1; }
-.ap2-nav button:hover::before { opacity: 1; }
-.ap2-copy { position: absolute; left: clamp(24px, 8.33vw, 160px); bottom: clamp(48px, 9.26vh, 100px); width: min(817px, calc(100% - 48px)); color: #fff; }
-.ap2-item { position: absolute; left: 0; bottom: 0; width: 100%; display: flex; flex-direction: column; gap: 12px; opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
-.ap2-item.on { position: relative; opacity: 1; transform: none; pointer-events: auto; transition-delay: .12s; }
-.ap2-item h3 { margin: 0; display: flex; gap: 8px; font-size: clamp(16px, 1.1vw, 21px); font-weight: 700; line-height: 1; }
-.ap2-item h3 span { width: 30px; }
-.ap2-item p { font-size: clamp(15px, 1.1vw, 21px); font-weight: 700; line-height: 1.6; word-break: keep-all; }
+/* bottom shade + caption + arrows: hidden on the rounded card, fade in once it is full screen */
+.ap2-shade, .ap2-copy, .ap2-arrows { opacity: var(--ui, 0); visibility: var(--uiv, hidden); }
+.ap2-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, #0d0d0d 0%, rgba(13,13,13,.75) 14.884%, rgba(13,13,13,0) 45.188%); }
+.ap2-arrows { position: absolute; left: clamp(16px, 3.125vw, 60px); right: clamp(16px, 3.125vw, 60px); top: 50%; transform: translateY(-50%); display: flex; justify-content: space-between; pointer-events: none; }
+.ap2-arrows button { width: 52px; height: 52px; border-radius: 26px; pointer-events: auto; transition: transform .2s, opacity .3s; }
+.ap2-arrows button img { width: 52px; height: 52px; }
+.ap2-arrows button:hover:not(:disabled) { transform: scale(1.06); }
+.ap2-arrows button:disabled { opacity: .35; cursor: default; }
+.ap2-copy { position: absolute; left: 0; right: 0; bottom: clamp(48px, 10.2vh, 110px); display: grid; justify-items: center; color: #fff; text-align: center; pointer-events: none; }
+.ap2-item { grid-area: 1 / 1; align-self: end; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-inline: 16px; opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+.ap2-item.on { opacity: 1; transform: none; transition-delay: .12s; }
+.ap2-item h3 { margin: 0; font-size: clamp(34px, 3.125vw, 60px); font-weight: 700; line-height: 1; white-space: nowrap; }
+.ap2-item p { width: min(800px, 100%); font-size: clamp(15px, 1.1vw, 21px); font-weight: 700; line-height: 1.6; word-break: keep-all; }
+.ap2-item.narrow p { width: min(600px, 100%); }
 @media (max-width: 760px) {
-  .ap2-row { flex-direction: column; align-items: flex-start; padding: 32px 0 48px; }
-  .ap2-row p { text-align: left; font-size: 15px; }
-  .ap2-nav { top: 28%; }
+  .ap2-arrows { top: auto; bottom: 16px; transform: none; }
 }
 
 /* ---------- 커리큘럼 (Figma 6892:1052) ---------- */
@@ -672,8 +677,11 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   <section class="hero" id="hero" aria-label="Phi의 1년제 프로그램">
     <div class="stage" id="stage">
       <div class="canvas" id="canvas">
-        <div class="statue" id="statue"><img src="assets/statue.png" alt=""></div>
+        <img class="fot" id="fot" src="assets/fundamentals-over-tools.svg" alt="Fundamentals over tools">
+        <div id="pr" role="list" aria-label="Phi OS 다섯 가지 원칙"></div>
+        <div class="statue" id="statue" data-show="a"><img class="st-a" src="assets/statue/a18.webp" alt=""><img class="st-b" src="assets/statue/f27.webp" alt="" decoding="async"></div>
         <div id="deck" aria-live="polite"></div>
+        <img class="phios" id="phios" src="assets/phi-operating-system.svg" alt="Phi Operating System">
       </div>
       <div class="ui" id="ui">
         <div class="copy" id="heroCopy">
@@ -698,8 +706,8 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
         <div class="dk-dots" id="dkDots"></div>
       </div>
       <div class="seg" id="seg" role="tablist" aria-label="역량과 태도">
-        <button type="button" role="tab" aria-selected="true" data-set="0">역량 Competency</button>
-        <button type="button" role="tab" aria-selected="false" data-set="1">태도 Phi OS</button>
+        <button type="button" role="tab" aria-selected="true" data-set="1">태도 Phi OS</button>
+        <button type="button" role="tab" aria-selected="false" data-set="0">역량 Competency</button>
       </div>
     </div>
   </section>
@@ -711,7 +719,7 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
       <p>상기된 <a href="#hero" id="toCompetencies">역량과 태도</a>를 중심으로 수업들이 설계되었습니다.<br>이를 토대로 디지털 프로덕트 디자인과 브랜딩 분야에서 자신의 가능성을 펼칠 수 있도록 합니다.<br>본 주요 수업들은 1학기에 진행되는 수업들이며, 2학기는 1학기의 성취에 따라 학습 효과를 보완, 증폭할 수 있는 방향으로 준비됩니다.</p>
     </div>
     <div class="cg-col cg-grid" id="cgGrid"></div>
-    <!-- classroom photo: pinned while the dark lifts off it over two screens of scroll (veil = solid half + Figma 6891:803 gradient half) -->
+    <!-- classroom photo: pinned while it brightens out of the dark over two screens of scroll -->
     <div class="cg-photo" id="cgPhoto" aria-hidden="true"><div class="cg-pin"><img src="assets/classroom-courses.webp" alt=""><span class="cg-veil" id="cgVeil"></span></div></div>
   </section>
 
@@ -739,24 +747,24 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     </div>
   </section>
 
-  <!-- 수업을 관통하는 접근 — Figma 6906:6568: header, then a rounded photo card that grows to full screen,
-       after which the nav + copy appear and scrolling steps 01 → 06 -->
+  <!-- 수업을 관통하는 접근 — Figma 6906:6568 (rev. 7013): header, then a rounded photo card that grows to full screen,
+       after which the caption + arrows appear and scrolling steps 01 → 06 -->
   <section class="ap2" id="approach">
     <div class="ap2-head">
       <p class="ap2-kicker">핵심 수업 장치</p>
       <h2>수업을 관통하는 접근</h2>
-      <div class="ap2-row">
-        <button class="ap2-down" type="button" id="ap2Down" aria-label="핵심 수업 장치 보기"><svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><rect width="52" height="52" rx="8" fill="#EFEFEF"/><path transform="rotate(90 26 26)" d="M33.8 23.5751C35.6667 24.6529 35.6667 27.3472 33.8 28.4249L24.2 33.9674C22.3333 35.0452 20 33.698 20 31.5426L20 20.4574C20 18.302 22.3333 16.9548 24.2 18.0326L33.8 23.5751Z" fill="#000"/></svg></button>
-        <p>Phi의 교육은 인지적 도제(Cognitive Apprenticeship)를 토대로 설계되었습니다.<br>전문가의 사고 과정을 학습자가 능동적으로 관찰할 수 있도록 다양한 장치가 준비되어있습니다.</p>
-      </div>
+      <p>Phi의 교육은 인지적 도제(Cognitive Apprenticeship)를 토대로 설계되었습니다.<br>전문가의 사고 과정을 학습자가 능동적으로 관찰할 수 있도록 다양한 장치가 준비되어있습니다.</p>
     </div>
     <div class="ap2-run" id="ap2Run">
       <div class="ap2-stage">
         <div class="ap2-card" id="ap2Card">
           <div class="ap2-imgs" id="ap2Imgs"></div>
           <span class="ap2-shade"></span>
-          <ol class="ap2-nav" id="ap2Nav" aria-label="핵심 수업 장치"></ol>
           <div class="ap2-copy" id="ap2Copy" aria-live="polite"></div>
+          <div class="ap2-arrows">
+            <button type="button" id="ap2Prev" aria-label="이전 수업 장치"><img src="assets/ap-prev.svg" alt=""></button>
+            <button type="button" id="ap2Next" aria-label="다음 수업 장치"><img src="assets/ap-next.svg" alt=""></button>
+          </div>
         </div>
       </div>
     </div>
@@ -855,26 +863,58 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
 
 <script>
 (() => {
-  /* ---------- Hero: pinned scroll story (Figma 6899:1859) ----------
-     The canvas is the 1920×1080 design frame. Scroll progress p (0 → 1 across the pinned stretch) runs frames 1–8:
-       1→4  copy fades out, statue drifts left        4→5  statue grows to centre
-       5→8  cards fall in around the statue           7→8  toggle fades in
-     Once settled the deck orbits the statue in steps; the toggle scatters it outward and gathers the other set in (Figma 6899:1909). */
+  /* ---------- Hero: pinned scroll story (Figma 시나리오 7013:1724, frames Hero → 20) ----------
+     The canvas is the 1920×1080 design frame, scaled to fit. p = viewport heights scrolled into the hero; K holds the p of each Figma frame.
+       Hero → 2   copy dims while the statue turns from its 3/4 pose toward the viewer and grows
+       2 → 4      copy gone; the statue shrinks to the centre facing front, FUNDAMENTALS OVER TOOLS slides over its head
+       4 → 7      the logo fades out               8 → 13   the five principles come in one by one (half, then full)
+       13 → 15    principles fade, the statue rises, the cards come up from below and settle into the orbit; the toggle appears
+       16 → 17    the cards lift away              18       close-up on the face
+       19 → 20    PHI OPERATING SYSTEM over the fading statue; then the logo scrolls up and 주요 수업들 follows under it (frame 21). */
   const hero = document.getElementById('hero'), stage = document.getElementById('stage');
   const canvas = document.getElementById('canvas'), ui = document.getElementById('ui');
   const statue = document.getElementById('statue'), deck = document.getElementById('deck');
+  const fot = document.getElementById('fot'), prBox = document.getElementById('pr'), phios = document.getElementById('phios');
   const heroTitle = document.getElementById('heroTitle'), bodyParas = [...document.querySelectorAll('#heroBody p')];
   const facts = document.getElementById('heroFacts'), navWrap = document.querySelector('.nav-wrap');
   const segBar = document.getElementById('seg'), segBtns = [...segBar.querySelectorAll('button')];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a=0, b=1) => Math.min(b, Math.max(a, v));
+
+  /* Statue: Blender renders of the KAS633 scan, upper body (scripts/bust.py), lights fixed while the statue turns.
+     q00 → q19 step 3° from +30° to −27° (facing the viewer); the page mirrors them as it always has. The hero opens at +18° (q04,
+     head turned to screen left, picked by the user over the Figma +30°), so the turn plays q04 → q19.
+     The turn plays on a canvas from full 1800×2000 frames (1200×1333 on phones, to keep memory down); the two poses the page
+     rests on (+18°, −27°) are 4500×5000 images shown directly. */
+  const SEQ_N = 20, SEQ_0 = 4, SW = 1800, SH = 2000;
+  const small = Math.min(screen.width, screen.height) < 760;
+  const seqCv = document.createElement('canvas'), seqCtx = seqCv.getContext('2d'), seqImgs = [];
+  let seqReady = false, seqF = -1;
+  seqCv.width = small ? 1200 : SW; seqCv.height = small ? 1333 : SH; statue.appendChild(seqCv);
+  seqCtx.imageSmoothingQuality = 'high';
+  Promise.all(Array.from({ length: SEQ_N - SEQ_0 }, (_, k) => {
+    const i = SEQ_0 + k, im = seqImgs[i] = new Image();
+    im.src = `assets/statue/${small ? 'm' : 'q'}${String(i).padStart(2, '0')}.webp`;
+    return im.decode();
+  })).then(() => { seqReady = true; seqF = -1; }).catch(() => {}); // until then (or on failure) the nearer still pose stands in
+  function drawStatue(f) {
+    const show = f < SEQ_0 + .01 ? 'a' : f > SEQ_N - 1.01 ? 'b' : seqReady ? 'seq' : f < (SEQ_0 + SEQ_N - 1) / 2 ? 'a' : 'b';
+    if (statue.dataset.show !== show) { statue.dataset.show = show; seqF = -1; } // repaint the canvas when it comes back
+    if (show !== 'seq' || Math.abs(f - seqF) < .005) return;
+    seqF = f;
+    const w = seqCv.width, h = seqCv.height, i = Math.min(Math.floor(f), SEQ_N - 2), t = f - i;
+    seqCtx.clearRect(0, 0, w, h); seqCtx.globalAlpha = 1;
+    seqCtx.drawImage(seqImgs[i], 0, 0, w, h);
+    if (t > .005) { seqCtx.globalAlpha = t; seqCtx.drawImage(seqImgs[i + 1], 0, 0, w, h); }
+  }
   const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
   const lerp = (a, b, t) => a + (b - a) * t;
   const seg = (p, a, b) => clamp((p - a) / (b - a));
-  // piecewise-linear keyframes: keys ascending, vals same length
+  // keyframes: keys ascending, vals same length; each segment eases in and out (smootherstep) so motion settles into every frame
+  const smooth = t => t * t * t * (t * (6 * t - 15) + 10);
   const kf = (keys, vals, p) => {
     if (p <= keys[0]) return vals[0];
-    for (let i = 1; i < keys.length; i++) if (p <= keys[i]) return lerp(vals[i - 1], vals[i], (p - keys[i - 1]) / (keys[i] - keys[i - 1]));
+    for (let i = 1; i < keys.length; i++) if (p <= keys[i]) return lerp(vals[i - 1], vals[i], smooth((p - keys[i - 1]) / (keys[i] - keys[i - 1])));
     return vals[vals.length - 1];
   };
 
@@ -885,111 +925,89 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
       ['Aesthetic Sense', '심미안', '디자이너에게 가장 중요한 역량을 고르라면 아름다움을 인식하는 능력 아닐까? 대상을 보았을 때 구체적으로 부분을 인식하고, 미추를 판단하며, 그 미추의 정도를 가늠할 수 있는 예리한 감각을 훈련한다.'],
       ['Articulation', '언어화', '언어는 곧 사고의 천장이다. 내가 다룰 수 있는 어휘의 질과 양이 나의 사고방식의 높이를 결정한다. 타인에게 내 생각을 전달하는 것은 물론, 스스로를 설득할 수 있는 언어 체계를 갖춘다.'],
       ['Structural Thinking', '구조화', '나무를 보는 것만큼 숲을 보는 일도 중요하다. 구체와 추상을 오가며 현재 다루고 있는 문제가 전체 그림에서 어느 위치성을 지니는지 이해하고, 파편화된 분야들을 하나로 엮어내는 구조적 사고를 훈련한다.'],
-      ['Reframing', '관점전환', '혁신적인 해결책은 같은 문제를 다른 관점으로 바라보았을 때 나온다. 특정 문제를 그 분야의 문법으로만 정의하는 것이 아니라, 다른 분야의 레퍼런스도 내 문제에 적용할 수 있는 관점을 지니기 위해 유연한 관점 전환을 훈련한다.'],
-      ['Problem Definition', '문제 정의', '많은 디자인이 실패하는 이유는 틀린 문제를 풀었기 때문이다. 증상을 문제로 오독하지 않고, 본질이 무엇인지 파악함으로써 정확한 문제 정의를 추구한다.']]],
+      ['Problem Definition', '문제 정의', '많은 디자인이 실패하는 이유는 틀린 문제를 풀었기 때문이다. 증상을 문제로 오독하지 않고, 본질이 무엇인지 파악함으로써 정확한 문제 정의를 추구한다.'],
+      ['Reframing', '관점 전환', '혁신적인 해결책은 같은 문제를 다른 관점으로 바라보았을 때 나온다. 특정 문제를 그 분야의 문법으로만 정의하는 것이 아니라, 다른 분야의 레퍼런스도 내 문제에 적용할 수 있는 관점을 지니기 위해 유연한 관점 전환을 훈련한다.']]],
     ['태도 Phi OS', [
       ['Active Learning', '능동적으로 학습하기', 'Phi의 전체 교육 과정은 학습자의 능동성을 중요시한다. 교사는 가르치고, 학생은 배우는 구조가 아닌 학습자 스스로 동기를 부여하고 배움을 설계하는 방식을 전제로 한다.'],
-      ['Discovering Unknowns', '무지를 발굴하기', 'Phi에서는 질문하는 것, 못하는 상태에서 내 결과물을 내놓는 것을 권장한다. 자신의 현재 상태를 꺼내놓음으로써 자신이 정확하게 무엇을 모르는지 발견할 수 있는 기회가 되기 때문이다.'],
-      ['Unpacking the Compression', '압축된 사고 분석하기', '사고 과정을 관찰하는 훈련이 되어있다면, 교실은 물론 교실 밖 일상에서도 전문성을 추출해낼 수 있다. Phi에서는 지식을 전달 받기를 기다리지 않고, 먼저 추출하는 태도와 기술을 연습한다.'],
+      ['Discovering\nUnknowns', '무지를 발굴하기', 'Phi에서는 질문하는 것, 못하는 상태에서 내 결과물을 내놓는 것을 권장한다. 자신의 현재 상태를 꺼내놓음으로써 자신이 정확하게 무엇을 모르는지 발견할 수 있는 기회가 되기 때문이다.'],
+      ['Unpacking\nInvisible Decisions', '압축된 사고 분석하기', '사고 과정을 관찰하는 훈련이 되어있다면, 교실은 물론 교실 밖 일상에서도 전문성을 추출해낼 수 있다. Phi에서는 지식을 전달 받기를 기다리지 않고, 먼저 추출하는 태도와 기술을 연습한다.'],
       ['Dissatisfaction Sensor', '불만족에 민감해지기', '문제 정의의 출발은 문제 감지에서 시작된다. 완성도를 타협하지 않는 이들은 쉽게 만족하지 않고 불만족을 민감하게 알아차린다. 좋은 것을 만들기 위해서는 좋지 않음을 느낄 수 있어야 한다.'],
       ['Learning by Sharing', '공유하며 배우기', '가장 잘 배우는 방법은 남에게 가르쳐 보는 것이다. 이미 충분히 이해했다고 생각하는 것도 타인에게 설명해보고, 설득해보면 공백이 있다는 것을 깨닫게 된다. 이 메커니즘을 이해하고, 자신의 지식을 적극적으로 공유할 수 있어야 한다.']]]
   ];
-  /* Deck: cards orbit the statue's vertical axis (reference: screen recording).
-     The frame-8 positions sit on rings around the axis (x = CX + R·sinθ, depth c = cosθ). Each turn every card travels
-     along its ring to the next position: front (c > 0) passes in front of the statue, back (c < 0) behind it.
-     Size, height and shade blend between positions, so at rest the deck is always the frame-8 composition. */
-  const FRAME8 = [ // [x, y, width, opacity, shade, front] — 0–4 numbered cards, 5–8 Phi-mark backs
-    [225, -61, 385, 1, 0, 1],
-    [1158, 142, 326, .8, 0, 0],
-    [111, 547, 286, 1, .42, 0],
-    [564, 699, 366.4, 1, 0, 1],
-    [1338, 713, 243.2, 1, 0, 1],
-    [1782, 568, 281.6, .2, 0, 0], // the two faintest, smallest backs read as far side of the ring: behind the statue
-    [878, -32, 185.6, .1, 0, 0],
-    [1710, 66, 281.6, .8, 0, 1],
-    [-122, 157, 281.6, .5, 0, 1]
+  /* Deck: five cards ride one ellipse around the statue (Figma 6971:3696 + the orbit sketch) at a steady speed, never stopping.
+     Seen from slightly above, the near half (lower arc, c = cos φ > 0) passes in front of the statue moving right,
+     the far half (upper arc) passes behind it moving left. Each frame-8 card is a station on the ellipse; between stations
+     a card blends size, shade and its small offset from the ideal ellipse, so whenever cards sit on stations the deck is the frame. */
+  const FRAME8 = [ // [x, y, width, opacity] (Figma frame 6971:3696)
+    [410, 54, 307.8, .8],
+    [1309, 146, 285, .54],
+    [87, 521, 304, 1],
+    [685, 740, 380, 1],
+    [1529, 710, 190, .8]
   ];
-  const CX = 913, CY = 540, RX = 1060; // statue axis in frame 8, nominal ring radius (design px)
-  const TILT = 300; // the ring is tilted: mid-turn, the far side rises behind the head and the near side dips in front of the body
-  // cards stay opaque so overlaps read cleanly; frame 8's translucency becomes an equivalent black shade (white at 20% on black ≈ 80% shade)
-  const POS = FRAME8.map(([x, y, w, op, shade, front]) => {
-    const dx = x + w / 2 - CX, sn = clamp(dx / RX, -.97, .97);
-    const th = Math.atan2(sn, (front ? 1 : -1) * Math.sqrt(1 - sn * sn));
-    return { th, r: Math.abs(sn) > .01 ? dx / Math.sin(th) : RX, cy: y + w * .625, s: w / 480, shade: 1 - op * (1 - shade) };
-  });
-  // two rings on the same axis so numbered cards keep to readable positions: numbered 0–4, Phi-mark backs 5–8
-  const RINGS = [[0, 1, 2, 3, 4], [5, 6, 7, 8]].map(g => g.sort((a, b) => POS[a].th - POS[b].th)); // orbit order
-  const ringOf = i => RINGS[i < 5 ? 0 : 1];
-  const at = POS.map((_, i) => ringOf(i).indexOf(i)); // card i → its index on its ring
+  const KW = 380, KH = 460; // card size 380×460 (Figma 역량 Competency_1 6971:2763)
+  const CX = 960, CY = 600, RX = 760, RY = 370; // orbit ellipse fitted through the five card centres (design px)
   const TAU = Math.PI * 2;
+  const POS = FRAME8.map(([x, y, w, op]) => {
+    const px = x + w / 2, py = y + w * KH / KW / 2, phi = Math.atan2((px - CX) / RX, (py - CY) / RY);
+    // cards stay opaque so overlaps read cleanly; Figma's translucency becomes an equivalent black shade
+    return { phi, ox: px - (CX + RX * Math.sin(phi)), oy: py - (CY + RY * Math.cos(phi)), s: w / KW, shade: 1 - op };
+  });
+  const RING = POS.map((_, i) => i).sort((a, b) => POS[a].phi - POS[b].phi); // stations in travel order (φ increasing)
+  const ARC = RING.map(j => ((POS[j].phi - POS[RING[0]].phi) % TAU + TAU) % TAU);
 
-  deck.innerHTML = FRAME8.map((_, i) => i < 5
-    ? `<div class="kw"><article class="k"><div class="lb"><small></small><b></b></div><span class="n"></span></article></div>`
-    : `<div class="kw" aria-hidden="true"><div class="k back"><img class="fr" src="assets/card-frame.svg" alt=""><img class="mk" src="assets/phi-mark.png" alt=""></div></div>`).join('');
+  deck.innerHTML = FRAME8.map(() =>
+    `<div class="kw"><article class="k"><div class="lb"><small></small><b></b></div><p class="ds"></p></article></div>`).join('');
   const wraps = [...deck.children], cards = wraps.map(w => w.firstElementChild);
-  let setIdx = 0, scatter = 0;
+  let setIdx = 1, scatter = 0; // opens on 태도 Phi OS (the principles just shown)
 
   function fillSet(n) {
-    const [label, items] = SETS[n];
-    items.forEach(([en, ko], i) => {
-      const c = cards[i], num = String(n * 5 + i + 1).padStart(2, '0');
-      c.querySelector('small').textContent = label;
-      c.querySelector('b').innerHTML = `${en}<br>${ko}`;
-      c.querySelector('.n').textContent = num;
-      c.setAttribute('aria-label', `${label} ${num} ${en} ${ko}`);
+    const [label, items] = SETS[n], kind = n ? 'Phi OS' : 'Competency';
+    items.forEach(([en, ko, desc], i) => {
+      const c = cards[i], num = String(i + 1).padStart(2, '0');
+      c.querySelector('small').textContent = `${kind} — ${num}`;
+      c.querySelector('b').innerHTML = `${en.replace('\n', '<br>')}<br>${ko}`;
+      c.querySelector('.ds').textContent = desc;
+      c.setAttribute('aria-label', `${label} ${num} ${en.replace('\n', ' ')} ${ko}`);
     });
   }
-  fillSet(0);
+  fillSet(setIdx);
 
-  // place every card: e = progress of the current turn (0 at rest), plus scatter and the fall-in offset dy
-  let turnE = 0;
-  function drawDeck(dy) {
+  // place every card at its angle φ = φ₀ + ω·orbitT (orbitT = ms travelled), plus scatter and its own rise/lift offset dys[i]
+  let orbitT = 0;
+  function drawDeck(dys) {
     cards.forEach((card, i) => {
-      const R = ringOf(i), A = POS[R[at[i]]], B = POS[R[(at[i] + 1) % R.length]], e = turnE;
-      const th = A.th + e * (((B.th - A.th) % TAU + TAU) % TAU), c = Math.cos(th);
-      const r = lerp(A.r, B.r, e), s = lerp(A.s, B.s, e);
-      // mid-turn, cards swinging through the back shrink and darken a little more than either end
-      const depth = 1 - .12 * Math.max(0, -c) * Math.sin(Math.PI * e);
-      let cx = CX + r * Math.sin(th), cy = lerp(A.cy, B.cy, e) + TILT * Math.sin(Math.PI * e) * c;
+      const phi = POS[i].phi + OMEGA * orbitT, rel = ((phi - POS[RING[0]].phi) % TAU + TAU) % TAU;
+      let k = RING.length - 1; while (k > 0 && ARC[k] > rel) k--;
+      const A = POS[RING[k]], B = POS[RING[(k + 1) % RING.length]];
+      const e = (rel - ARC[k]) / ((k + 1 < RING.length ? ARC[k + 1] : TAU) - ARC[k]);
+      const c = Math.cos(phi), sc = lerp(A.s, B.s, e);
+      let cx = CX + RX * Math.sin(phi) + lerp(A.ox, B.ox, e), cy = CY + RY * c + lerp(A.oy, B.oy, e);
       if (scatter > 0) { // push straight out from the statue until off screen (전환 frames 2–3)
         const vx = cx - CX, vy = cy - CY, len = Math.hypot(vx, vy) || 1, push = 1700 * scatter;
         cx += vx / len * push; cy += vy / len * push;
       }
-      const sc = s * depth;
-      card.style.transform = `translate3d(${(cx - 240 * sc).toFixed(1)}px, ${(cy - 300 * sc + dy).toFixed(1)}px, 0) scale(${sc.toFixed(4)})`;
+      card.style.transform = `translate3d(${(cx - KW / 2 * sc).toFixed(1)}px, ${(cy - KH / 2 * sc + dys[i]).toFixed(1)}px, 0) scale(${sc.toFixed(4)})`;
       card.style.opacity = (1 - scatter).toFixed(3);
-      card.style.setProperty('--shade', clamp(lerp(A.shade, B.shade, e) + (1 - depth) * 2, 0, .9).toFixed(3));
-      wraps[i].style.zIndex = c >= 0 ? 10 + Math.round(c * 20) : (c > -.5 ? 1 : 0); // statue sits at 2
+      card.style.setProperty('--shade', clamp(lerp(A.shade, B.shade, e), 0, .9).toFixed(3));
+      wraps[i].style.zIndex = c >= 0 ? 10 + Math.round(c * 20) : 1; // statue sits at 2: lower arc in front, upper arc behind
     });
   }
 
-  // turns: hold, then every card moves one position along its ring.
-  // Curve measured off the reference recording (60 fps, six turns): progress fits cubic-bezier(.15, 0, .4, 1) —
-  // a brief ease-in, then a long ease-out settle (rmse .005). The reference ran 950 ms move + 1550 ms hold;
-  // slowed here to 1700 ms + 1700 ms (3.4 s cycle) on request, same curve.
-  const HOLD_MS = 1685, TURN_MS = 1700; // hold is checked per frame, so 1685 lands the cycle on 3.4 s
-  let turn = null, swap = null, lastTurn = 0, paused = false; // paused while the detail view is open
-  const bezier = (x1, y1, x2, y2) => {
-    const B = (a, b, u) => 3 * (1 - u) * (1 - u) * u * a + 3 * (1 - u) * u * u * b + u * u * u;
-    const dB = (a, b, u) => 3 * (1 - u) * (1 - u) * a + 6 * (1 - u) * u * (b - a) + 3 * u * u * (1 - b);
-    return t => {
-      let u = t;
-      for (let k = 0; k < 6; k++) { const d = dB(x1, x2, u); if (Math.abs(d) < 1e-6) break; u = clamp(u - (B(x1, x2, u) - t) / d); }
-      return B(y1, y2, u);
-    };
-  };
-  const turnEase = bezier(.15, 0, .4, 1);
+  // orbit speed: one lap in 20 s, constant (on request — no holds, no easing)
+  const OMEGA = TAU / 20000; // rad per ms
+  let swap = null, lastOrbit = null, paused = false; // paused while the detail view is open
   const easeIn = t => t * t * t, easeOutQ = t => 1 - Math.pow(1 - t, 4);
 
   // toggle: scatter outward (ease-in) → empty beat → the other set gathers back in (ease-out)
   const OUT_MS = 450, GAP_MS = 150, IN_MS = 850;
   function swapSet(n) {
     if (n === setIdx || swap) return;
-    setIdx = n; segBtns.forEach((b, i) => b.setAttribute('aria-selected', i === n));
+    setIdx = n; segBtns.forEach(b => b.setAttribute('aria-selected', +b.dataset.set === n));
     if (reduce) { fillSet(n); return; }
     swap = { t0: performance.now(), n, filled: false };
   }
-  segBtns.forEach((b, i) => b.addEventListener('click', () => swapSet(i)));
+  segBtns.forEach(b => b.addEventListener('click', () => swapSet(+b.dataset.set)));
 
   /* ---------- Card detail (Figma 6899:3374) ----------
      A numbered card opens its set as a carousel (active card centred, neighbours dimmed, pill pagination);
@@ -1001,7 +1019,7 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     const [label, items] = SETS[n];
     dkTrack.innerHTML = items.map(([en, ko, desc], i) =>
       `<article class="dkc" data-i="${i}" aria-roledescription="slide" aria-label="${i + 1} / ${items.length}"><div><small>${label}</small><b>${en}<br>${ko}</b></div><p>${desc}</p></article>`).join('');
-    dkDots.innerHTML = items.map(([en], i) => `<button type="button" data-i="${i}" aria-label="${en}"></button>`).join('');
+    dkDots.innerHTML = items.map(([en], i) => `<button type="button" data-i="${i}" aria-label="${en.replace('\n', ' ')}"></button>`).join('');
   }
   function dkGo(i, instant) {
     dkIdx = clamp(i, 0, dkTrack.children.length - 1);
@@ -1020,7 +1038,7 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   }
   function dkHide() {
     if (!dkOpen) return;
-    dk.classList.remove('open'); dkOpen = false; paused = false; lastTurn = performance.now();
+    dk.classList.remove('open'); dkOpen = false; paused = false;
     dkFrom && dkFrom.focus && dkFrom.focus({ preventScroll: true });
   }
   cards.slice(0, 5).forEach((c, i) => {
@@ -1055,12 +1073,9 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   dkView.addEventListener('click', e => { if (dk.dataset.swiped) e.stopPropagation(); }, true);
   addEventListener('resize', () => { if (dkOpen) dkGo(dkIdx, true); });
   function animateDeck(now, settled, inView) {
-    if (turn) {
-      const t = clamp((now - turn) / TURN_MS);
-      turnE = turnEase(t);
-      if (t >= 1) { turnE = 0; turn = null; lastTurn = now; at.forEach((p, i) => { at[i] = (p + 1) % ringOf(i).length; }); }
-    } else if (settled && inView && !swap && !paused && !reduce && !document.hidden && now - lastTurn > HOLD_MS) turn = now;
-    if (!settled && !turn) lastTurn = now - HOLD_MS; // no dead beat on landing: the first turn starts the moment the deck settles
+    // advances only while the deck is landed and on screen; otherwise it simply holds where it is
+    if (lastOrbit != null && settled && inView && !swap && !paused && !reduce && !document.hidden) orbitT += Math.min(now - lastOrbit, 100);
+    lastOrbit = now;
     if (swap) {
       const t = now - swap.t0;
       if (t < OUT_MS) scatter = easeIn(t / OUT_MS);
@@ -1068,18 +1083,50 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
       else {
         if (!swap.filled) { fillSet(swap.n); swap.filled = true; }
         scatter = 1 - easeOutQ(clamp((t - OUT_MS - GAP_MS) / IN_MS));
-        if (t >= OUT_MS + GAP_MS + IN_MS) { scatter = 0; swap = null; lastTurn = now; }
+        if (t >= OUT_MS + GAP_MS + IN_MS) { scatter = 0; swap = null; }
       }
     }
   }
 
-  // p = viewport heights scrolled into the hero. Frame keys along p; per-frame values read off the Figma frames.
-  // F: intro frames 1–8 (6899:1859) · settled orbit until O[0] · O: outro frames 1–5 (아웃 6906:4348).
-  // At O[4] the pin releases and the stage scrolls away with the page — 아웃 frame 6, statue base above 주요 수업들.
-  const F = [0, .4, .8, 1.2, 1.8, 2.28, 2.76, 3.2];
-  const O = [4, 4.4, 4.8, 5.2, 5.6];
-  const RUN = O[4]; // viewport heights of scroll through the story
+  // p of each Figma frame (viewport heights of scroll). RUN, where the pin lets go, is frame 20 plus the stretch in which
+  // the PHI OS logo scrolls up until 주요 수업들 reaches the bottom of the screen; it depends on the viewport, so layout() sets it.
+  // paced slower than toss.im on request (4× the first cut): every scene holds a good while and each change takes a couple of screens
+  const K = { f1: 1.6, f2: 3.6, f4: 6, f5: 8, f6: 8.8, f7: 9.6, f8: 11, f9: 12.4, f10: 13.8, f11: 15.2, f12: 16.6, f13: 18,
+              f14: 20.8, f15: 22.4, f16: 25.6, f17: 27, f18: 28.8, f19: 31.2, f20: 32.8 };
+  const PR_OUT = K.f13 + 1.4; // principles held, then gone as the cards start up
+  let RUN = K.f20 + .3;
   let S = 1, vh = innerHeight, portrait = false, sp = 0, clock = 0, lastNow = null, lastY = scrollY;
+
+  /* statue box (1800×2000 render px, mirrored) per pose: [left, top, scale] in design px, fitted so the head lands where each Figma frame has it.
+     A = Hero/1 (+30°), B = frame 2 (+7.5°), C = frames 4–13, D = 14–17, E = 18–19 (all −27°) */
+  // head centre / top in the mirrored renders ≈ (1060, 114) at +18°, (1048, 116) at +7.5°, (998, 120) at −27°
+  // A follows the user's reference screenshot (head centre x ≈ 1430, top ≈ 251) rather than Figma Hero
+  const POSE = { A: [31.5, 100.5, 1.32], B: [36.6, 86.9, 1.32], C: [369.4, 397.3, .5948], D: [441.4, 103.5, .5948], E: [-247.7, -12.4, 1.17] };
+  const POSE_KEYS = [K.f1, K.f2, K.f4, K.f13, K.f14, K.f17, K.f18];
+  const POSE_SEQ = ['A', 'B', 'C', 'C', 'D', 'D', 'E'];
+  const TURN_B = (30 - 7.5) / 3; // sequence index of the frame-2 pose
+
+  /* principles (Figma 7013:1033…1220): five 538-wide windows onto Group 35, a stack of number + word blocks 496.1 wide.
+     [left, top, height, where the number block starts in the group, where the word block starts] — the group stacks
+     Active · Dissatisfaction · Unpacking · Discovering · Sharing, so NO.2/NO.4 take their words from each other's block to follow the card order */
+  const PR = [
+    [90, 72, 193, -22, -22],
+    [90, 440, 193, 190, 679.7],
+    [691, 160, 260, 401.5, 401.5],
+    [1292, 72, 193, 679.7, 190],
+    [1292, 440, 193, 891.4, 891.4]
+  ];
+  const PR_NAMES = ['Active Learning', 'Discovering Unknowns', 'Unpacking Invisible Decisions', 'Dissatisfaction Sensor', 'Learning by Sharing'];
+  prBox.innerHTML = PR.map(([l, t, h, yn, yw], i) =>
+    // the asset is the 2× export (992.2 wide, Figma 7009:256), so the viewBox runs in 2× units
+    `<svg class="pr-w" role="listitem" aria-label="No.${i + 1} ${PR_NAMES[i]}" style="left:${l + 21}px;top:${t}px" width="496.1" height="${h}" viewBox="0 0 992.2 ${h * 2}">` +
+    `<use href="assets/five-principles.svg#numbers" y="${-yn * 2}"/><use href="assets/five-principles.svg#principles" y="${-yw * 2}"/></svg>`).join('');
+  const prEls = [...prBox.children];
+  const PR_FR = [K.f7, K.f8, K.f9, K.f10, K.f11, K.f12, K.f13];
+
+  // cards rise from below, front ones first (frame 14 offsets per FRAME8 card), then lift away together (frame 17)
+  const RISE14 = [880.9, 881.2, 552.1, 122, 348.7];
+  const dys = [0, 0, 0, 0, 0];
 
   function layout() {
     const vw = document.documentElement.clientWidth; vh = innerHeight;
@@ -1089,6 +1136,8 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     S = portrait ? Math.min(vw / 1150, (vh * .8) / 1080) : Math.min(vw / 1920, vh / 1080);
     const left = (vw - 1920 * S) / 2, top = (vh - 1080 * S) / 2;
     canvas.style.transform = ui.style.transform = `translate(${left}px, ${top}px) scale(${S})`;
+    // frame 21: 주요 수업들 starts 518 design px under the logo's top (321) — scroll the logo until that point meets the bottom edge
+    RUN = K.f20 + Math.max(.05, (vh - top - (321 + 518) * S) / vh);
     hero.style.height = (vh * (1 + RUN)) + 'px';
   }
   const fade = (el, a, dy) => { el.style.opacity = a.toFixed(3); el.style.transform = `translateY(${((1 - a) * dy).toFixed(2)}px)`; };
@@ -1096,32 +1145,54 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   function render(p, ts) {
     // entrance on load (seconds), multiplied by the scroll fade
     const enter = (a, b) => reduce ? 1 : ease(seg(ts, a, b));
-    const copyA = kf(F.slice(0, 4), [1, .45, .12, 0], p);
+    // copy: full through frame 1, dim at 2, gone by 4 (Figma Hero 6971:3281, guide lines removed)
+    const copyA = kf([K.f1, K.f2, K.f4], [1, .4, 0], p);
     fade(heroTitle, enter(.25, 1.1) * copyA, 18);
     bodyParas.forEach((el, i) => fade(el, enter(.5 + i * .3, 1.4 + i * .3) * copyA, 14));
     fade(facts, enter(1, 1.9) * copyA, 20);
     ui.style.visibility = copyA <= .002 ? 'hidden' : '';
 
-    // statue: frames 1–2 hold, 3–4 drift left, 5 grows to its centred size
+    // statue: pose by frame, turning from +30° to −27° between frames 1 and 4; it fades under the logo (19) and is gone at 20
     const sIn = enter(0, 1.3);
-    const x = kf(F.slice(0, 5), [470, 470, 286, 62, -73], p) + (1 - sIn) * 80;
-    // outro: holds while the cards lift away, then rises 290 → 1177 (아웃 frames 4–5) to bring its base up
-    const y = kf(F.slice(0, 5), [-210, -210, -210, -210, -280], p) + kf(O, [0, 0, 0, -290, -1177], p);
-    const sc = kf(F.slice(0, 5), [1, 1, 1, 1, 1973 / 1858.6], p);
+    const pose = k => kf(POSE_KEYS, POSE_SEQ.map(n => POSE[n][k]), p);
+    const x = pose(0) + (1 - sIn) * 60, y = pose(1), sc = pose(2);
     statue.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
-    statue.style.opacity = (sIn * (portrait ? lerp(.4, 1, seg(p, F[1], F[3])) : 1)).toFixed(3);
+    const sA = sIn * kf([K.f18, K.f19, K.f20], [1, .1, 0], p) * (portrait ? lerp(.4, 1, seg(p, K.f1, K.f4)) : 1);
+    statue.style.opacity = sA.toFixed(3);
+    statue.style.visibility = sA <= .002 ? 'hidden' : '';
+    drawStatue(kf([K.f1, K.f2, K.f4], [SEQ_0, TURN_B, SEQ_N - 1], p));
 
-    // cards fall in as one group (frames 5–8); in the outro they lift away ahead of the statue (아웃 frames 2–5)
-    const dy = kf(F.slice(3), [-1300, -917, -393, -142, 0], p) + kf(O, [0, -262, -589, -1002, -1500], p);
-    const show = p > F[3] && p < O[4] - .02;
+    // FUNDAMENTALS OVER TOOLS: behind the head, slides to centre with the statue (2 → 4), fades 1 → .5 → .1 → 0 (4 → 7)
+    const fA = enter(.3, 1.3) * kf([K.f4, K.f5, K.f6, K.f7], [1, .5, .1, 0], p);
+    fot.style.transform = `translate3d(${kf([K.f2, K.f4], [958, 499], p).toFixed(2)}px, ${kf([K.f2, K.f4], [124, 173], p).toFixed(2)}px, 0)`;
+    fot.style.opacity = fA.toFixed(3);
+    fot.style.visibility = fA <= .002 ? 'hidden' : '';
+
+    // principles: each comes in at half (its frame) then full (the next), all fade together after frame 13
+    const prOut = kf([K.f13, PR_OUT], [1, 0], p);
+    prEls.forEach((el, i) => { el.style.opacity = (kf(PR_FR.slice(i, i + 3), [0, .5, 1], p) * prOut).toFixed(3); });
+
+    // cards: up from below the frame (13 → 14 → 15), out the top (16 → 17 → 18)
+    // one eased rise per card, the front ones setting off earlier so frame 14 shows them staggered; one eased lift out
+    for (let i = 0; i < dys.length; i++) {
+      const start = Math.max(PR_OUT - .1, K.f14 - (1 - RISE14[i] / 1300) * (K.f15 - K.f14) * 1.2);
+      dys[i] = kf([start, K.f15], [1300, 0], p) + kf([K.f16, K.f18], [0, -1500], p);
+    }
+    const show = p > PR_OUT - .1 && p < K.f18 - .02;
     wraps.forEach(w => { w.style.visibility = show ? '' : 'hidden'; });
-    drawDeck(dy);
+    drawDeck(dys);
 
-    // toggle: frame 7 at 60%, frame 8 full; gone by 아웃 frame 3
-    const tA = kf(F.slice(5), [0, .6, 1], p) * kf(O.slice(1, 3), [1, 0], p);
+    // toggle: in with the cards, half at the close-up (18), gone by 19
+    const tA = kf([PR_OUT - .1, K.f14], [0, 1], p) * kf([K.f17, K.f18, K.f19], [1, .5, 0], p);
     segBar.style.opacity = tA.toFixed(3);
     segBar.style.visibility = tA <= .01 ? 'hidden' : 'visible';
     segBar.style.transform = `translateX(-50%) translateY(${((1 - tA) * 16).toFixed(1)}px)`;
+
+    // PHI OPERATING SYSTEM: fades in over the statue (18 → 19), then scrolls up like the page (20 → release)
+    const lA = kf([K.f18, K.f19], [0, 1], p);
+    phios.style.opacity = lA.toFixed(3);
+    phios.style.visibility = lA <= .002 ? 'hidden' : '';
+    phios.style.transform = `translate3d(0, ${(-Math.max(0, p - K.f20) * vh / S).toFixed(2)}px, 0)`;
   }
 
   function tick(now) {
@@ -1129,10 +1200,10 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     const dt = lastNow == null ? 0 : Math.min(.1, (now - lastNow) / 1000); lastNow = now;
     clock += dt * (scrollY > 10 ? 4 : 1);
     const target = clamp((scrollY - hero.offsetTop) / vh, 0, RUN);
-    sp = reduce ? target : sp + (target - sp) * .14; // a little inertia on the scrub
+    sp = reduce ? target : sp + (target - sp) * .06; // heavy inertia on the scrub so a flick glides instead of jumping
     if (Math.abs(target - sp) < .002) sp = target;
     // the orbit turns only while the deck is fully landed and not yet lifting away
-    const settled = sp >= F[7] - .02 && sp <= O[0] + .02, inView = scrollY < hero.offsetTop + hero.offsetHeight;
+    const settled = sp >= K.f15 - .02 && sp <= K.f16 + .02, inView = scrollY < hero.offsetTop + hero.offsetHeight;
     animateDeck(now, settled, inView);
     render(sp, clock);
     const y = scrollY;
@@ -1183,7 +1254,7 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     ['Readable<br>Writing', '읽음직한 글쓰기', '김자유', [2, 2]],
     ['Self-<br>Introduction', '자기소개', '민구홍', [2, 3]],
     ['What If?', '만약에 ~라면?', 'Learning Design(LD) Team', [2, 4]],
-    ['What If?', '미감은 타고나는 감각일까?', 'Learning Design(LD) Team', null]
+    ['Aesthetic<br>Literacy', '미감은 타고나는 감각일까?', 'Learning Design(LD) Team', null]
   ];
   const cgGrid = document.getElementById('cgGrid');
   cgGrid.innerHTML = GRID.map(([t, ko, who, ref], i) => {
@@ -1199,47 +1270,50 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     openModal('m-course');
   }
   cgGrid.addEventListener('click', e => { const c = e.target.closest('button.cgc'); if (c) courseOpen(GRID[+c.dataset.i][3]); });
-  // classroom photo: the veil slides up from fully dark (pin start) to clear (pin end)
-  const cgPhoto = document.getElementById('cgPhoto'), cgVeil = document.getElementById('cgVeil');
+  // classroom photo: dark → light. t runs from the photo entering the viewport (0) to the end of its pin (1);
+  // the veil fades out over t .25 → .85 so the room is fully lit for the last stretch, and the image settles from 1.08 → 1
+  const cgPhoto = document.getElementById('cgPhoto'), cgVeil = document.getElementById('cgVeil'), cgImg = cgPhoto.querySelector('img');
   function cgLift() {
     // rect-based: offsetTop would be relative to the .band section, not the page
-    const r = cgPhoto.getBoundingClientRect(), run = r.height - innerHeight;
-    const t = clamp(-r.top / run);
-    cgVeil.style.transform = `translate3d(0, ${(-t * 100).toFixed(2)}%, 0)`;
+    const r = cgPhoto.getBoundingClientRect();
+    const t = clamp((innerHeight - r.top) / r.height);
+    const u = clamp((t - .25) / .6), e = u * u * (3 - 2 * u); // smoothstep
+    cgVeil.style.opacity = (1 - e).toFixed(3);
+    cgImg.style.transform = `scale(${(1.08 - .08 * e).toFixed(4)})`;
   }
   addEventListener('scroll', cgLift, { passive: true }); addEventListener('resize', cgLift); cgLift();
   // "역량과 태도" link: back up to the settled orbit in the hero
   document.getElementById('toCompetencies').addEventListener('click', e => {
-    e.preventDefault(); scrollTo({ top: hero.offsetTop + (F[7] + .3) * vh, behavior: 'smooth' });
+    e.preventDefault(); scrollTo({ top: hero.offsetTop + (K.f15 + .3) * vh, behavior: 'smooth' });
   });
 
-  /* ---------- 수업을 관통하는 접근 (Figma 6906:6568) ----------
-     Run (sticky stage): 0 → EXPAND  the rounded card grows to full screen (inset 160 → 0, radius 40 → 0, Figma frames 1 → 2 → 01)
-                         → +UI_IN    nav + copy fade in
-                         then STEP per item, 01 → 06. All lengths in viewport heights of scroll. */
-  const AP = [ // 01 copy: the Figma layer repeats the section intro, so the original 라이브데모 text is kept; 06 drops a stray trailing "주요"
-    ['라이브데모', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는 문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다."],
-    ['피어크리틱', '모든 코스에는 관찰 가능한 평가 기준, 즉 루브릭이 있습니다. 전문가는 매주 Learning Design팀과 학습자의 결과물을 리뷰하고, 루브릭 기반으로 주로 하는 실수 패턴을 정의합니다. 학습자는 매 세션 이 패턴을 기준으로 구체적인 피드백을 주고받습니다.'],
-    ['셀프피드백', 'Phi에는 별도의 평가 시스템이 없습니다. 하지만, 학습자 역시 전문가와 동일한 기준으로 자신의 작업을 판단할 수 있도록, 모든 코스에는 정교하게 설계된 루브릭이 있습니다. 시작 전과 진행 중 매주, 학습 목표를 어느 정도 달성했고 그 이유가 무엇인지 루브릭 기반으로 작성합니다. 코스가 끝난 뒤에는 시작 전과 후의 자신을 현재의 언어로 다시 평가합니다.'],
-    ['워크숍', '정해진 코스 외에도, 학기 중 학습자의 이해도를 높이는 워크숍이 열립니다. 주제는 다양하고, 매 기수 학습자들의 상태를 반영합니다. 예를 들어 Phi의 세션은 시연 위주라 능동적 관찰이 중요한데, 전문가의 암묵지를 분석하고 분해하는 법은 코스 밖 워크숍에서 따로 배웁니다.'],
-    ['공유회', '가장 잘 배우는 방법은 남에게 가르쳐보는 것입니다. 워크숍은 매회 정해진 인원만 들을 수 있습니다. 서로 다른 주제의 워크숍을 들은 동기들은 자연스럽게 배운 것을 나눕니다. 설명하는 사람은 자신이 이해하지 못한 부분을 발견하고, 듣는 사람은 놓친 주제를 얻으면서 자발적인 공유회가 일상적으로 일어납니다.'],
-    ['저널링', '매주 혹은 매일 배운 점이나 느낀 점 등을 4F(Fact/Feeling/Finding/Future Item)양식으로 회고합니다. 스스로 수업을 정리해보기도 하고, 동기의 저널링을 보면서 깨달음이나 동기를 얻기도 합니다. 쌓인 저널링은 학기별로 Phi만의 회고 방식을 담은 러닝 리포트로 정리해 드립니다.']
+  /* ---------- 수업을 관통하는 접근 (Figma 6906:6568, rev. 7013) ----------
+     Run (sticky stage): 0 → EXPAND  the rounded card grows to full screen (inset 160 → 0, radius 40 → 0)
+                         → +UI_IN    bottom shade, caption and arrows fade in
+                         then STEP per item, 01 → 06; the arrows scroll to the previous / next step. All lengths in viewport heights of scroll. */
+  const AP = [ // [title, copy, narrow caption]. 01: the Figma caption repeats the section intro, so the original 라이브데모 text stays
+    ['Live Demo', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는 문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다.", true],
+    ['Peer Critique', '모든 코스에는 관찰 가능한 평가 기준, 즉 루브릭이 있습니다. 전문가는 매주 Learning Design팀과 학습자의 결과물을 리뷰하고, 루브릭 기반으로 주로 하는 실수 패턴을 정의합니다. 학습자는 매 세션 이 패턴을 기준으로 구체적인 피드백을 주고받습니다.'],
+    ['Self-Feedback', 'Phi에는 별도의 평가 시스템이 없습니다. 하지만, 학습자 역시 전문가와 동일한 기준으로 자신의 작업을 판단할 수 있도록, 모든 코스에는 정교하게 설계된 루브릭이 있습니다.<br>시작 전과 진행 중 매주, 학습 목표를 어느 정도 달성했고 그 이유가 무엇인지 루브릭 기반으로 작성합니다. 코스가 끝난 뒤에는 시작 전과 후의 자신을 현재의 언어로 다시 평가합니다.'],
+    ['Workshop', '정해진 코스 외에도, 학기 중 학습자의 이해도를 높이는 워크숍이 열립니다. 주제는 다양하고, 매 기수 학습자들의 상태를 반영합니다. 예를 들어 Phi의 세션은 시연 위주라 능동적 관찰이 중요한데, 전문가의 암묵지를 분석하고 분해하는 법은 코스 밖 워크숍에서 따로 배웁니다.'],
+    ['Sharing Session', '가장 잘 배우는 방법은 남에게 가르쳐보는 것입니다. 워크숍은 매회 정해진 인원만 들을 수 있습니다. 서로 다른 주제의 워크숍을 들은 동기들은 자연스럽게 배운 것을 나눕니다. 설명하는 사람은 자신이 이해하지 못한 부분을 발견하고, 듣는 사람은 놓친 주제를 얻으면서 자발적인 공유회가 일상적으로 일어납니다.'],
+    ['Journaling', '매주 혹은 매일 배운 점이나 느낀 점 등을 4F(Fact/Feeling/Finding/Future Item)양식으로 회고합니다. 스스로 수업을 정리해보기도 하고, 동기의 저널링을 보면서 깨달음이나 동기를 얻기도 합니다. 쌓인 저널링은 학기별로 Phi만의 회고 방식을 담은 러닝 리포트로 정리해 드립니다.']
   ];
   const ap2Run = document.getElementById('ap2Run'), ap2Card = document.getElementById('ap2Card');
-  const ap2Imgs = document.getElementById('ap2Imgs'), ap2Nav = document.getElementById('ap2Nav'), ap2Copy = document.getElementById('ap2Copy');
+  const ap2Imgs = document.getElementById('ap2Imgs'), ap2Copy = document.getElementById('ap2Copy');
+  const ap2Prev = document.getElementById('ap2Prev'), ap2Next = document.getElementById('ap2Next');
   ap2Imgs.innerHTML = AP.map((_, i) => `<img src="assets/ap-${i + 1}.webp" alt=""${i ? ' loading="lazy"' : ''}${i === 0 ? ' class="on"' : ''}>`).join('');
-  ap2Nav.innerHTML = AP.map(([t], i) => `<li><button type="button" data-i="${i}" aria-label="${String(i + 1).padStart(2, '0')} ${t}"${i === 0 ? ' aria-current="true"' : ''}></button></li>`).join('');
-  ap2Copy.innerHTML = AP.map(([t, d], i) => `<div class="ap2-item${i === 0 ? ' on' : ''}"><h3><span>${String(i + 1).padStart(2, '0')}</span>${t}</h3><p>${d}</p></div>`).join('');
-  const ap2ImgEls = [...ap2Imgs.children], ap2Btns = [...ap2Nav.querySelectorAll('button')], ap2Items = [...ap2Copy.children];
-  const AP_EXPAND = .7, AP_UI = .15, AP_STEP = .75;
+  ap2Copy.innerHTML = AP.map(([t, d, narrow], i) => `<div class="ap2-item${narrow ? ' narrow' : ''}${i === 0 ? ' on' : ''}" aria-hidden="${i !== 0}"><h3>${t}</h3><p>${d}</p></div>`).join('');
+  const ap2ImgEls = [...ap2Imgs.children], ap2Items = [...ap2Copy.children];
+  const AP_EXPAND = 2.8, AP_UI = .6, AP_STEP = 3;
   let ap2Idx = 0;
   const ap2Top = () => ap2Run.getBoundingClientRect().top + scrollY;
   function ap2Layout() { ap2Run.style.height = (innerHeight * (1 + AP_EXPAND + AP_UI + AP_STEP * AP.length)) + 'px'; }
   function ap2Set(i) {
+    ap2Prev.disabled = i === 0; ap2Next.disabled = i === AP.length - 1;
     if (i === ap2Idx) return; ap2Idx = i;
     ap2ImgEls.forEach((el, k) => el.classList.toggle('on', k === i));
-    ap2Items.forEach((el, k) => el.classList.toggle('on', k === i));
-    ap2Btns.forEach((b, k) => k === i ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'));
+    ap2Items.forEach((el, k) => { el.classList.toggle('on', k === i); el.setAttribute('aria-hidden', k !== i); });
   }
   function ap2Scroll() {
     const vh = innerHeight, u = (scrollY - ap2Top()) / vh; // viewport heights into the run
@@ -1252,9 +1326,9 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     ap2Card.style.setProperty('--uiv', ui > .01 ? 'visible' : 'hidden');
     ap2Set(Math.max(0, Math.min(AP.length - 1, Math.floor((u - AP_EXPAND - AP_UI) / AP_STEP))));
   }
-  const ap2Go = i => scrollTo({ top: ap2Top() + (AP_EXPAND + AP_UI + AP_STEP * i + .05) * innerHeight, behavior: 'smooth' });
-  ap2Btns.forEach((b, i) => b.addEventListener('click', () => ap2Go(i)));
-  document.getElementById('ap2Down').addEventListener('click', () => ap2Go(0));
+  const ap2Go = i => scrollTo({ top: ap2Top() + (AP_EXPAND + AP_UI + AP_STEP * clamp(i, 0, AP.length - 1) + .05) * innerHeight, behavior: 'smooth' });
+  ap2Prev.addEventListener('click', () => ap2Go(ap2Idx - 1));
+  ap2Next.addEventListener('click', () => ap2Go(ap2Idx + 1));
   addEventListener('scroll', ap2Scroll, { passive: true });
   addEventListener('resize', () => { ap2Layout(); ap2Scroll(); });
   ap2Layout(); ap2Scroll();
