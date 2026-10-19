@@ -1075,7 +1075,7 @@ button.cgc:hover .th { opacity: .28; }
      Figma frame are extended past the screen's edge; the ones that end on a square or a label stay put relative to it.
      ldPlace holds the re-placing for each piece; ldFit() runs it from layout() */
   const ldPlace = [];
-  let LDK = { kx: 1, ky: 1, ko: 1 };
+  let LDK = { kx: 1, ky: 1, ko: 1, ay: 540 };
   {
     const NS = 'http://www.w3.org/2000/svg', defs = document.createElementNS(NS, 'defs');
     ldSvg.appendChild(defs);
@@ -1086,7 +1086,7 @@ button.cgc:hover .th { opacity: .28; }
     };
     const mk = (tag, attrs) => { const el = document.createElementNS(NS, tag); for (const k in attrs) el.setAttribute(k, attrs[k]); return el; };
     const set = (el, attrs) => { for (const k in attrs) el.setAttribute(k, typeof attrs[k] === 'number' ? +attrs[k].toFixed(2) : attrs[k]); };
-    const X = x => 960 + (x - 960) * LDK.kx, Y = y => 540 + (y - 540) * LDK.ky;
+    const X = x => 960 + (x - 960) * LDK.kx, Y = y => LDK.ay + (y - LDK.ay) * LDK.ky; // ay: the edge the canvas hangs from
     LD_IMG.forEach(([f, x, y, w, h, cl, op]) => {
       const el = mk('image', { href: `assets/loading/${f}.webp`, preserveAspectRatio: 'none' });
       ldPlace.push(() => { const k = LDK.ko, cx = X(x + w / 2), cy = Y(y + h / 2); set(el, { x: cx - w * k / 2, y: cy - h * k / 2, width: w * k, height: h * k }); });
@@ -1128,9 +1128,9 @@ button.cgc:hover .th { opacity: .28; }
       add(el, cl, op);
     });
   }
-  function ldFit(vw, vh, S) {
+  function ldFit(vw, vh, S, ay) {
     const kx = Math.max(1, vw / S / 1920), ky = Math.max(1, vh / S / 1080);
-    LDK = { kx, ky, ko: Math.min(1.6, Math.sqrt(kx * ky)) };
+    LDK = { kx, ky, ko: Math.min(1.6, Math.sqrt(kx * ky)), ay };
     ldPlace.forEach(f => f());
   }
   // an entrance: opacity on a soft S-curve (no pop at the start), the rise on a long ease-out
@@ -1385,9 +1385,10 @@ button.cgc:hover .th { opacity: .28; }
   // the PHI OS logo scrolls up until 주요 수업들 reaches the bottom of the screen; it depends on the viewport, so layout() sets it.
   // paced slower than toss.im on request (4× the first cut): every scene holds a good while and each change takes a couple of screens
   // 10/19: the logo fade → five principles → cards stretch (frames 4 → 15) cut by ~40 % on request ('스크롤이 좀 길다')
-  const K = { f1: 1.6, f2: 3.6, f4: 6, f5: 7.2, f6: 7.8, f7: 8.4, f8: 9.4, f9: 10.4, f10: 11.4, f11: 12.4, f12: 13.4, f13: 14.4,
-              f14: 16.6, f15: 17.8, f16: 21, f17: 22.4, f18: 24.2, f19: 26.6, f20: 28.2 };
-  const PR_OUT = K.f13 + 1.4; // principles held, then gone as the cards start up
+  // shortened again the same evening ('좀 더 줄여줘'): the principles now 0.7 screen apart, the cards rise over 2.8
+  const K = { f1: 1.6, f2: 3.6, f4: 6, f5: 6.6, f6: 7, f7: 7.4, f8: 8.1, f9: 8.8, f10: 9.5, f11: 10.2, f12: 10.9, f13: 11.6,
+              f14: 13.4, f15: 14.4, f16: 17.6, f17: 19, f18: 20.8, f19: 23.2, f20: 24.8 };
+  const PR_OUT = K.f13 + 1; // principles held, then gone as the cards start up
   let RUN = K.f20 + .3;
   // PHI OS holds a beat after frame 20, then rises with the raw scroll (not the eased scrub): when the pin lets go the page's own
   // scroll takes over at the same speed, so the logo never jumps ahead as the eased value catches up
@@ -1435,9 +1436,12 @@ button.cgc:hover .th { opacity: .28; }
     stage.classList.toggle('portrait', portrait);
     // portrait: frame the centre ~1150 design px so the statue and most of the deck stay on screen
     S = portrait ? Math.min(vw / 1150, (vh * .8) / 1080) : Math.min(vw / 1920, vh / 1080);
-    const left = (vw - 1920 * S) / 2, top = (vh - 1080 * S) / 2;
+    // a screen taller than 16:9 hangs the design from the top (as in Figma, right under the nav) and lets the bust run on below,
+    // instead of centring it with an empty band above; wider screens and portrait phones stay centred
+    const hang = !portrait && vh > 1080 * S + 1;
+    const left = (vw - 1920 * S) / 2, top = hang ? 0 : (vh - 1080 * S) / 2;
     canvas.style.transform = ui.style.transform = `translate(${left}px, ${top}px) scale(${S})`;
-    ldFit(vw, vh, S); // loading decorations reach the screen's edges; the bust and logo keep the fitted scale
+    ldFit(vw, vh, S, hang ? 0 : 540); // loading decorations reach the screen's edges; the bust and logo keep the fitted scale
     // narrow (portrait) screens see only the middle vw/S of the design: slide the first screen's bust + logo left until their
     // right edge (logo 1819, bust 1789 design px) is inside, so neither is cut off (rule: no cut-off ends inside the screen)
     AX = portrait ? Math.min(0, 960 + vw / S / 2 - 1835) : 0;
