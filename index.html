@@ -1431,6 +1431,7 @@ button.cgc:hover .th { opacity: .28; }
   const K = { f1: 1.6, f2: 3.6, f4: 6, f5: 6.6, f6: 7, f7: 7.4, f8: 8.1, f9: 8.8, f10: 9.5, f11: 10.2, f12: 10.9, f13: 11.6,
               f14: 13.8, f15: 15, f16: 18.2, f17: 19.6, f18: 21.4, f19: 23.8, f20: 25.4 }; // cards' rise (13 → 15) back to the 1st cut, on request
   const PR_OUT = K.f13 + 1.4; // principles held, then gone as the cards start up
+  const OS_IN = K.f17 + .9; // no close-up any more: as soon as the cards are out, the bust darkens and PHI OS fades in (→ 19)
   let RUN = K.f20 + .3;
   // PHI OS holds a beat after frame 20, then rises with the raw scroll (not the eased scrub): when the pin lets go the page's own
   // scroll takes over at the same speed, so the logo never jumps ahead as the eased value catches up
@@ -1447,8 +1448,9 @@ button.cgc:hover .th { opacity: .28; }
   const POSE = { A: [903.5, 245.6, 886 / 1800], B: [36.6, 86.9, 1.32], C: [369.4, 397.3, .5948], D: [441.4, 103.5, .5948], E: [-247.7, -12.4, 1.17] };
   // 10/19: no zoom-in between the first screen and frame 4 (the frame-2 close pose B is skipped): the bust turns to face the
   // viewer while it slides to the centre and grows only to frame 4's size
+  // 10/19 (later): no close-up before PHI OS either — the bust holds frame 14–17's pose D and just darkens under the logo (E unused)
   const POSE_KEYS = [K.f1, K.f4, K.f13, K.f14, K.f17, K.f18];
-  const POSE_SEQ = ['A', 'C', 'C', 'D', 'D', 'E'];
+  const POSE_SEQ = ['A', 'C', 'C', 'D', 'D', 'D'];
 
   /* principles (Figma frame 13, 7013:1197): five windows onto Group 35, a stack of number + word blocks 496.1 wide, each showing one
      number and one word. [left, top, height, where the number block starts in the group, where the word block starts]. They come in
@@ -1520,7 +1522,7 @@ button.cgc:hover .th { opacity: .28; }
     // (244 box px at the first-screen scale); it goes once the turn starts
     const sh = kf([K.f1, K.f2], [.56, 0], p);
     statue.style.filter = sh > .002 ? `drop-shadow(0 0 244px rgba(0,0,0,${sh.toFixed(3)}))` : 'none';
-    const sA = lIn * kf([K.f18, K.f19, K.f20], [1, .1, 0], p) * (portrait ? lerp(1, lerp(.4, 1, seg(p, K.f1, K.f4)), hT) : 1);
+    const sA = lIn * kf([OS_IN, K.f19, K.f20], [1, .1, 0], p) * (portrait ? lerp(1, lerp(.4, 1, seg(p, K.f1, K.f4)), hT) : 1);
     statue.style.opacity = sA.toFixed(3);
     statue.style.visibility = sA <= .002 ? 'hidden' : '';
     drawStatue(kf([K.f1, K.f4], [SEQ_0, SEQ_N - 1], p));
@@ -1555,8 +1557,8 @@ button.cgc:hover .th { opacity: .28; }
     segBar.style.visibility = tAf <= .01 ? 'hidden' : 'visible';
     segBar.style.transform = `translateX(-50%) translateY(${((1 - tAf) * 16).toFixed(1)}px)`;
 
-    // PHI OPERATING SYSTEM: fades in over the statue (18 → 19), then scrolls up like the page (20 → release)
-    const lA = kf([K.f18, K.f19], [0, 1], p);
+    // PHI OPERATING SYSTEM: fades in over the statue (OS_IN → 19), then scrolls up like the page (20 → release)
+    const lA = kf([OS_IN, K.f19], [0, 1], p);
     phios.style.opacity = lA.toFixed(3);
     phios.style.visibility = lA <= .002 ? 'hidden' : '';
     phios.style.transform = `translate3d(0, ${(-Math.max(0, rawP - K.f20 - LOGO_HOLD) * vh / S).toFixed(2)}px, 0)`;
