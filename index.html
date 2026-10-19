@@ -1428,14 +1428,17 @@ button.cgc:hover .th { opacity: .28; }
   // paced slower than toss.im on request (4× the first cut): every scene holds a good while and each change takes a couple of screens
   // 10/19: the logo fade → five principles → cards stretch (frames 4 → 15) cut by ~40 % on request ('스크롤이 좀 길다')
   // shortened again the same evening ('좀 더 줄여줘'): the principles now 0.7 screen apart, the cards rise over 2.8
-  const K = { f1: 1.6, f2: 3.6, f4: 6, f5: 6.6, f6: 7, f7: 7.4, f8: 8.1, f9: 8.8, f10: 9.5, f11: 10.2, f12: 10.9, f13: 11.6,
-              f14: 13.8, f15: 15, f16: 18.2, f17: 19.6, f18: 21.4, f19: 23.8, f20: 25.4 }; // cards' rise (13 → 15) back to the 1st cut, on request
-  const PR_OUT = K.f13 + 1.4; // principles held, then gone as the cards start up
-  const OS_IN = K.f17 + .9; // no close-up any more: as soon as the cards are out, the bust darkens and PHI OS fades in (→ 19)
+  // 10/20: the whole run cut from ~26 to ~10 screens ('스크롤이 너무 길어', esp. the cards coming up): about one screen per change,
+  // half a screen to a screen per hold — first screen .6, turn 1.5, FOT out .7, principles .35 apart, cards up .8 and held 1.2,
+  // cards out 1, logo 1
+  const K = { f1: .6, f2: 1.3, f4: 2.1, f5: 2.4, f6: 2.6, f7: 2.8, f8: 3.15, f9: 3.5, f10: 3.85, f11: 4.2, f12: 4.55, f13: 4.9,
+              f14: 5.7, f15: 6.5, f16: 7.7, f17: 8.1, f18: 8.7, f19: 9.4, f20: 9.8 };
+  const PR_OUT = K.f13 + .5; // principles held, then gone as the cards start up
+  const OS_IN = K.f17 + .3; // no close-up any more: as soon as the cards are out, the bust darkens and PHI OS fades in (→ 19)
   let RUN = K.f20 + .3;
   // PHI OS holds a beat after frame 20, then rises with the raw scroll (not the eased scrub): when the pin lets go the page's own
   // scroll takes over at the same speed, so the logo never jumps ahead as the eased value catches up
-  const LOGO_HOLD = .8;
+  const LOGO_HOLD = .3;
   let rawP = 0;
   let AX = 0; // first-screen shift for narrow screens (layout())
   let S = 1, vh = innerHeight, portrait = false, sp = 0, clock = 0, lastNow = null, lastY = scrollY;
@@ -1588,12 +1591,12 @@ button.cgc:hover .th { opacity: .28; }
   layout(); requestAnimationFrame(tick);
 
   /* ---------- Eased wheel scroll (on request: a hard flick shouldn't throw the page) ----------
-     Mouse wheel / trackpad input moves a target instead of the page: each notch counts for 55 %, the target never runs more than
+     Mouse wheel / trackpad input moves a target instead of the page: each notch counts for 90 %, the target never runs more than
      0.9 screens ahead of where the page is, and the page glides toward it (8 % of the gap per frame). So a big flick and a gentle
      one differ in how long the page keeps gliding, not in a sudden jump. Keyboard, scrollbar, anchor and scripted scrolls are
      left native (the glide re-syncs to them); touch screens keep their own scrolling. Off while loading or a card is focused. */
   if (!reduce && matchMedia('(pointer: fine)').matches) {
-    const WHEEL_K = .55, LEAD = .9, EASE = .08;
+    const WHEEL_K = .9, LEAD = .9, EASE = .08; // 10/20: .55 → .9 with the shorter run
     let tgt = scrollY, cur = scrollY, own = -1, raf = 0;
     const maxY = () => document.documentElement.scrollHeight - innerHeight;
     const step = () => {
