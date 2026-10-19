@@ -1517,7 +1517,7 @@ button.cgc:hover .th { opacity: .28; }
     if (ldReady) clock += dt * (scrollY > 10 || ldHurry ? 4 : 1);
     if (!ldDone && clock >= LD.hero[1]) ldDone = true;
     const target = clamp((scrollY - hero.offsetTop) / vh, 0, RUN); rawP = target;
-    sp = reduce ? target : sp + (target - sp) * .06; // heavy inertia on the scrub so a flick glides instead of jumping
+    sp = reduce ? target : sp + (target - sp) * .09; // inertia on the scrub (on top of the page's eased wheel scroll below)
     if (Math.abs(target - sp) < .002) sp = target;
     // the orbit turns only while the deck is fully landed and not yet lifting away
     const settled = sp >= K.f15 - .02 && sp <= K.f16 + .02, inView = scrollY < hero.offsetTop + hero.offsetHeight;
@@ -1530,6 +1530,36 @@ button.cgc:hover .th { opacity: .28; }
   addEventListener('resize', layout);
   addEventListener('load', layout);
   layout(); requestAnimationFrame(tick);
+
+  /* ---------- Eased wheel scroll (on request: a hard flick shouldn't throw the page) ----------
+     Mouse wheel / trackpad input moves a target instead of the page: each notch counts for 55 %, the target never runs more than
+     0.9 screens ahead of where the page is, and the page glides toward it (8 % of the gap per frame). So a big flick and a gentle
+     one differ in how long the page keeps gliding, not in a sudden jump. Keyboard, scrollbar, anchor and scripted scrolls are
+     left native (the glide re-syncs to them); touch screens keep their own scrolling. Off while loading or a card is focused. */
+  if (!reduce && matchMedia('(pointer: fine)').matches) {
+    const WHEEL_K = .55, LEAD = .9, EASE = .08;
+    let tgt = scrollY, cur = scrollY, own = -1, raf = 0;
+    const maxY = () => document.documentElement.scrollHeight - innerHeight;
+    const step = () => {
+      raf = 0;
+      cur += (tgt - cur) * EASE;
+      if (Math.abs(tgt - cur) < .5) cur = tgt;
+      own = Math.round(cur); scrollTo(0, cur);
+      if (cur !== tgt) raf = requestAnimationFrame(step);
+    };
+    addEventListener('wheel', e => {
+      if (e.ctrlKey || e.defaultPrevented || !ldDone || dkOpen) return; // pinch-zoom; the loading hold and the card focus own the wheel
+      if (e.target.closest && e.target.closest('textarea, select, [data-native-scroll]')) return;
+      e.preventDefault();
+      const d = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaMode === 2 ? e.deltaY * innerHeight : e.deltaY;
+      if (!raf) cur = scrollY; // start from where the page really is
+      tgt = clamp(tgt + d * WHEEL_K, Math.max(0, cur - LEAD * innerHeight), Math.min(maxY(), cur + LEAD * innerHeight));
+      if (!raf) raf = requestAnimationFrame(step);
+    }, { passive: false });
+    addEventListener('scroll', () => { // someone else scrolled (keys, scrollbar, scrollTo): follow them
+      if (Math.abs(scrollY - own) > 2) { tgt = cur = scrollY; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+    }, { passive: true });
+  }
 
   /* ---------- Content reveal (cards rise in as their band enters) ---------- */
   const rv = document.querySelectorAll('.term, .ps2-item');
