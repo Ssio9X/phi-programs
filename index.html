@@ -1659,7 +1659,7 @@ button.cgc:hover .th { opacity: .28; }
   ap2Imgs.innerHTML = AP.map((_, i) => `<img src="assets/ap-${i + 1}.webp" alt=""${i ? ' loading="lazy"' : ''}${i === 0 ? ' class="on"' : ''}>`).join('');
   ap2Copy.innerHTML = AP.map(([t, d, narrow], i) => `<div class="ap2-item${narrow ? ' narrow' : ''}${i === 0 ? ' on' : ''}" aria-hidden="${i !== 0}"><h3>${t}</h3><p>${d}</p></div>`).join('');
   const ap2ImgEls = [...ap2Imgs.children], ap2Items = [...ap2Copy.children];
-  const AP_EXPAND = 2.8, AP_UI = .6, AP_STEP = 3;
+  const AP_EXPAND = 2.4, AP_UI = .5, AP_STEP = 2.4; // 10/19: trimmed ~20 % on request (was 2.8 · .6 · 3)
   let ap2Idx = 0;
   const ap2Top = () => ap2Run.getBoundingClientRect().top + scrollY;
   function ap2Layout() { ap2Run.style.height = (innerHeight * (1 + AP_EXPAND + AP_UI + AP_STEP * AP.length)) + 'px'; }
