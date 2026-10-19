@@ -76,6 +76,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .nav .nb2 { width: 0; height: 0; visibility: hidden; }
 .nav .bar { position: relative; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; }
 .nav .mark { display: block; width: 32px; height: 32px; }
+.nav .mark { position: relative; }
+.nav .mark .crop { position: absolute; inset: 0; } /* the static image is a sheet (mark + wordmark): clipped to the mark */
 .nav .mark img { height: 187.39%; left: -33.79%; top: -44.07%; width: 333.13%; }
 /* the spinning mark (phi-logo-rotation-HD.webm, one turn): a 38.4 px canvas centred on the 32 px slot so the rings at rest
    match the static mark's size, and the wider poses mid-turn have room; the static image shows until the frames load */
@@ -498,7 +500,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: #eee; padding: 0 0
 .cgc .m b { font-weight: 700; }
 button.cgc { cursor: pointer; }
 button.cgc:hover .th { opacity: .28; }
-.cg-photo { --lift: 4; position: relative; margin-top: 409px; height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
+.cg-photo { --lift: 2.5; position: relative; margin-top: 160px; height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
 .cg-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; }
 /* dark → light: a solid #0d0d0d veil (same as the section, so the photo arrives unseen) fades out while the room eases back into frame; JS drives --o and the image scale */
@@ -712,7 +714,7 @@ button.cgc:hover .th { opacity: .28; }
   <nav class="nav" id="nav" aria-label="주요 메뉴">
     <div class="goo" aria-hidden="true"><span class="nb1"></span><span class="nb2" id="navDrop"></span></div>
     <div class="bar">
-      <a class="mark crop" href="#top" aria-label="Phi Institute of Design"><img src="assets/logo-mark.webp" alt=""></a>
+      <a class="mark" href="#top" aria-label="Phi Institute of Design"><span class="crop"><img src="assets/logo-mark.webp" alt=""></span></a>
       <button class="tog" id="navTog" type="button" aria-expanded="false" aria-controls="navMenu" aria-label="메뉴 열기"><i></i><i></i><i></i></button>
     </div>
     <div class="menu" id="navMenu">
@@ -974,10 +976,11 @@ button.cgc:hover .th { opacity: .28; }
      Motion: the frames are stations on one continuous path, not stops — positions and opacities run through them on monotone
      cubic splines (no overshoot, no halt at frames 2/3) under a single ease that starts from rest and glides out long.
      Clusters set off a few tens of ms apart, and the bust starts for the first screen while the reliefs are still leaving. */
-  const LD = { drift: [3, 6.4], hero: [5.2, 7.6], copy: 6.3 }; // frame 1 holds ~1 s after the bust has settled
+  const LD = { drift: [5, 8.4], hero: [7.2, 9.6], copy: 8.3 }; // frame 1 holds ~1 s after the bust has settled
   // entrance, far to near: the measuring grid, then the reliefs from the smallest (farthest) to the largest, the logo, the bust last
-  const LD_IN = { grid: 0, fot: 1, bust: 1.2, fade: .9 }; // start (s) and fade length; relief starts below
-  const LD_IMG_IN = { 'ld-small': .25, 'ld-coin': .4, 'ld-br': .55, 'ld-tl': .7, 'ld-frieze': .85 }; // seconds after ready; the page unlocks at hero end
+  // entrances overlap and take their time (on request: '서서히 스무스하게'): 1.6 s each, starts spread over 2.5 s
+  const LD_IN = { grid: 0, fot: 2.1, bust: 2.5, fade: 1.6 }; // start (s) and fade length; relief starts below
+  const LD_IMG_IN = { 'ld-small': .5, 'ld-coin': .8, 'ld-br': 1.1, 'ld-tl': 1.4, 'ld-frieze': 1.7 }; // seconds after ready; the page unlocks at hero end
   const LD_LAG = { c: 0, fix: 0, t8: .04, g20: .04, tr: .06, l35: .08, tl: .1, br: .12, bl: .16 }; // per-cluster delay (s)
   const LD_OP_AT = [0, .38, .72, 1]; // where frames 1–4 sit along the drift, for opacity (positions use frames 1–3 at 0, .5, 1)
   // cubic-bezier(x1, y1, x2, y2) as a function of t (Newton steps, then bisection)
@@ -1073,7 +1076,7 @@ button.cgc:hover .th { opacity: .28; }
   {
     const NS = 'http://www.w3.org/2000/svg', defs = document.createElementNS(NS, 'defs');
     ldSvg.appendChild(defs);
-    const add = (el, cl, op, inAt = LD_IN.grid + LD_LAG[cl] * .5) => {
+    const add = (el, cl, op, inAt = LD_IN.grid + LD_LAG[cl] * 2) => {
       const g = document.createElementNS(NS, 'g'), d = LD_DRIFT[cl];
       g.appendChild(el); ldSvg.appendChild(g);
       ldItems.push([g, LD_LAG[cl], mono([0, .5, 1], [0, d[0][0], d[1][0]]), mono([0, .5, 1], [0, d[0][1], d[1][1]]), mono(LD_OP_AT, op || LD_OP[cl]), inAt]);
@@ -1127,15 +1130,18 @@ button.cgc:hover .th { opacity: .28; }
     LDK = { kx, ky, ko: Math.min(1.6, Math.sqrt(kx * ky)) };
     ldPlace.forEach(f => f());
   }
+  // an entrance: opacity on a soft S-curve (no pop at the start), the rise on a long ease-out
+  const easeFade = bez(.42, 0, .3, 1);
+  const appear = (ts, t0) => { const u = seg(ts, t0, t0 + LD_IN.fade); return [easeFade(u), easeEnter(u)]; };
   let ldT = -1;
   function drawLoader(ts, a) { // ts: seconds on the clock, a: overall fade (goes as the first screen arrives)
     if (a <= .002 || ts > LD.hero[1]) { if (ldT !== Infinity) { ldSvg.style.visibility = 'hidden'; ldT = Infinity; } return; }
     if (Math.abs(ts - ldT) < .001) return;
     ldT = ts; ldSvg.style.visibility = '';
     ldItems.forEach(([g, lag, fx, fy, fo, inAt]) => {
-      const inA = easeEnter(seg(ts, inAt, inAt + LD_IN.fade)); // fades in rising 20px
+      const [inA, inR] = appear(ts, inAt); // fades in rising 20px
       const sd = easeDrift(seg(ts, LD.drift[0] + lag, LD.drift[1] + lag));
-      g.setAttribute('transform', `translate(${(fx(sd) * LDK.ko).toFixed(2)} ${(fy(sd) * LDK.ko + (1 - inA) * 20).toFixed(2)})`);
+      g.setAttribute('transform', `translate(${(fx(sd) * LDK.ko).toFixed(2)} ${(fy(sd) * LDK.ko + (1 - inR) * 20).toFixed(2)})`);
       g.setAttribute('opacity', Math.max(0, fo(sd) * inA * a).toFixed(3));
     });
   }
@@ -1437,7 +1443,7 @@ button.cgc:hover .th { opacity: .28; }
   function render(p, ts) {
     // loading (seconds on the clock): pieces fade in, the frames play, then the bust and the logo move into the first screen
     // the logo, then the bust (nearest) fade in last, rising 24px
-    const fIn = reduce ? 1 : easeEnter(seg(ts, LD_IN.fot, LD_IN.fot + LD_IN.fade)), lIn = reduce ? 1 : easeEnter(seg(ts, LD_IN.bust, LD_IN.bust + LD_IN.fade));
+    const [fIn, fR] = reduce ? [1, 1] : appear(ts, LD_IN.fot), [lIn, lR] = reduce ? [1, 1] : appear(ts, LD_IN.bust);
     const hT = reduce ? 1 : easeMove(seg(ts, LD.hero[0], LD.hero[1]));
     if (!reduce) drawLoader(ts, 1 - hT); else drawLoader(Infinity, 0);
     ldBg.style.opacity = (1 - hT).toFixed(3);
@@ -1454,7 +1460,7 @@ button.cgc:hover .th { opacity: .28; }
     // statue: pose by frame, turning from +30° to −27° between frames 1 and 4; it fades under the logo (19) and is gone at 20
     const pose = k => lerp(LOAD[k], kf(POSE_KEYS, POSE_SEQ.map(n => POSE[n][k]), p), hT);
     const aOn = hT * (1 - seg(p, K.f1, K.f2)); // the narrow-screen shift holds on the first screen only
-    const x = pose(0) + AX * aOn, y = pose(1) + (1 - lIn) * 24, sc = pose(2);
+    const x = pose(0) + AX * aOn, y = pose(1) + (1 - lR) * 24, sc = pose(2);
     statue.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
     // loading + first screen (Figma 7541:548 / 7541:502): the bust casts 0 0 120px rgba(0,0,0,.56) around its silhouette
     // (244 box px at the first-screen scale); it goes once the turn starts
@@ -1468,7 +1474,7 @@ button.cgc:hover .th { opacity: .28; }
     // FUNDAMENTALS OVER TOOLS: behind the head, slides to centre with the statue (2 → 4), fades 1 → .5 → .1 → 0 (4 → 7)
     // first screen: 788 wide at (1030.9, 170.6) (Figma 7541:502); loading: 682 wide at (619, 173)
     const fA = fIn * kf([K.f4, K.f5, K.f6, K.f7], [1, .5, .1, 0], p);
-    const fx = lerp(619, kf([K.f1, K.f2, K.f4], [1030.9, 958, 499], p), hT) + AX * aOn, fy = lerp(173, kf([K.f1, K.f2, K.f4], [170.6, 124, 173], p), hT) + (1 - fIn) * 24;
+    const fx = lerp(619, kf([K.f1, K.f2, K.f4], [1030.9, 958, 499], p), hT) + AX * aOn, fy = lerp(173, kf([K.f1, K.f2, K.f4], [170.6, 124, 173], p), hT) + (1 - fR) * 24;
     const fs = lerp(682 / 922, kf([K.f1, K.f2], [788 / 922, 1], p), hT);
     fot.style.transform = `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, 0) scale(${fs.toFixed(4)})`;
     fot.style.opacity = fA.toFixed(3);
@@ -1592,7 +1598,8 @@ button.cgc:hover .th { opacity: .28; }
     const target = clamp((innerHeight - r.top) / r.height);
     cgT = cgT < 0 || reduce ? target : cgT + (target - cgT) * .06;
     if (Math.abs(target - cgT) < .0005) cgT = target;
-    const u = clamp((cgT - .25) / .6), e = u * u * (3 - 2 * u); // smoothstep
+    // the veil starts lifting as soon as the photo comes in (no black stretch) and is gone by 70 %
+    const u = clamp(cgT / .7), e = u * u * (3 - 2 * u); // smoothstep
     cgVeil.style.opacity = (1 - e).toFixed(3);
     cgImg.style.transform = `scale(${(1.08 - .08 * e).toFixed(4)})`;
     cgRaf = cgT !== target ? requestAnimationFrame(cgLift) : 0;
