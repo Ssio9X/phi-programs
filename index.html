@@ -1403,9 +1403,10 @@ button.cgc:hover .th { opacity: .28; }
   // A = first screen Figma 7541:502 (bust box 886×985 at 903.5, 245.6); LOAD = the loading frames 7541:548 (766.8×852 at 504.2, 238)
   const LOAD = [504.2, 238, 766.772 / 1800];
   const POSE = { A: [903.5, 245.6, 886 / 1800], B: [36.6, 86.9, 1.32], C: [369.4, 397.3, .5948], D: [441.4, 103.5, .5948], E: [-247.7, -12.4, 1.17] };
-  const POSE_KEYS = [K.f1, K.f2, K.f4, K.f13, K.f14, K.f17, K.f18];
-  const POSE_SEQ = ['A', 'B', 'C', 'C', 'D', 'D', 'E'];
-  const TURN_B = (30 - 7.5) / 3; // sequence index of the frame-2 pose
+  // 10/19: no zoom-in between the first screen and frame 4 (the frame-2 close pose B is skipped): the bust turns to face the
+  // viewer while it slides to the centre and grows only to frame 4's size
+  const POSE_KEYS = [K.f1, K.f4, K.f13, K.f14, K.f17, K.f18];
+  const POSE_SEQ = ['A', 'C', 'C', 'D', 'D', 'E'];
 
   /* principles (Figma frame 13, 7013:1197): five windows onto Group 35, a stack of number + word blocks 496.1 wide, each showing one
      number and one word. [left, top, height, where the number block starts in the group, where the word block starts]. They come in
@@ -1470,7 +1471,7 @@ button.cgc:hover .th { opacity: .28; }
 
     // statue: pose by frame, turning from +30° to −27° between frames 1 and 4; it fades under the logo (19) and is gone at 20
     const pose = k => lerp(LOAD[k], kf(POSE_KEYS, POSE_SEQ.map(n => POSE[n][k]), p), hT);
-    const aOn = hT * (1 - seg(p, K.f1, K.f2)); // the narrow-screen shift holds on the first screen only
+    const aOn = hT * (1 - seg(p, K.f1, K.f4)); // the narrow-screen shift holds on the first screen only
     const x = pose(0) + AX * aOn, y = pose(1) + (1 - lR) * 24, sc = pose(2);
     statue.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
     // loading + first screen (Figma 7541:548 / 7541:502): the bust casts 0 0 120px rgba(0,0,0,.56) around its silhouette
@@ -1480,13 +1481,13 @@ button.cgc:hover .th { opacity: .28; }
     const sA = lIn * kf([K.f18, K.f19, K.f20], [1, .1, 0], p) * (portrait ? lerp(1, lerp(.4, 1, seg(p, K.f1, K.f4)), hT) : 1);
     statue.style.opacity = sA.toFixed(3);
     statue.style.visibility = sA <= .002 ? 'hidden' : '';
-    drawStatue(kf([K.f1, K.f2, K.f4], [SEQ_0, TURN_B, SEQ_N - 1], p));
+    drawStatue(kf([K.f1, K.f4], [SEQ_0, SEQ_N - 1], p));
 
     // FUNDAMENTALS OVER TOOLS: behind the head, slides to centre with the statue (2 → 4), fades 1 → .5 → .1 → 0 (4 → 7)
     // first screen: 788 wide at (1030.9, 170.6) (Figma 7541:502); loading: 682 wide at (619, 173)
     const fA = fIn * kf([K.f4, K.f5, K.f6, K.f7], [1, .5, .1, 0], p);
-    const fx = lerp(619, kf([K.f1, K.f2, K.f4], [1030.9, 958, 499], p), hT) + AX * aOn, fy = lerp(173, kf([K.f1, K.f2, K.f4], [170.6, 124, 173], p), hT) + (1 - fR) * 24;
-    const fs = lerp(682 / 922, kf([K.f1, K.f2], [788 / 922, 1], p), hT);
+    const fx = lerp(619, kf([K.f1, K.f4], [1030.9, 499], p), hT) + AX * aOn, fy = lerp(173, kf([K.f1, K.f4], [170.6, 173], p), hT) + (1 - fR) * 24;
+    const fs = lerp(682 / 922, kf([K.f1, K.f4], [788 / 922, 1], p), hT);
     fot.style.transform = `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, 0) scale(${fs.toFixed(4)})`;
     fot.style.opacity = fA.toFixed(3);
     fot.style.visibility = fA <= .002 ? 'hidden' : '';
