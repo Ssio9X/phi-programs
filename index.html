@@ -83,31 +83,54 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* ---------- Hero (pinned scroll story, Figma 시나리오 7013:1724, frames Hero → 20) ----------
    Copy + FUNDAMENTALS OVER TOOLS over the turning statue → the five Phi OS principles → the card orbit → close-up → PHI OPERATING SYSTEM.
-   Settled: the deck orbits the statue; the toggle scatters it outward and gathers the other set in (Figma 6899:1909). */
+   Settled: the deck orbits the statue; the toggle flips the cards over to the other set, farthest first (Figma 7541:2600). */
 .hero { position: relative; background: #0d0d0d; }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; z-index: 0; }
 .canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
-.statue { position: absolute; z-index: 2; left: 0; top: 0; width: 1800px; height: 2000px; transform-origin: 0 0; will-change: transform, opacity; pointer-events: none; }
-.statue img, .statue canvas { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; transform: scaleX(-1); visibility: hidden; }
-/* the two poses the page rests on are plain 4500×5000 images (sharp at any size, no canvas limits); the canvas only shows the turn between them */
-.statue[data-show="a"] .st-a, .statue[data-show="b"] .st-b, .statue[data-show="seq"] canvas { visibility: visible; }
+.statue { position: absolute; z-index: 2; left: 0; top: 0; width: 1800px; height: 3700px; transform-origin: 0 0; will-change: transform, opacity; pointer-events: none; }
+.statue img, .statue canvas { position: absolute; left: 0; top: 0; width: 100%; max-width: none; transform: scaleX(-1); visibility: hidden; }
+/* the two poses the page rests on are plain 4500×5000 images (head to hips, sharp at any size, no canvas limits) with a lower
+   extension down to the plinth (1800 wide, from 1960 with a 40 px blend), so tall viewports never meet the render's bottom edge;
+   the canvas only shows the turn between them (frames down to 2900) */
+.statue .st-a, .statue .st-b { height: 2000px; }
+.statue .st-a2, .statue .st-b2 { top: 1960px; height: 1740px; }
+.statue canvas { height: 2900px; }
+.statue[data-show="a"] :is(.st-a, .st-a2), .statue[data-show="b"] :is(.st-b, .st-b2), .statue[data-show="seq"] canvas { visibility: visible; }
 
 /* FUNDAMENTALS OVER TOOLS (frames Hero → 6) sits behind the statue; the principles (8 → 13) are windows onto one vector group
    (Figma Group 35), each showing a number and a word; PHI OPERATING SYSTEM (19 → 20) sits above everything */
 /* no will-change on these vectors: a promoted layer is rasterised once at the scaled-down size and then blurs when stretched */
-.fot { position: absolute; z-index: 1; left: 0; top: 0; width: 922px; height: 506px; max-width: none; }
+.fot { position: absolute; z-index: 1; left: 0; top: 0; width: 922px; height: 506px; max-width: none; transform-origin: 0 0; }
+
+/* loading (Figma 7541:548, frames Loding → 4): reliefs and their measuring lines drift outward and dim around the bust, then the
+   bust and FUNDAMENTALS OVER TOOLS move into the first screen. Black (#000) under it all, giving way to the hero's #0d0d0d */
+.ld-bg { position: absolute; inset: 0; background: #000; pointer-events: none; }
+.ld { position: absolute; z-index: 0; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; pointer-events: none; }
+.ld text { font-family: "Pretendard", sans-serif; font-size: 10px; fill: #fff; text-anchor: middle; }
 .pr-w { position: absolute; z-index: 1; overflow: hidden; opacity: 0; }
 .phios { position: absolute; z-index: 25; left: 451.7px; top: 321px; width: 1016.6px; height: 437.6px; max-width: none; opacity: 0; }
 
-/* cards: positioned every frame from JS (ring angle + fall-in offset); the wrapper only carries depth order */
-.kw { position: absolute; left: 0; top: 0; will-change: transform; }
+/* cards: positioned every frame from JS (loop position + fall-in offset); the wrapper only carries depth order.
+   .kc is the moving card, a 3D pair of faces: the set's front (.k) and its coin back (.kb), flipped on the 역량 / 태도 toggle */
+.kw { position: absolute; left: 0; top: 0; }
+.kc { position: absolute; left: 0; top: 0; width: 380px; height: 460px; transform-origin: 0 0; transform-style: preserve-3d; will-change: transform; }
+.k, .kb { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
 /* front 380×460 (Figma 역량 Competency_1 6971:2763): label + title on top, description at the foot */
 .k {
   position: absolute; left: 0; top: 0; width: 380px; height: 460px; padding: 32px 30px; border-radius: 24px; overflow: hidden;
   display: flex; flex-direction: column; justify-content: space-between;
-  background: #fff; color: #0d0d0d; box-shadow: 0 4px 17.3px rgba(21,21,21,.2); transform-origin: 0 0; will-change: transform, opacity;
+  background: #fff; color: #0d0d0d; box-shadow: 0 4px 17.3px rgba(21,21,21,.2);
 }
-.k::after { content: ""; position: absolute; inset: 0; background: #000; opacity: var(--shade, 0); pointer-events: none; } /* depth shading */
+/* back 380×460 (Figma 역량 Competency_Back 7541:2601 / Phi OS_Back 7541:2631): wordmark + the set's coin on #131313,
+   1.8px rgba(255,255,255,.4) edge drawn inside so the Figma offsets hold; corner 24 like the front (the component's 19.44 is the
+   307.8-wide card's) */
+.kb {
+  position: absolute; inset: 0; border-radius: 24px; overflow: hidden; transform: rotateY(180deg);
+  background: #131313; box-shadow: inset 0 0 0 1.8px rgba(255,255,255,.4), 0 4px 17.3px rgba(21,21,21,.2);
+}
+.kb img { position: absolute; max-width: none; }
+.kb .mark { left: 24.2px; top: 24.1px; width: 137.2px; height: 75.1px; }
+.k::after, .kb::after { content: ""; position: absolute; inset: 0; background: #000; opacity: var(--shade, 0); pointer-events: none; } /* depth shading */
 .k .lb { display: flex; flex-direction: column; gap: 8px; white-space: nowrap; }
 .k .lb small { font-family: var(--font-latin); font-size: 20px; font-weight: 500; line-height: 1; color: #8d8d8d; }
 .k .lb b { font-family: var(--font-latin); font-size: 32px; font-weight: 700; line-height: 1.3; letter-spacing: -.02em; } /* Inter runs wider than the Figma SF Pro: keeps "Dissatisfaction Sensor" on one line */
@@ -119,13 +142,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .copy h1 { margin: 0; font-size: 42px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .copy .paras { display: flex; flex-direction: column; gap: 36px; }
 .copy .paras p { font-size: 20px; line-height: 1.6; color: var(--mute); }
-.hfacts { position: absolute; left: 151px; top: 650px; width: 426px; }
+.hfacts { position: absolute; left: 151px; top: 650px; width: 420px; }
 .hfacts > div { display: grid; grid-template-columns: 134px 1fr; align-items: center; padding: 12px 0; border-bottom: .8px solid rgba(239,233,221,.4); }
 .hfacts > div:last-child { border-bottom: 0; }
 .hfacts dt { font-size: 14px; line-height: 1.5; color: #7a7c83; }
 .hfacts dd { margin: 0; font-size: 16px; line-height: 1.6; color: #fff; }
 dl { margin: 0; }
-.copy h1, .copy .paras p, .hfacts { will-change: opacity, transform; }
+/* no will-change here: a promoted layer is rasterised at the canvas's scaled-down size and the text then reads as a blurry image.
+   Type as in Figma 7541:502: SF Pro (Korean falls back to the system Apple SD Gothic Neo, as it does in Figma) */
+.copy, .hfacts { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Apple SD Gothic Neo", "Pretendard", sans-serif; }
 
 /* 역량 / 태도 toggle (Figma Nav 6899:1562) */
 .seg {
@@ -138,7 +163,7 @@ dl { margin: 0; }
 .seg button:not([aria-selected="true"]):hover { color: #d5d5d5; }
 
 /* numbered cards open the detail view */
-.kw:not([aria-hidden]) .k { cursor: pointer; }
+.kw:not([aria-hidden]) .kc { cursor: pointer; }
 
 /* card detail (Figma 6899:3374): 898×480 cards on a 1920 frame → ~46.8vw, carousel with the active card centred */
 .dk {
@@ -676,10 +701,12 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   <!-- Hero: Figma 6899:1859 (scroll story) + cards 6899:2862 / 6899:2864 + toggle transition 6899:1909. Stage stays pinned while the page scrolls through it -->
   <section class="hero" id="hero" aria-label="Phi의 1년제 프로그램">
     <div class="stage" id="stage">
+      <div class="ld-bg" id="ldBg"></div>
       <div class="canvas" id="canvas">
+        <svg class="ld" id="ld" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
         <img class="fot" id="fot" src="assets/fundamentals-over-tools.svg" alt="Fundamentals over tools">
         <div id="pr" role="list" aria-label="Phi OS 다섯 가지 원칙"></div>
-        <div class="statue" id="statue" data-show="a"><img class="st-a" src="assets/statue/a18.webp" alt=""><img class="st-b" src="assets/statue/f27.webp" alt="" decoding="async"></div>
+        <div class="statue" id="statue" data-show="a"><img class="st-a" src="assets/statue/a18.webp" alt=""><img class="st-a2" src="assets/statue/a18-low.webp" alt=""><img class="st-b" src="assets/statue/f27.webp" alt="" decoding="async"><img class="st-b2" src="assets/statue/f27-low.webp" alt="" decoding="async"></div>
         <div id="deck" aria-live="polite"></div>
         <img class="phios" id="phios" src="assets/phi-operating-system.svg" alt="Phi Operating System">
       </div>
@@ -881,16 +908,17 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a=0, b=1) => Math.min(b, Math.max(a, v));
 
-  /* Statue: Blender renders of the KAS633 scan, upper body (scripts/bust.py), lights fixed while the statue turns.
+  /* Statue: Blender renders of the KAS633 scan (scripts/bust.py, extended to the plinth by scripts/bust_tall.py with the same
+     camera, so the top 2000 rows are unchanged), lights fixed while the statue turns.
      q00 → q19 step 3° from +30° to −27° (facing the viewer); the page mirrors them as it always has. The hero opens at +18° (q04,
      head turned to screen left, picked by the user over the Figma +30°), so the turn plays q04 → q19.
-     The turn plays on a canvas from full 1800×2000 frames (1200×1333 on phones, to keep memory down); the two poses the page
-     rests on (+18°, −27°) are 4500×5000 images shown directly. */
-  const SEQ_N = 20, SEQ_0 = 4, SW = 1800, SH = 2000;
+     The turn plays on a canvas from 1800×2900 frames (1200×1933 on phones, to keep memory down; enough below the hips for a
+     0.9:1 viewport); the two poses the page rests on (+18°, −27°) are 4500×5000 images shown directly, plus their extensions. */
+  const SEQ_N = 20, SEQ_0 = 4, SW = 1800, SH = 2900;
   const small = Math.min(screen.width, screen.height) < 760;
   const seqCv = document.createElement('canvas'), seqCtx = seqCv.getContext('2d'), seqImgs = [];
   let seqReady = false, seqF = -1;
-  seqCv.width = small ? 1200 : SW; seqCv.height = small ? 1333 : SH; statue.appendChild(seqCv);
+  seqCv.width = small ? 1200 : SW; seqCv.height = small ? 1933 : SH; statue.appendChild(seqCv);
   seqCtx.imageSmoothingQuality = 'high';
   Promise.all(Array.from({ length: SEQ_N - SEQ_0 }, (_, k) => {
     const i = SEQ_0 + k, im = seqImgs[i] = new Image();
@@ -904,8 +932,10 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     seqF = f;
     const w = seqCv.width, h = seqCv.height, i = Math.min(Math.floor(f), SEQ_N - 2), t = f - i;
     seqCtx.clearRect(0, 0, w, h); seqCtx.globalAlpha = 1;
-    seqCtx.drawImage(seqImgs[i], 0, 0, w, h);
-    if (t > .005) { seqCtx.globalAlpha = t; seqCtx.drawImage(seqImgs[i + 1], 0, 0, w, h); }
+    // each frame at its own aspect (width-fitted), never stretched to the canvas height
+    const draw = im => seqCtx.drawImage(im, 0, 0, w, w * im.naturalHeight / im.naturalWidth);
+    draw(seqImgs[i]);
+    if (t > .005) { seqCtx.globalAlpha = t; draw(seqImgs[i + 1]); }
   }
   const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -917,6 +947,152 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
     for (let i = 1; i < keys.length; i++) if (p <= keys[i]) return lerp(vals[i - 1], vals[i], smooth((p - keys[i - 1]) / (keys[i] - keys[i - 1])));
     return vals[vals.length - 1];
   };
+
+  /* ---------- Loading (Figma home 7541:1078 = frame 1, then 7541:548 frames 2 → 3 → 4, then the first screen 7541:502) ----------
+     Plays on time once the bust, the logo and the reliefs have decoded; the page holds still meanwhile (scroll input hurries it).
+     Everything below is in frame-1 (Loding) coordinates. Each piece belongs to a cluster that drifts outward by the offsets measured
+     between the Figma frames; its opacity per frame (Loding, 2, 3, 4) comes from the frames themselves.
+     Motion: the frames are stations on one continuous path, not stops — positions and opacities run through them on monotone
+     cubic splines (no overshoot, no halt at frames 2/3) under a single ease that starts from rest and glides out long.
+     Clusters set off a few tens of ms apart, and the bust starts for the first screen while the reliefs are still leaving. */
+  const LD = { drift: [3, 6.4], hero: [5.2, 7.6], copy: 6.3 }; // frame 1 holds ~1 s after the bust has settled
+  // entrance, far to near: the measuring grid, then the reliefs from the smallest (farthest) to the largest, the logo, the bust last
+  const LD_IN = { grid: 0, fot: 1, bust: 1.2, fade: .9 }; // start (s) and fade length; relief starts below
+  const LD_IMG_IN = { 'ld-small': .25, 'ld-coin': .4, 'ld-br': .55, 'ld-tl': .7, 'ld-frieze': .85 }; // seconds after ready; the page unlocks at hero end
+  const LD_LAG = { c: 0, fix: 0, t8: .04, g20: .04, tr: .06, l35: .08, tl: .1, br: .12, bl: .16 }; // per-cluster delay (s)
+  const LD_OP_AT = [0, .38, .72, 1]; // where frames 1–4 sit along the drift, for opacity (positions use frames 1–3 at 0, .5, 1)
+  // cubic-bezier(x1, y1, x2, y2) as a function of t (Newton steps, then bisection)
+  const bez = (x1, y1, x2, y2) => {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const X = u => ((ax * u + bx) * u + cx) * u, dX = u => (3 * ax * u + 2 * bx) * u + cx, Y = u => ((ay * u + by) * u + cy) * u;
+    return t => {
+      if (t <= 0) return 0; if (t >= 1) return 1;
+      let u = t;
+      for (let i = 0; i < 6; i++) { const d = dX(u); if (Math.abs(d) < 1e-6) break; const e = X(u) - t; if (Math.abs(e) < 1e-5) return Y(u); u -= e / d; }
+      let lo = 0, hi = 1; u = t;
+      for (let i = 0; i < 24; i++) { const e = X(u) - t; if (Math.abs(e) < 1e-5) break; if (e > 0) hi = u; else lo = u; u = (lo + hi) / 2; }
+      return Y(u);
+    };
+  };
+  const easeEnter = bez(.22, 1, .36, 1), // entrances: quick to show, long settle (ease-out-quint)
+        easeDrift = bez(.45, 0, .15, 1), // the drift: gentle start from rest, long glide out
+        easeMove = bez(.5, 0, .1, 1);    // the bust + logo into the first screen: weighted start, soft landing
+  // monotone cubic (Fritsch–Carlson) through (xs, ys): smooth through every station without overshooting it
+  const mono = (xs, ys) => {
+    const n = xs.length, d = [], m = [];
+    for (let i = 0; i < n - 1; i++) d.push((ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]));
+    m[0] = d[0]; m[n - 1] = d[n - 2];
+    for (let i = 1; i < n - 1; i++) {
+      const h0 = xs[i] - xs[i - 1], h1 = xs[i + 1] - xs[i];
+      m[i] = d[i - 1] * d[i] <= 0 ? 0 : 3 * (h0 + h1) / ((2 * h1 + h0) / d[i - 1] + (h1 + 2 * h0) / d[i]);
+    }
+    for (let i = 0; i < n - 1; i++) if (d[i] === 0) { m[i] = 0; m[i + 1] = 0; }
+    return x => {
+      if (x <= xs[0]) return ys[0]; if (x >= xs[n - 1]) return ys[n - 1];
+      let i = 0; while (x > xs[i + 1]) i++;
+      const h = xs[i + 1] - xs[i], t = (x - xs[i]) / h, t2 = t * t, t3 = t2 * t;
+      return (2 * t3 - 3 * t2 + 1) * ys[i] + (t3 - 2 * t2 + t) * h * m[i] + (-2 * t3 + 3 * t2) * ys[i + 1] + (t3 - t2) * h * m[i + 1];
+    };
+  };
+  const LD_DRIFT = { // [dx, dy] at frames 2 and 3 (frame 1 is the origin)
+    tr: [[90, -90], [190, -170]], br: [[130, 130], [261, 361]], tl: [[-134, -141], [-304, -361]], bl: [[-220, 86], [-323, 135]],
+    c: [[-20, -20.33], [-20, -20.33]], g20: [[20, 20], [20, 20]], l35: [[220, 40], [320, -40]], t8: [[-20, -10], [-20, -10]], fix: [[0, 0], [0, 0]]
+  };
+  // opacity per frame (1, 2, 3, 4) by cluster; pieces that differ carry their own
+  const LD_OP = { tr: [1, .6, .2, 0], br: [1, .8, .4, 0], tl: [1, .8, .5, 0], bl: [1, .8, .32, 0], c: [1, .5, .1, 0], g20: [1, .6, .2, 0],
+                  l35: [1, .6, .6, 0], t8: [1, .5, .2, .2], fix: [1, 0, 0, 0] };
+  const G10 = [[0, 1], [1, 0]], G01 = [[0, 0], [1, 1]], GMID = [[0, 1], [.5, .1], [1, 1]];
+  // lines: [x1, y1, x2, y2, cluster, gradient stops [pos, alpha] (null = solid, undashed), opacity override]
+  // Figma runs each gradient from the line's end back to its start
+  const LD_LINES = [
+    [1553, 248, 1370, 248, 'tr'], [1553, 434, 1370, 434, 'tr'], [1366, 430, 1366, 252, 'tr'], [1557, 430, 1557, 252, 'tr'],
+    [1502, 562, 1370, 438, 'br', GMID], [1557, 512, 1557, 438, 'tr', G10], [398, 623, 398, 532, 'tl', G10], [1890, 346, 1890, 562, 'br', G10],
+    [1675, 529, 1675, 307, 'l35', G10], [1366, 646, 1366, 438, 'tr', G10],
+    [567, 1047, 567, 138.33, 'c', [[0, 1], [.432, .505], [.626, 0], [.814, .448], [1, 1]]], [567, -47, 567, 137.54, 'c', G10],
+    [1366, 244, 1366, 59, 'tr', G01], [1362, 248, 1058, 248, 'tr', [[.353, 0], [1, 1]]], [1671, 303, 1557, 303, 'tr', G01, [1, .8, .2, 0]],
+    [1502, 1042, 1370, 1032, 'br', GMID], [1894, 1042, 2176, 1042, 'br', G01], [1362, 434, 1290, 434, 'tr', [[0, 0], [.26, .06], [1, 1]]],
+    [563, 142.33, 398, 142.33, 'c', [[0, 0], [.489, .431], [1, 1]]], [571, 142.33, 1274, 142.33, 'c', G01], [1561, 434, 1889, 434, 'tr', G01],
+    [-2, 725, 523, 725, 'bl', [[0, .1], [.517, .466], [1, 1]]], [402, 528, 650, 528, 'tl', [[0, 0], [.442, .56], [1, 1]]],
+    [1894, 566, 2222, 566, 'br', G01], [1561, 244, 1675, -70, 'tr', GMID, [1, .8, .2, 0]],
+    [1886, 566, 1510, 566, 'br', null, [1, .8, .3, 0]], [1886, 1042, 1510, 1042, 'br', null, [1, .8, .3, 0]],
+    [1890, 1038, 1890, 570, 'br', null, [1, .8, .3, 0]], [1506, 1038, 1506, 570, 'br', null, [1, .8, .3, 0]],
+    [2055, 303, 1679, 303, 'tr', null, [1, .8, .2, 0]], [1675, 299, 1675, -24, 'tr', null, [1, .8, .2, 0]],
+    [394, 528, -24, 528, 'tl'], [398, 524, 398, -20, 'tl'],
+    [476, 575, 476, 857, 'bl', G10, [1, .8, .4, 0]], [480, 861, 760, 861, 'bl', [[0, 0], [.398, .08], [1, 1]], [1, .8, .4, 0]],
+    [472, 861, -88, 861, 'bl', null, [1, .8, .4, 0]], [476, 1333, 476, 865, 'bl', null, [1, .8, .4, 0]],
+    [1366, 565, 1366, 1028, 'g20', G10], [1366, 1244, 1366, 1036, 'g20', G10],
+    [1890, 1046, 1890, 1170, 'br', G01, null, 3.701], // this one's gradient is squeezed into the first 27% of the line
+    [1362, 1032, 594, 1032, 'g20', [[0, 0], [.235, .505], [1, 1]], [0, .6, .2, 0]] // appears from frame 2
+  ];
+  // squares: [x, y, size, filled, cluster, opacity override]
+  const LD_SQ = [
+    [1553, 244, 8, 0, 'tr'], [1553, 430, 8, 0, 'tr'], [1673, 432, 4, 1, 'tr'], [1362, 244, 8, 0, 'tr'], [1362, 430, 8, 1, 'tr'], [1671, 299, 8, 0, 'tr'],
+    [563, 138.33, 8, 1, 'c'], [565, 527, 4, 1, 'fix'], [565, 859, 4, 1, 'fix'],
+    [1886, 562, 8, 0, 'br', [1, .8, .12, 0]], [1886, 1038, 8, 0, 'br', [1, .8, .12, 0]], [1502, 562, 8, 1, 'br', [1, .8, .12, 0]], [1502, 1038, 8, 0, 'br', [1, .8, .12, 0]],
+    [394, 524, 8, 0, 'tl'], [472, 857, 8, 0, 'bl'], [474, 723, 4, 1, 'bl'], [1362, 1028, 8, 1, 'g20']
+  ];
+  // labels: [text, centre x, top, cluster, opacity per frame]
+  const LD_TX = [
+    ['92.156', 1342.5, 226, 'tr', [.7, .6, .2, 0]], ['152.156', 1340.5, 440, 'tr', [.7, .6, .2, 0]], ['456,398', 1584.5, 410, 'tr', [.7, .6, .2, 0]],
+    ['8 (14.581)', 566.5, 1050, 't8'], ['92.156', 1481.5, 1017, 'br'], ['538,511', 1526, 540, 'br'],
+    ['238,256', 535.5, 148.33, 'c'], ['456,398', 426.5, 534, 'tl', [.7, .56, .35, 0]], ['684,234', 503.5, 837, 'bl', [1, .8, .32, 0]]
+  ];
+  // reliefs: [file, x, y, w, h, cluster, opacity override] — Figma draws these FILL images stretched to the box (checked against its render)
+  const LD_IMG = [
+    ['ld-small', 1377, 259, 169, 163, 'tr'], ['ld-coin', 1692, -61, 294, 367, 'tr', [1, .8, .2, 0]], ['ld-frieze', -286, 873, 751, 320, 'bl'],
+    ['ld-br', 1526, 582, 343, 436, 'br', [1, .8, .12, 0]], ['ld-tl', -1, 14, 391, 498, 'tl']
+  ];
+  const ldSvg = document.getElementById('ld'), ldBg = document.getElementById('ldBg');
+  const ldItems = []; // [element, drift delay, x(s), y(s), opacity(s), entrance start]
+  {
+    const NS = 'http://www.w3.org/2000/svg', defs = document.createElementNS(NS, 'defs');
+    ldSvg.appendChild(defs);
+    const add = (el, cl, op, inAt = LD_IN.grid + LD_LAG[cl] * .5) => {
+      const g = document.createElementNS(NS, 'g'), d = LD_DRIFT[cl];
+      g.appendChild(el); ldSvg.appendChild(g);
+      ldItems.push([g, LD_LAG[cl], mono([0, .5, 1], [0, d[0][0], d[1][0]]), mono([0, .5, 1], [0, d[0][1], d[1][1]]), mono(LD_OP_AT, op || LD_OP[cl]), inAt]);
+    };
+    const mk = (tag, attrs) => { const el = document.createElementNS(NS, tag); for (const k in attrs) el.setAttribute(k, attrs[k]); return el; };
+    LD_IMG.forEach(([f, x, y, w, h, cl, op]) => add(mk('image', { href: `assets/loading/${f}.webp`, x, y, width: w, height: h, preserveAspectRatio: 'none' }), cl, op, LD_IMG_IN[f]));
+    LD_LINES.forEach(([x1, y1, x2, y2, cl, stops, op, squeeze], i) => {
+      const ln = mk('line', { x1, y1, x2, y2, stroke: '#fff', 'stroke-width': .8 });
+      if (stops) {
+        const u = squeeze ? 1 / squeeze : 1; // gradient position 0 sits at u along the line, 1 at its start
+        const gr = mk('linearGradient', { id: 'ldg' + i, gradientUnits: 'userSpaceOnUse', x1: x1 + (x2 - x1) * u, y1: y1 + (y2 - y1) * u, x2: x1, y2: y1 });
+        stops.forEach(([o, a]) => gr.appendChild(mk('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': a })));
+        defs.appendChild(gr);
+        ln.setAttribute('stroke', `url(#ldg${i})`); ln.setAttribute('stroke-dasharray', '2.4 2.4');
+      }
+      add(ln, cl, op);
+    });
+    LD_SQ.forEach(([x, y, s, filled, cl, op]) => add(filled ? mk('rect', { x, y, width: s, height: s, fill: '#fff' })
+      : mk('rect', { x: x + .4, y: y + .4, width: s - .8, height: s - .8, fill: 'none', stroke: '#fff', 'stroke-width': .8 }), cl, op));
+    LD_TX.forEach(([t, cx, top, cl, op]) => { const el = mk('text', { x: cx, y: top + 11.5 }); el.textContent = t; add(el, cl, op); });
+  }
+  let ldT = -1;
+  function drawLoader(ts, a) { // ts: seconds on the clock, a: overall fade (goes as the first screen arrives)
+    if (a <= .002 || ts > LD.hero[1]) { if (ldT !== Infinity) { ldSvg.style.visibility = 'hidden'; ldT = Infinity; } return; }
+    if (Math.abs(ts - ldT) < .001) return;
+    ldT = ts; ldSvg.style.visibility = '';
+    ldItems.forEach(([g, lag, fx, fy, fo, inAt]) => {
+      const inA = easeEnter(seg(ts, inAt, inAt + LD_IN.fade)); // fades in rising 20px
+      const sd = easeDrift(seg(ts, LD.drift[0] + lag, LD.drift[1] + lag));
+      g.setAttribute('transform', `translate(${fx(sd).toFixed(2)} ${(fy(sd) + (1 - inA) * 20).toFixed(2)})`);
+      g.setAttribute('opacity', Math.max(0, fo(sd) * inA * a).toFixed(3));
+    });
+  }
+  // the pieces the first frame needs before the clock starts; never wait more than 4 s
+  let ldSkip = reduce || scrollY > 10;
+  let ldReady = ldSkip, ldDone = ldSkip;
+  Promise.race([
+    Promise.all([...document.querySelectorAll('#statue .st-a, #statue .st-a2, #fot'), ...[...ldSvg.querySelectorAll('image')].map(im => { const i = new Image(); i.src = im.getAttribute('href'); return i; })]
+      .map(im => im.decode().catch(() => {}))),
+    new Promise(r => setTimeout(r, 4000))
+  ]).then(() => { ldReady = true; });
+  // hold the page while it plays; any scroll attempt plays it faster instead
+  let ldHurry = false;
+  const ldHold = e => { if (ldDone) return; ldHurry = true; if (e.type !== 'keydown' || ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].includes(e.key)) e.preventDefault(); };
+  if (!ldSkip) ['wheel', 'touchmove', 'keydown'].forEach(t => addEventListener(t, ldHold, { passive: false }));
 
   // card sets (Figma 역량Card 6899:2862 / 태도 Phi OS 6899:2864)
   // descriptions from the detail cards (Figma 6899:3374); 언어화 copy supplied directly (the Figma layer duplicated 무지를 발굴하기)
@@ -934,78 +1110,91 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
       ['Dissatisfaction Sensor', '불만족에 민감해지기', '문제 정의의 출발은 문제 감지에서 시작된다. 완성도를 타협하지 않는 이들은 쉽게 만족하지 않고 불만족을 민감하게 알아차린다. 좋은 것을 만들기 위해서는 좋지 않음을 느낄 수 있어야 한다.'],
       ['Learning by Sharing', '공유하며 배우기', '가장 잘 배우는 방법은 남에게 가르쳐 보는 것이다. 이미 충분히 이해했다고 생각하는 것도 타인에게 설명해보고, 설득해보면 공백이 있다는 것을 깨닫게 된다. 이 메커니즘을 이해하고, 자신의 지식을 적극적으로 공유할 수 있어야 한다.']]]
   ];
-  /* Deck: five cards ride one ellipse around the statue (Figma 6971:3696 + the orbit sketch) at a steady speed, never stopping.
-     Seen from slightly above, the near half (lower arc, c = cos φ > 0) passes in front of the statue moving right,
-     the far half (upper arc) passes behind it moving left. Each frame-8 card is a station on the ellipse; between stations
-     a card blends size, shade and its small offset from the ideal ellipse, so whenever cards sit on stations the deck is the frame. */
-  const FRAME8 = [ // [x, y, width, opacity] (Figma frame 6971:3696)
-    [410, 54, 307.8, .8],
-    [1309, 146, 285, .54],
-    [87, 521, 304, 1],
+  /* Deck: five cards ride one closed loop around the statue (Figma 7541:2562 + the orbit sketch) at a steady pace, never stopping.
+     Seen from slightly above, the near half (below the loop's centre) passes in front of the statue moving right, the far half
+     behind it moving left. The loop runs through the five frame cards (stations) on a closed Catmull-Rom curve, and all five
+     cards move in step — each is always the same fraction of the way to its next station — so the spacing never bunches up
+     and whenever the cards sit on stations the deck is exactly the frame. Size and shade blend between stations. */
+  const FRAME8 = [ // [x, y, width, opacity] (Figma 7541:2562 — the side cards 80 px closer in than 6971:3696)
+    [490, 54, 307.8, .8],
+    [1229, 146, 285, .54],
+    [167, 521, 304, 1],
     [685, 740, 380, 1],
-    [1529, 710, 190, .8]
+    [1449, 710, 190, .8]
   ];
   const KW = 380, KH = 460; // card size 380×460 (Figma 역량 Competency_1 6971:2763)
-  const CX = 960, CY = 600, RX = 760, RY = 370; // orbit ellipse fitted through the five card centres (design px)
+  const CX = 960, CY = 600, RX = 680, RY = 370; // orbit ellipse fitted through the five card centres (design px)
   const TAU = Math.PI * 2;
   const POS = FRAME8.map(([x, y, w, op]) => {
     const px = x + w / 2, py = y + w * KH / KW / 2, phi = Math.atan2((px - CX) / RX, (py - CY) / RY);
     // cards stay opaque so overlaps read cleanly; Figma's translucency becomes an equivalent black shade
-    return { phi, ox: px - (CX + RX * Math.sin(phi)), oy: py - (CY + RY * Math.cos(phi)), s: w / KW, shade: 1 - op };
+    return { phi, px, py, s: w / KW, shade: 1 - op };
   });
   const RING = POS.map((_, i) => i).sort((a, b) => POS[a].phi - POS[b].phi); // stations in travel order (φ increasing)
-  const ARC = RING.map(j => ((POS[j].phi - POS[RING[0]].phi) % TAU + TAU) % TAU);
+  const RI = POS.map((_, i) => RING.indexOf(i)); // each card's station in travel order
+  const NS_ = RING.length;
+  const cr = (a, b, c, d, t) => .5 * (2 * b + (c - a) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (3 * b - a - 3 * c + d) * t * t * t);
 
+  // backs per set: the coin's box on the 380×460 card (Figma 7541:2601 / 7541:2631)
+  const BACKS = [['assets/cards/back-competency.webp', 36.53, 57.28, 306.64, 366.44], ['assets/cards/back-phios.webp', 43.48, 57.26, 293.05, 365.48]];
   deck.innerHTML = FRAME8.map(() =>
-    `<div class="kw"><article class="k"><div class="lb"><small></small><b></b></div><p class="ds"></p></article></div>`).join('');
+    `<div class="kw"><div class="kc"><article class="k"><div class="lb"><small></small><b></b></div><p class="ds"></p></article>` +
+    `<div class="kb" aria-hidden="true"><img class="mark" src="assets/cards/wordmark.svg" alt=""><img class="coin" alt="" decoding="async"></div></div></div>`).join('');
   const wraps = [...deck.children], cards = wraps.map(w => w.firstElementChild);
-  let setIdx = 1, scatter = 0; // opens on 태도 Phi OS (the principles just shown)
+  let setIdx = 1; // opens on 태도 Phi OS (the principles just shown)
 
-  function fillSet(n) {
-    const [label, items] = SETS[n], kind = n ? 'Phi OS' : 'Competency';
-    items.forEach(([en, ko, desc], i) => {
-      const c = cards[i], num = String(i + 1).padStart(2, '0');
-      c.querySelector('small').textContent = `${kind} — ${num}`;
-      c.querySelector('b').innerHTML = `${en.replace('\n', '<br>')}<br>${ko}`;
-      c.querySelector('.ds').textContent = desc;
-      c.setAttribute('aria-label', `${label} ${num} ${en.replace('\n', ' ')} ${ko}`);
-    });
+  function fillCard(i, n) {
+    const [label, items] = SETS[n], kind = n ? 'Phi OS' : 'Competency', [en, ko, desc] = items[i];
+    const c = cards[i], num = String(i + 1).padStart(2, '0');
+    c.querySelector('small').textContent = `${kind} — ${num}`;
+    c.querySelector('b').innerHTML = `${en.replace('\n', '<br>')}<br>${ko}`;
+    c.querySelector('.ds').textContent = desc;
+    c.setAttribute('aria-label', `${label} ${num} ${en.replace('\n', ' ')} ${ko}`);
   }
+  function setBack(i, n) {
+    const [src, l, t, w, h] = BACKS[n], im = cards[i].querySelector('.coin');
+    if (im.getAttribute('src') !== src) { im.src = src; Object.assign(im.style, { left: l + 'px', top: t + 'px', width: w + 'px', height: h + 'px' }); }
+  }
+  const fillSet = n => cards.forEach((_, i) => { fillCard(i, n); setBack(i, n); });
   fillSet(setIdx);
+  BACKS.forEach(([src]) => { new Image().src = src; }); // both coins ready before the first flip
 
-  // place every card at its angle φ = φ₀ + ω·orbitT (orbitT = ms travelled), plus scatter and its own rise/lift offset dys[i]
+  // place every card on the loop (orbitT = ms travelled) plus its own rise/lift offset dys[i], and turn it by its flip angle
   let orbitT = 0;
+  const cardScale = FRAME8.map(([, , w]) => w / KW), flipDeg = FRAME8.map(() => 0), flipLift = FRAME8.map(() => 1);
   function drawDeck(dys) {
+    const step = orbitT / SEG_MS;
     cards.forEach((card, i) => {
-      const phi = POS[i].phi + OMEGA * orbitT, rel = ((phi - POS[RING[0]].phi) % TAU + TAU) % TAU;
-      let k = RING.length - 1; while (k > 0 && ARC[k] > rel) k--;
-      const A = POS[RING[k]], B = POS[RING[(k + 1) % RING.length]];
-      const e = (rel - ARC[k]) / ((k + 1 < RING.length ? ARC[k + 1] : TAU) - ARC[k]);
-      const c = Math.cos(phi), sc = lerp(A.s, B.s, e);
-      let cx = CX + RX * Math.sin(phi) + lerp(A.ox, B.ox, e), cy = CY + RY * c + lerp(A.oy, B.oy, e);
-      if (scatter > 0) { // push straight out from the statue until off screen (전환 frames 2–3)
-        const vx = cx - CX, vy = cy - CY, len = Math.hypot(vx, vy) || 1, push = 1700 * scatter;
-        cx += vx / len * push; cy += vy / len * push;
-      }
-      card.style.transform = `translate3d(${(cx - KW / 2 * sc).toFixed(1)}px, ${(cy - KH / 2 * sc + dys[i]).toFixed(1)}px, 0) scale(${sc.toFixed(4)})`;
-      card.style.opacity = (1 - scatter).toFixed(3);
-      card.style.setProperty('--shade', clamp(lerp(A.shade, B.shade, e), 0, .9).toFixed(3));
+      const u = ((RI[i] + step) % NS_ + NS_) % NS_, k = Math.floor(u), e = u - k;
+      const P = n => POS[RING[(k + n + NS_) % NS_]], A = P(0), B = P(1);
+      const es = e * e * (3 - 2 * e); // size and shade settle into each station
+      const sc = lerp(A.s, B.s, es);
+      const cx = cr(P(-1).px, A.px, B.px, P(2).px, e), cy = cr(P(-1).py, A.py, B.py, P(2).py, e);
+      const c = (cy - CY) / RY; // below the loop's centre = near side
+      cardScale[i] = sc;
+      // the flip turns the card about its own vertical axis, in perspective, lifting it a touch at the edge-on moment
+      const flip = flipDeg[i] ? ` translate(${KW / 2}px, ${KH / 2}px) perspective(1800px) rotateY(${flipDeg[i].toFixed(2)}deg) scale(${flipLift[i].toFixed(4)}) translate(${-KW / 2}px, ${-KH / 2}px)` : '';
+      card.style.transform = `translate3d(${(cx - KW / 2 * sc).toFixed(1)}px, ${(cy - KH / 2 * sc + dys[i]).toFixed(1)}px, 0) scale(${sc.toFixed(4)})${flip}`;
+      card.style.setProperty('--shade', clamp(lerp(A.shade, B.shade, es), 0, .9).toFixed(3));
       wraps[i].style.zIndex = c >= 0 ? 10 + Math.round(c * 20) : 1; // statue sits at 2: lower arc in front, upper arc behind
     });
   }
 
-  // orbit speed: one lap in 20 s, constant (on request — no holds, no easing)
-  const OMEGA = TAU / 20000; // rad per ms
+  // orbit speed: one lap in 20 s (4 s station to station), constant (on request — no holds, no easing)
+  const SEG_MS = 4000;
   let swap = null, lastOrbit = null, paused = false; // paused while the detail view is open
-  const easeIn = t => t * t * t, easeOutQ = t => 1 - Math.pow(1 - t, 4);
 
-  // toggle: scatter outward (ease-in) → empty beat → the other set gathers back in (ease-out)
-  const OUT_MS = 450, GAP_MS = 150, IN_MS = 850;
+  /* toggle (Figma 카드 바뀜 7541:2600): the cards flip one by one, farthest (smallest) first, to the chosen set's coin back,
+     turning the way the deck orbits (right edge away); once all five show their backs, they flip on again in the same order
+     to the new set's fronts. The orbit keeps going throughout. */
+  const FLIP_MS = 600, STAG_MS = 120, HOLD_MS = 300, easeFlip = bez(.65, 0, .35, 1);
   function swapSet(n) {
     if (n === setIdx || swap) return;
     setIdx = n; segBtns.forEach(b => b.setAttribute('aria-selected', +b.dataset.set === n));
     if (reduce) { fillSet(n); return; }
-    swap = { t0: performance.now(), n, filled: false };
+    const order = cards.map((_, i) => i).sort((a, b) => cardScale[a] - cardScale[b]); // far → near
+    order.forEach(i => setBack(i, n));
+    swap = { t0: performance.now(), n, order, filled: new Set() };
   }
   segBtns.forEach(b => b.addEventListener('click', () => swapSet(+b.dataset.set)));
 
@@ -1074,17 +1263,18 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   addEventListener('resize', () => { if (dkOpen) dkGo(dkIdx, true); });
   function animateDeck(now, settled, inView) {
     // advances only while the deck is landed and on screen; otherwise it simply holds where it is
-    if (lastOrbit != null && settled && inView && !swap && !paused && !reduce && !document.hidden) orbitT += Math.min(now - lastOrbit, 100);
+    if (lastOrbit != null && settled && inView && !paused && !reduce && !document.hidden) orbitT += Math.min(now - lastOrbit, 100);
     lastOrbit = now;
     if (swap) {
-      const t = now - swap.t0;
-      if (t < OUT_MS) scatter = easeIn(t / OUT_MS);
-      else if (t < OUT_MS + GAP_MS) { scatter = 1; if (!swap.filled) { fillSet(swap.n); swap.filled = true; } }
-      else {
-        if (!swap.filled) { fillSet(swap.n); swap.filled = true; }
-        scatter = 1 - easeOutQ(clamp((t - OUT_MS - GAP_MS) / IN_MS));
-        if (t >= OUT_MS + GAP_MS + IN_MS) { scatter = 0; swap = null; }
-      }
+      const t = now - swap.t0, last = swap.order.length - 1;
+      const wave2 = last * STAG_MS + FLIP_MS + HOLD_MS; // the second wave starts once every card shows its back, plus a beat
+      swap.order.forEach((i, k) => {
+        const p1 = clamp((t - k * STAG_MS) / FLIP_MS), p2 = clamp((t - wave2 - k * STAG_MS) / FLIP_MS);
+        flipDeg[i] = 180 * easeFlip(p1) + 180 * easeFlip(p2);
+        flipLift[i] = 1 + .04 * Math.sin(Math.PI * p1) + .04 * Math.sin(Math.PI * p2);
+        if (p1 >= .5 && !swap.filled.has(i)) { fillCard(i, swap.n); swap.filled.add(i); } // the front is turned away by now
+      });
+      if (t >= wave2 + last * STAG_MS + FLIP_MS) { flipDeg.fill(0); flipLift.fill(1); swap = null; }
     }
   }
 
@@ -1097,11 +1287,12 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   let RUN = K.f20 + .3;
   let S = 1, vh = innerHeight, portrait = false, sp = 0, clock = 0, lastNow = null, lastY = scrollY;
 
-  /* statue box (1800×2000 render px, mirrored) per pose: [left, top, scale] in design px, fitted so the head lands where each Figma frame has it.
+  /* statue box (1800 render px wide, top 2000 rows = head to hips, mirrored) per pose: [left, top, scale] in design px, fitted so the head lands where each Figma frame has it.
      A = Hero/1 (+30°), B = frame 2 (+7.5°), C = frames 4–13, D = 14–17, E = 18–19 (all −27°) */
   // head centre / top in the mirrored renders ≈ (1060, 114) at +18°, (1048, 116) at +7.5°, (998, 120) at −27°
-  // A follows the user's reference screenshot (head centre x ≈ 1430, top ≈ 251) rather than Figma Hero
-  const POSE = { A: [31.5, 100.5, 1.32], B: [36.6, 86.9, 1.32], C: [369.4, 397.3, .5948], D: [441.4, 103.5, .5948], E: [-247.7, -12.4, 1.17] };
+  // A = first screen Figma 7541:502 (bust box 886×985 at 903.5, 245.6); LOAD = the loading frames 7541:548 (766.8×852 at 504.2, 238)
+  const LOAD = [504.2, 238, 766.772 / 1800];
+  const POSE = { A: [903.5, 245.6, 886 / 1800], B: [36.6, 86.9, 1.32], C: [369.4, 397.3, .5948], D: [441.4, 103.5, .5948], E: [-247.7, -12.4, 1.17] };
   const POSE_KEYS = [K.f1, K.f2, K.f4, K.f13, K.f14, K.f17, K.f18];
   const POSE_SEQ = ['A', 'B', 'C', 'C', 'D', 'D', 'E'];
   const TURN_B = (30 - 7.5) / 3; // sequence index of the frame-2 pose
@@ -1143,28 +1334,41 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   const fade = (el, a, dy) => { el.style.opacity = a.toFixed(3); el.style.transform = `translateY(${((1 - a) * dy).toFixed(2)}px)`; };
 
   function render(p, ts) {
-    // entrance on load (seconds), multiplied by the scroll fade
-    const enter = (a, b) => reduce ? 1 : ease(seg(ts, a, b));
-    // copy: full through frame 1, dim at 2, gone by 4 (Figma Hero 6971:3281, guide lines removed)
+    // loading (seconds on the clock): pieces fade in, the frames play, then the bust and the logo move into the first screen
+    // the logo, then the bust (nearest) fade in last, rising 24px
+    const fIn = reduce ? 1 : easeEnter(seg(ts, LD_IN.fot, LD_IN.fot + LD_IN.fade)), lIn = reduce ? 1 : easeEnter(seg(ts, LD_IN.bust, LD_IN.bust + LD_IN.fade));
+    const hT = reduce ? 1 : easeMove(seg(ts, LD.hero[0], LD.hero[1]));
+    if (!reduce) drawLoader(ts, 1 - hT); else drawLoader(Infinity, 0);
+    ldBg.style.opacity = (1 - hT).toFixed(3);
+    ldBg.style.visibility = hT >= .998 ? 'hidden' : '';
+    // the copy rises in, line by line, as the bust lands; multiplied by the scroll fade
+    const enter = (a, b) => reduce ? 1 : easeEnter(seg(ts - LD.copy, a, b));
+    // copy: full through frame 1, dim at 2, gone by 4 (Figma Hero 7541:502)
     const copyA = kf([K.f1, K.f2, K.f4], [1, .4, 0], p);
-    fade(heroTitle, enter(.25, 1.1) * copyA, 18);
-    bodyParas.forEach((el, i) => fade(el, enter(.5 + i * .3, 1.4 + i * .3) * copyA, 14));
-    fade(facts, enter(1, 1.9) * copyA, 20);
+    fade(heroTitle, enter(0, 1.2) * copyA, 24);
+    bodyParas.forEach((el, i) => fade(el, enter(.12 + i * .12, 1.32 + i * .12) * copyA, 22));
+    fade(facts, enter(.36, 1.56) * copyA, 24);
     ui.style.visibility = copyA <= .002 ? 'hidden' : '';
 
     // statue: pose by frame, turning from +30° to −27° between frames 1 and 4; it fades under the logo (19) and is gone at 20
-    const sIn = enter(0, 1.3);
-    const pose = k => kf(POSE_KEYS, POSE_SEQ.map(n => POSE[n][k]), p);
-    const x = pose(0) + (1 - sIn) * 60, y = pose(1), sc = pose(2);
+    const pose = k => lerp(LOAD[k], kf(POSE_KEYS, POSE_SEQ.map(n => POSE[n][k]), p), hT);
+    const x = pose(0), y = pose(1) + (1 - lIn) * 24, sc = pose(2);
     statue.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
-    const sA = sIn * kf([K.f18, K.f19, K.f20], [1, .1, 0], p) * (portrait ? lerp(.4, 1, seg(p, K.f1, K.f4)) : 1);
+    // loading + first screen (Figma 7541:548 / 7541:502): the bust casts 0 0 120px rgba(0,0,0,.56) around its silhouette
+    // (244 box px at the first-screen scale); it goes once the turn starts
+    const sh = kf([K.f1, K.f2], [.56, 0], p);
+    statue.style.filter = sh > .002 ? `drop-shadow(0 0 244px rgba(0,0,0,${sh.toFixed(3)}))` : 'none';
+    const sA = lIn * kf([K.f18, K.f19, K.f20], [1, .1, 0], p) * (portrait ? lerp(1, lerp(.4, 1, seg(p, K.f1, K.f4)), hT) : 1);
     statue.style.opacity = sA.toFixed(3);
     statue.style.visibility = sA <= .002 ? 'hidden' : '';
     drawStatue(kf([K.f1, K.f2, K.f4], [SEQ_0, TURN_B, SEQ_N - 1], p));
 
     // FUNDAMENTALS OVER TOOLS: behind the head, slides to centre with the statue (2 → 4), fades 1 → .5 → .1 → 0 (4 → 7)
-    const fA = enter(.3, 1.3) * kf([K.f4, K.f5, K.f6, K.f7], [1, .5, .1, 0], p);
-    fot.style.transform = `translate3d(${kf([K.f2, K.f4], [958, 499], p).toFixed(2)}px, ${kf([K.f2, K.f4], [124, 173], p).toFixed(2)}px, 0)`;
+    // first screen: 788 wide at (1030.9, 170.6) (Figma 7541:502); loading: 682 wide at (619, 173)
+    const fA = fIn * kf([K.f4, K.f5, K.f6, K.f7], [1, .5, .1, 0], p);
+    const fx = lerp(619, kf([K.f1, K.f2, K.f4], [1030.9, 958, 499], p), hT), fy = lerp(173, kf([K.f1, K.f2, K.f4], [170.6, 124, 173], p), hT) + (1 - fIn) * 24;
+    const fs = lerp(682 / 922, kf([K.f1, K.f2], [788 / 922, 1], p), hT);
+    fot.style.transform = `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, 0) scale(${fs.toFixed(4)})`;
     fot.style.opacity = fA.toFixed(3);
     fot.style.visibility = fA <= .002 ? 'hidden' : '';
 
@@ -1198,7 +1402,11 @@ button.cgc:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(255
   function tick(now) {
     // scrolling during the entrance fast-forwards it rather than leaving it half-played
     const dt = lastNow == null ? 0 : Math.min(.1, (now - lastNow) / 1000); lastNow = now;
-    clock += dt * (scrollY > 10 ? 4 : 1);
+    // the clock waits for the loading pieces; a page that opens mid-scroll (or with reduced motion) skips the loading
+    if (!ldDone && scrollY > 10) ldSkip = true; // restored scroll position, anchor jump or scrollbar drag
+    if (ldSkip && clock < LD.hero[1] + 3) clock = LD.hero[1] + 3;
+    if (ldReady) clock += dt * (scrollY > 10 || ldHurry ? 4 : 1);
+    if (!ldDone && clock >= LD.hero[1]) ldDone = true;
     const target = clamp((scrollY - hero.offsetTop) / vh, 0, RUN);
     sp = reduce ? target : sp + (target - sp) * .06; // heavy inertia on the scrub so a flick glides instead of jumping
     if (Math.abs(target - sp) < .002) sp = target;
