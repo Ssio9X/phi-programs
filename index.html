@@ -2,7 +2,7 @@
 <title>Phi 1년제 프로그램</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Young+Serif&display=swap">
 </head><body>
 <style>
 /* Layout: hero stage (1920×1077 design canvas, scaled; entrance autoplays) → white/grey/black content bands on a 1280 column → footer revealed under the rounded last band */
@@ -151,6 +151,29 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* starfield (screen recording 10/24): fine white points flying out of the centre toward the viewer, no backdrop of its own.
    Sized to the viewport, not the 1920×1080 canvas, so the field reaches every edge at any aspect; sits under the statue */
 .stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+/* construction lines (Figma Hero 8426:21274): 1:1 on screens up to 1920×1088, scaled up only to cover larger or taller ones,
+   strokes kept at their 0.6 px whatever the scale; fade out with the stars */
+.hlines { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; opacity: 0; }
+.hlines svg { display: block; overflow: visible; }
+.hlines path { vector-effect: non-scaling-stroke; }
+
+/* section index (Figma Black 8426:22361 / White 8426:22910): fixed under the hero facts (design x 150, y 876), type at its own
+   size. Rows 140 × 20, gap 2; others at 20 %, the current one full with a dotted leader to its numeral; hover shows every row
+   underlined. White type over the dark bands, black over the white ones */
+.toc { position: fixed; z-index: 45; left: 150px; top: 876px; width: 140px; display: flex; flex-direction: column; gap: 2px; color: #fff; opacity: 0; transition: color .3s; }
+.toc.light { color: #000; }
+.toc a { display: flex; align-items: center; gap: 4px; height: 20px; color: inherit; text-decoration: none; opacity: .2; transition: opacity .3s; }
+.toc b { flex: 1 1 auto; font: 700 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Pretendard", sans-serif; white-space: nowrap; }
+.toc i { display: none; flex: 1 1 0; height: 2px; background: radial-gradient(circle, currentColor 1px, transparent 1.2px) 0 50% / 5.6px 2px repeat-x; }
+.toc span { font: 400 16px/1.6 "Young Serif", Georgia, serif; text-align: right; }
+.toc a.on { opacity: 1; }
+.toc a.on b { flex: 0 0 auto; }
+.toc a.on i { display: block; }
+.toc:hover a { opacity: 1; }
+.toc:hover a b { flex: 1 1 auto; text-decoration: underline; text-underline-offset: from-font; }
+.toc:hover a i { display: none; }
+.toc[hidden] { display: none; }
+@media (max-width: 900px) { .toc { display: none; } }
 .ld { position: absolute; z-index: 0; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; pointer-events: none; }
 .ld text { font-family: "Pretendard", sans-serif; font-size: 10px; fill: #fff; text-anchor: middle; }
 .pr-w { position: absolute; z-index: 1; overflow: hidden; opacity: 0; }
@@ -184,11 +207,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* copy (frame 1) */
 .ui { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; pointer-events: none; z-index: 3; }
-.copy { position: absolute; left: 151px; top: 244px; width: 740px; display: flex; flex-direction: column; gap: 32px; color: #fff; }
+.copy { position: absolute; left: 150px; top: 204px; width: 740px; display: flex; flex-direction: column; gap: 32px; color: #fff; }
 .copy h1 { margin: 0; font-size: 42px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .copy .paras { display: flex; flex-direction: column; gap: 36px; }
 .copy .paras p { font-size: 20px; line-height: 1.6; color: #a6a6a6; } /* Figma 7541:502 rev. */
-.hfacts { position: absolute; left: 151px; top: 650px; width: 420px; }
+.hfacts { position: absolute; left: 150px; top: 576px; width: 420px; }
 .hfacts > div { display: grid; grid-template-columns: 134px 1fr; align-items: center; padding: 12px 0; border-bottom: .8px solid rgba(239,233,221,.4); }
 .hfacts > div:last-child { border-bottom: 0; }
 .hfacts dt { font-size: 14px; line-height: 1.5; color: #7a7c83; }
@@ -776,11 +799,21 @@ button.cgc:hover .th { opacity: .28; }
   </filter></svg>
 </div>
 
+<nav class="toc" id="toc" aria-label="페이지 목차">
+  <a href="#hero" data-p="0"><b>Introduce</b><i></i><span>I</span></a>
+  <a href="#hero" data-p="f9"><b>Competency</b><i></i><span>II</span></a>
+  <a href="#hero" data-p="f15"><b>Phi OS</b><i></i><span>III</span></a>
+  <a href="#courses"><b>Course</b><i></i><span>IV</span></a>
+  <a href="#structure"><b>Structure</b><i></i><span>V</span></a>
+  <a href="#approach"><b>Approach</b><i></i><span>VI</span></a>
+  <a href="#curriculum"><b>Curriculum</b><i></i><span>VII</span></a>
+</nav>
 <main class="content" id="top">
   <!-- Hero: Figma 6899:1859 (scroll story) + cards 6899:2862 / 6899:2864 + toggle transition 6899:1909. Stage stays pinned while the page scrolls through it -->
   <section class="hero" id="hero" aria-label="Phi의 1년제 프로그램">
     <div class="stage" id="stage">
       <div class="ld-bg" id="ldBg"></div>
+      <div class="hlines" id="hlines" aria-hidden="true"></div>
       <canvas class="stars" id="stars" aria-hidden="true"></canvas>
       <div class="canvas" id="canvas">
         <svg class="ld" id="ld" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
@@ -1491,6 +1524,44 @@ button.cgc:hover .th { opacity: .28; }
     const dpr = Math.min(devicePixelRatio || 1, 2); stW = stCv.clientWidth; stH = stCv.clientHeight;
     stCv.width = Math.round(stW * dpr); stCv.height = Math.round(stH * dpr); stCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
+  // construction lines: the Figma export, inlined so its strokes can stay 0.6 px at any scale
+  const hlines = document.getElementById('hlines');
+  fetch('assets/hero-lines.svg').then(r => r.text()).then(t => { hlines.innerHTML = t; }).catch(() => {});
+  function sizeLines(vw, vh) {
+    const L = Math.max(1, vw / 1920, vh / 1088); // the group overhangs the 1920×1088 frame on every side, so this covers the screen
+    const fl = (vw - 1920 * L) / 2, ft = (vh - 1088 * L) / 2;
+    hlines.style.transform = `translate(${(fl - 611 * L).toFixed(1)}px, ${(ft - 582 * L).toFixed(1)}px) scale(${L.toFixed(4)})`;
+  }
+
+  // section index: rows 0–2 follow the hero frames (II = the principles, III = the card deck, as in Figma Section 6),
+  // the rest the section under the index; light rows over the white bands, hidden over the footer
+  const toc = document.getElementById('toc'), tocA = [...toc.children], mainEl = document.getElementById('top');
+  const secs = ['courses', 'structure', 'approach', 'curriculum'].map(id => document.getElementById(id));
+  const tocPhoto = document.getElementById('cgPhoto');
+  let tocOn = -1, tocLight = null;
+  function placeToc(left, top) {
+    toc.hidden = portrait;
+    toc.style.left = (left + 150 * S).toFixed(1) + 'px'; toc.style.top = (top + 876 * S).toFixed(1) + 'px';
+  }
+  function updateToc(p, a) {
+    const y = toc.getBoundingClientRect().top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
+    let on;
+    if (hero.getBoundingClientRect().bottom > mid) on = p < K.f7 ? 0 : p < K.f14 ? 1 : p < OS_IN ? 2 : 3;
+    else on = tocPhoto.getBoundingClientRect().top <= mid ? 4 : 3;
+    for (let i = 1; i < secs.length; i++) if (secs[i].getBoundingClientRect().top <= mid) on = i + 3;
+    if (on !== tocOn) { tocA.forEach((el, i) => { el.classList.toggle('on', i === on); el.toggleAttribute('aria-current', i === on); }); tocOn = on; }
+    const light = secs[1].getBoundingClientRect().top <= y;
+    if (light !== tocLight) { toc.classList.toggle('light', light); tocLight = light; }
+    const over = mainEl.getBoundingClientRect().bottom < y + 76; // footer underneath
+    toc.style.opacity = (over ? 0 : a).toFixed(3);
+    toc.style.visibility = over || a <= .002 ? 'hidden' : '';
+  }
+  tocA.forEach(el => el.addEventListener('click', e => {
+    const k = el.dataset.p; if (k == null) return;
+    e.preventDefault();
+    scrollTo({ top: hero.offsetTop + (k === '0' ? 0 : K[k]) * vh, behavior: reduce ? 'auto' : 'smooth' });
+  }));
+
   function drawStars(a) {
     const now = performance.now(), dt = stLast ? Math.min((now - stLast) / 1000, .05) : 0; stLast = now;
     if (a <= .002) { if (stOn) { stCtx.clearRect(0, 0, stW, stH); stOn = false; } return; }
@@ -1530,7 +1601,7 @@ button.cgc:hover .th { opacity: .28; }
     // frame 21: 주요 수업들 starts 518 design px under the logo's top (321) — scroll the logo until that point meets the bottom edge
     RUN = K.f20 + LOGO_HOLD + Math.max(.05, (vh - top - (321 + 518) * S) / vh);
     hero.style.height = (vh * (1 + RUN)) + 'px';
-    sizeStars();
+    sizeStars(); sizeLines(vw, vh); placeToc(left, top);
   }
   const fade = (el, a, dy) => { el.style.opacity = a.toFixed(3); el.style.transform = `translateY(${((1 - a) * dy).toFixed(2)}px)`; };
 
@@ -1542,7 +1613,10 @@ button.cgc:hover .th { opacity: .28; }
     if (!reduce) drawLoader(ts, 1 - hT); else drawLoader(Infinity, 0);
     ldBg.style.opacity = (1 - hT).toFixed(3);
     ldBg.style.visibility = hT >= .998 ? 'hidden' : '';
-    drawStars(hT * kf([K.f4, K.f7], [1, 0], p));
+    const stA = hT * kf([K.f4, K.f7], [1, 0], p);
+    drawStars(stA);
+    hlines.style.opacity = stA.toFixed(3);
+    updateToc(p, hT);
     // the copy rises in, line by line, as the bust lands; multiplied by the scroll fade
     const enter = (a, b) => reduce ? 1 : easeEnter(seg(ts - LD.copy, a, b));
     // copy: full through frame 1, dim at 2, gone by 4 (Figma Hero 7541:502)
