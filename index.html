@@ -174,9 +174,40 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .toc a:hover i { display: none; }
 .toc[hidden] { display: none; }
 @media (max-width: 900px) { .toc { display: none; } }
+
+/* item sheet (Figma 8445:336): the hero behind frosted (black 60 % + blur), the group's five rows on the left (2 px bar, Pretendard
+   16, current SemiBold white, others Medium 40 %), the title (457 wide) with its Korean name (SF Pro Heavy 14, #aaa) and text
+   (SF Pro Semibold 18 / 1.6, #ddd, 500 wide) in the middle */
+.osd { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; background: rgba(0,0,0,.6); -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s; }
+.osd.open { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+.osd-nav { position: absolute; left: clamp(24px, 6.25vw, 120px); top: 50%; transform: translateY(-50%); margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.osd-nav button { display: block; height: 28px; padding: 0 0 0 10px; border-left: 2px solid rgba(255,255,255,.4); color: rgba(255,255,255,.4); font: 500 16px/28px "Pretendard", sans-serif; text-align: left; white-space: nowrap; transition: color .2s, border-color .2s; }
+.osd-nav button:hover { color: rgba(255,255,255,.75); }
+.osd-nav button[aria-current="true"] { border-color: #fff; color: #fff; font-weight: 600; }
+.osd-body { width: min(500px, calc(100vw - 48px)); display: flex; flex-direction: column; align-items: center; text-align: center; }
+.osd-body img { width: 457px; max-width: calc(100vw - 48px); height: auto; }
+.osd-k { margin-top: 8px; font: 860 14px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro", "Pretendard", sans-serif; color: #aaa; }
+.osd-d { margin-top: 40px; font: 590 18px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro", "Pretendard", sans-serif; color: #ddd; word-break: keep-all; }
+@media (max-width: 900px) {
+  .osd { align-content: start; padding-top: 18vh; }
+  .osd-nav { position: static; transform: none; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 6px 12px; margin: 0 24px 32px; }
+  .osd-body img { width: min(380px, calc(100vw - 48px)); }
+}
 .ld { position: absolute; z-index: 0; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; pointer-events: none; }
 .ld text { font-family: "Pretendard", sans-serif; font-size: 10px; fill: #fff; text-anchor: middle; }
 .pr-w { position: absolute; z-index: 1; overflow: hidden; opacity: 0; }
+/* 역량 / 태도 list (Figma Section 6 scenario 8445:536, titles Section 7 8445:699): the new statue (statue_kas633, 1350×1800 render,
+   Figma box 1665 wide at 1018, 12), the bottom fade over it (0, 640, 1920 × 448, transparent → black), and one column of titles
+   centred on x 752 that scrolls through a focus at y 527 — focused 1, the next .9 / .3, then .7 / .2, then .5 / .2 */
+.kas { position: absolute; z-index: 2; left: 0; top: 0; width: 1350px; max-width: none; transform-origin: 0 0; opacity: 0; visibility: hidden; pointer-events: none; will-change: transform, opacity; }
+/* runs on solid black past the frame so a screen taller than the design never shows the statue again under the fade */
+.osfade { position: absolute; z-index: 3; left: -2000px; right: -2000px; top: 640px; height: 3000px; background: linear-gradient(rgba(0,0,0,0), #000 448px); opacity: 0; pointer-events: none; }
+.stage.portrait .osfade { top: 540px; }
+.osl { position: absolute; z-index: 4; left: 0; top: 0; width: 0; height: 0; visibility: hidden; }
+.osl > * { position: absolute; left: 0; top: 0; width: 900px; padding: 0; transform-origin: 50% 50%; opacity: 0; }
+.osl img { display: block; width: 900px; max-width: none; pointer-events: none; }
+.osl button { cursor: pointer; border-radius: 24px; }
+.osl button:focus-visible { outline: 2px solid rgba(255,255,255,.6); outline-offset: -12px; }
 .phios { position: absolute; z-index: 25; left: 451.7px; top: 321px; width: 1016.6px; height: 437.6px; max-width: none; opacity: 0; }
 
 /* cards: positioned every frame from JS (loop position + fall-in offset); the wrapper only carries depth order.
@@ -801,13 +832,17 @@ button.cgc:hover .th { opacity: .28; }
 
 <nav class="toc" id="toc" aria-label="페이지 목차">
   <a href="#hero" data-p="0"><b>Introduce</b><i></i><span>I</span></a>
-  <a href="#hero" data-p="f9"><b>Phi OS</b><i></i><span>II</span></a>
-  <a href="#hero" data-p="f15"><b>Competency</b><i></i><span>III</span></a>
+  <a href="#hero" data-p="lc"><b>Competency</b><i></i><span>II</span></a>
+  <a href="#hero" data-p="lo"><b>Phi OS</b><i></i><span>III</span></a>
   <a href="#courses"><b>Course</b><i></i><span>IV</span></a>
   <a href="#structure"><b>Structure</b><i></i><span>V</span></a>
   <a href="#approach"><b>Approach</b><i></i><span>VI</span></a>
   <a href="#curriculum"><b>Curriculum</b><i></i><span>VII</span></a>
 </nav>
+<div class="osd" id="osd" role="dialog" aria-modal="true" aria-labelledby="osdK">
+  <ul class="osd-nav" id="osdNav"></ul>
+  <div class="osd-body"><img id="osdT" alt=""><p class="osd-k" id="osdK"></p><p class="osd-d" id="osdD"></p></div>
+</div>
 <main class="content" id="top">
   <!-- Hero: Figma 6899:1859 (scroll story) + cards 6899:2862 / 6899:2864 + toggle transition 6899:1909. Stage stays pinned while the page scrolls through it -->
   <section class="hero" id="hero" aria-label="Phi의 1년제 프로그램">
@@ -820,6 +855,9 @@ button.cgc:hover .th { opacity: .28; }
         <img class="fot" id="fot" src="assets/fundamentals-over-tools.svg" alt="Fundamentals over tools">
         <div id="pr" role="list" aria-label="Phi OS 다섯 가지 원칙"></div>
         <div class="statue" id="statue" data-show="a"><img class="st-a" src="assets/statue/a18.webp" alt=""><img class="st-a2" src="assets/statue/a18-low.webp" alt=""><img class="st-b" src="assets/statue/f27.webp" alt="" decoding="async"><img class="st-b2" src="assets/statue/f27-low.webp" alt="" decoding="async"></div>
+        <img class="kas" id="kas" src="assets/statue/kas633.webp" alt="" decoding="async">
+        <div class="osfade" id="osfade"></div>
+        <div class="osl" id="osl" role="list" aria-label="역량과 태도"></div>
         <div id="deck" aria-live="polite"></div>
         <div class="kf" id="kf" aria-hidden="true"><button class="kp" type="button" aria-label="이전 카드" tabindex="-1"></button><button class="kn" type="button" aria-label="다음 카드" tabindex="-1"></button><p class="kc-n" id="kcN"></p></div>
         <img class="phios" id="phios" src="assets/phi-operating-system.svg" alt="Phi Operating System">
@@ -1469,10 +1507,13 @@ button.cgc:hover .th { opacity: .28; }
   // 10/20: the whole run cut from ~26 to ~10 screens ('스크롤이 너무 길어', esp. the cards coming up): about one screen per change,
   // half a screen to a screen per hold — first screen .6, turn 1.5, FOT out .7, principles .35 apart, cards up .8 and held 1.2,
   // cards out 1, logo 1
-  const K = { f1: .6, f2: 1.3, f4: 2.1, f5: 2.4, f6: 2.6, f7: 2.8, f8: 3.15, f9: 3.5, f10: 3.85, f11: 4.2, f12: 4.55, f13: 4.9,
-              f14: 5.7, f15: 6.5, f16: 7.7, f17: 8.1, f18: 8.7, f19: 9.4, f20: 9.8 };
-  const PR_OUT = K.f13 + .5; // principles held, then gone as the cards start up
-  const OS_IN = K.f17 + .3; // no close-up any more: as soon as the cards are out, the bust darkens and PHI OS fades in (→ 19)
+  // 10/25 (Figma scenario 8445:536): after the first screen the bust grows to the right and becomes the standing statue, and the
+  // 역량 / 태도 list scrolls past — COMPETENCY, its five, PHI OS, its five (L = 0 … 11, LSTEP screens apart, from lc) — then the
+  // statue darkens under PHI OPERATING SYSTEM (OS_IN → 19 → 20) as before. The old turn / principles / card deck frames are gone.
+  const LSTEP = .42, L_N = 11;
+  const K = { f1: .6, f2: .9, f4: 1.5, lc: 1.5, lo: 1.5 + 6 * LSTEP, lend: 1.5 + L_N * LSTEP };
+  const OS_IN = K.lend + .35;
+  K.f19 = OS_IN + .5; K.f20 = K.f19 + .4;
   let RUN = K.f20 + .3;
   // PHI OS holds a beat after frame 20, then rises with the raw scroll (not the eased scrub): when the pin lets go the page's own
   // scroll takes over at the same speed, so the logo never jumps ahead as the eased value catches up
@@ -1486,12 +1527,15 @@ button.cgc:hover .th { opacity: .28; }
   // head centre / top in the mirrored renders ≈ (1060, 114) at +18°, (1048, 116) at +7.5°, (998, 120) at −27°
   // A = first screen Figma 7541:502 (bust box 886×985 at 903.5, 245.6); LOAD = the loading frames 7541:548 (766.8×852 at 504.2, 238)
   const LOAD = [504.2, 238, 766.772 / 1800];
-  const POSE = { A: [903.5, 245.6, 886 / 1800], B: [36.6, 86.9, 1.32], C: [369.4, 397.3, .5948], D: [441.4, 103.5, .5948], E: [-247.7, -12.4, 1.17] };
+  const POSE = { A: [903.5, 245.6, 886 / 1800], B: [36.6, 86.9, 1.32], C: [369.4, 397.3, .5948], D: [441.4, 103.5, .5948], E: [-247.7, -12.4, 1.17],
+    N: [1028, 44, .694] }; // N: the bust scaled 1.41× so its head lands on the standing statue's (1764, 308) — the cross-fade point
+  // standing statue (kas633): Figma box at (1018, 12), 1.2333 render px per px; KAS0 puts its head on the first-screen bust's
+  const KAS = [1018, 12, 1.2333], KAS0 = [896, 222, .875];
   // 10/19: no zoom-in between the first screen and frame 4 (the frame-2 close pose B is skipped): the bust turns to face the
   // viewer while it slides to the centre and grows only to frame 4's size
   // 10/19 (later): no close-up before PHI OS either — the bust holds frame 14–17's pose D and just darkens under the logo (E unused)
-  const POSE_KEYS = [K.f1, K.f4, K.f13, K.f14, K.f17, K.f18];
-  const POSE_SEQ = ['A', 'C', 'C', 'D', 'D', 'D'];
+  const POSE_KEYS = [K.f1, K.f4];
+  const POSE_SEQ = ['A', 'N'];
 
   /* principles (Figma frame 13, 7013:1197): five windows onto Group 35, a stack of number + word blocks 496.1 wide, each showing one
      number and one word. [left, top, height, where the number block starts in the group, where the word block starts]. They come in
@@ -1510,7 +1554,84 @@ button.cgc:hover .th { opacity: .28; }
     // the number is clipped to the window's top 60 px so a taller window (NO.2's three lines) never shows the next number below it
     `<svg width="992.2" height="120"><use href="assets/five-principles.svg#numbers" y="${-yn * 2}"/></svg><use href="assets/five-principles.svg#principles" y="${-yw * 2}"/></svg>`).join('');
   const prEls = [...prBox.children];
-  const PR_FR = [K.f7, K.f8, K.f9, K.f10, K.f11, K.f12, K.f13];
+  prBox.hidden = true; // 10/25: the five principles are now items of the 태도 list below
+
+  // 역량 / 태도 list: [title svg, Korean name, text] per item; the copy is Figma 8445:699's companion sheet (역량과 태도)
+  const OS_GROUPS = [
+    { head: 'h-competency', items: [
+      ['c1', '심미안', '디자이너에게 가장 중요한 역량을 고르라면 아름다움을 인식하는 능력 아닐까? 대상을 보았을 때 구체적으로 부분을 인식하고, 미추를 판단하며, 그 미추의 정도를 가늠할 수 있는 예리한 감각을 훈련한다.', 'Aesthetic Sense'],
+      ['c2', '언어화', '언어는 곧 사고의 천장이다. 내가 다룰 수 있는 어휘의 질과 양이 나의 사고방식의 높이를 결정한다. 타인에게 내 생각을 전달하는 것은 물론, 스스로를 설득할 수 있는 언어 체계를 갖춘다.', 'Articulation'],
+      ['c3', '구조화', '나무를 보는 것만큼 숲을 보는 일도 중요하다. 구체와 추상을 오가며 현재 다루고 있는 문제가 전체 그림에서 어느 위치성을 지니는지 이해하고, 파편화된 분야들을 하나로 엮어내는 구조적 사고를 훈련한다.', 'Structural Thinking'],
+      ['c4', '문제 정의', '많은 디자인이 실패하는 이유는 틀린 문제를 풀었기 때문이다. 증상을 문제로 오독하지 않고, 본질이 무엇인지 파악함으로써 정확한 문제 정의를 추구한다.', 'Problem Definition'],
+      ['c5', '관점 전환', '혁신적인 해결책은 같은 문제를 다른 관점으로 바라보았을 때 나온다. 특정 문제를 그 분야의 문법으로만 정의하는 것이 아니라, 다른 분야의 레퍼런스도 내 문제에 적용할 수 있는 관점을 지니기 위해 유연한 관점 전환을 훈련한다.', 'Reframing'] ] },
+    { head: 'h-phios', items: [
+      ['p1', '능동적으로 학습하기', 'Phi의 전체 교육 과정은 학습자의 능동성을 중요시한다. 교사는 가르치고, 학생은 배우는 구조가 아닌 학습자 스스로 동기를 부여하고 배움을 설계하는 방식을 전제로 한다.', 'Active Learning'],
+      ['p2', '불만족에 민감해지기', '문제 정의의 출발은 문제 감지에서 시작된다. 완성도를 타협하지 않는 이들은 쉽게 만족하지 않고 불만족을 민감하게 알아차린다. 좋은 것을 만들기 위해서는 좋지 않음을 느낄 수 있어야 한다.', 'Dissatisfaction Sensor'],
+      ['p3', '압축된 사고 분석하기', '사고 과정을 관찰하는 훈련이 되어있다면, 교실은 물론 교실 밖 일상에서도 전문성을 추출해낼 수 있다. Phi에서는 지식을 전달 받기를 기다리지 않고, 먼저 추출하는 태도와 기술을 연습한다.', 'Unpacking Invisible Decisions'],
+      ['p4', '무지를 발굴하기', 'Phi에서는 질문하는 것, 못하는 상태에서 내 결과물을 내놓는 것을 권장한다. 자신의 현재 상태를 꺼내놓음으로써 자신이 정확하게 무엇을 모르는지 발견할 수 있는 기회가 되기 때문이다.', 'Discovering Unknowns'],
+      ['p5', '공유하며 배우기', '가장 잘 배우는 방법은 남에게 가르쳐 보는 것이다. 이미 충분히 이해했다고 생각하는 것도 타인에게 설명해보고, 설득해보면 공백이 있다는 것을 깨닫게 된다. 이 메커니즘을 이해하고, 자신의 지식을 적극적으로 공유할 수 있어야 한다.', 'Learning by Sharing'] ] },
+  ];
+  // svg heights (all 900 wide): headings 102, two-line titles 323, one-line 229, three-line 436
+  const OS_H = { 'h-competency': 102, 'h-phios': 102, c1: 323, c2: 229, c3: 323, c4: 323, c5: 229, p1: 323, p2: 323, p3: 436, p4: 323, p5: 323 };
+  const osl = document.getElementById('osl'), kas = document.getElementById('kas'), osfade = document.getElementById('osfade');
+  const OSL = []; // { el, h, c (centre in the unscaled stack) }
+  {
+    let top = 0;
+    OS_GROUPS.forEach((g, gi) => [[g.head], ...g.items].forEach((it, k) => {
+      const el = document.createElement(k ? 'button' : 'div'), name = it[0];
+      if (k) { el.type = 'button'; el.setAttribute('role', 'listitem'); el.setAttribute('aria-label', `NO.${k} ${it[3]} ${it[1]}`); el.tabIndex = -1; el.addEventListener('click', () => openOsd(gi, k - 1)); }
+      else el.setAttribute('role', 'presentation');
+      el.innerHTML = `<img src="assets/os/${name}.svg" alt="" width="900" height="${OS_H[name]}" decoding="async">`;
+      osl.appendChild(el);
+      OSL.push({ el, h: OS_H[name], c: top + OS_H[name] / 2 }); top += OS_H[name] + 72; // Section 7 column gap
+    }));
+  }
+  const OS_FOCUS = 527, OS_PACK = .95; // focus centre (Figma frames 1–3); neighbours sit a little closer than the flat stack
+  let osVis = false;
+  function drawList(p, a) {
+    if (a <= .002) { if (osVis) { osl.style.visibility = 'hidden'; osVis = false; } return; }
+    if (!osVis) { osl.style.visibility = 'visible'; osVis = true; }
+    // L: which row is in focus; each row holds a little (half the step is spent settling on it)
+    const raw = clamp((p - K.lc) / LSTEP, 0, L_N), i0 = Math.floor(raw), f = raw - i0;
+    const L = i0 + (f < .5 ? 0 : easeMove((f - .5) / .5));
+    const j = Math.min(Math.floor(L), L_N - 1), t = L - j;
+    const F = OSL[j].c + (OSL[j + 1].c - OSL[j].c) * t;
+    const cx = portrait ? 960 : 752, rise = (1 - easeMove(seg(p, 1.1, K.f4))) * 260;
+    OSL.forEach((o, i) => {
+      const d = Math.abs(i - L), y = OS_FOCUS + (o.c - F) * OS_PACK + rise;
+      const sc = kf([0, 1, 2, 3], [1, .9, .7, .5], d), op = kf([0, 1, 2], [1, .3, .2], d) * a;
+      const on = y + o.h / 2 > -200 && y - o.h / 2 < 1280 + (vh / S - 1080);
+      o.el.style.visibility = on && op > .002 ? '' : 'hidden';
+      if (!on) return;
+      o.el.style.opacity = op.toFixed(3);
+      o.el.style.transform = `translate3d(${(cx - 450).toFixed(1)}px, ${(y - o.h / 2).toFixed(1)}px, 0) scale(${sc.toFixed(4)})`;
+      o.el.tabIndex = d < .5 && a > .5 ? 0 : -1;
+    });
+  }
+
+  // item sheet (Figma 8445:336): opened from a list title; the left rows switch between the group's five
+  const osd = document.getElementById('osd'), osdNav = document.getElementById('osdNav');
+  const osdT = document.getElementById('osdT'), osdK = document.getElementById('osdK'), osdD = document.getElementById('osdD');
+  let osdG = -1, osdFrom = null;
+  function showOsd(gi, k) {
+    const it = OS_GROUPS[gi].items[k];
+    osdT.src = `assets/os/${it[0]}.svg`; osdT.alt = `NO.${k + 1} ${it[3]}`; osdK.textContent = it[1]; osdD.textContent = it[2];
+    [...osdNav.querySelectorAll('button')].forEach((b, i) => b.setAttribute('aria-current', i === k ? 'true' : 'false'));
+  }
+  function openOsd(gi, k) {
+    if (osdG !== gi) { osdNav.innerHTML = OS_GROUPS[gi].items.map((it, i) => `<li><button type="button" data-k="${i}">${it[1]}</button></li>`).join(''); osdG = gi; }
+    showOsd(gi, k);
+    osdFrom = document.activeElement; osd.classList.add('open'); document.documentElement.style.overflow = 'hidden';
+    osdNav.querySelector('[aria-current="true"]').focus();
+  }
+  function closeOsd() {
+    if (!osd.classList.contains('open')) return;
+    osd.classList.remove('open'); document.documentElement.style.overflow = '';
+    osdFrom && osdFrom.focus && osdFrom.focus({ preventScroll: true });
+  }
+  osdNav.addEventListener('click', e => { const b = e.target.closest('button'); if (b) showOsd(osdG, +b.dataset.k); });
+  osd.addEventListener('click', e => { if (!e.target.closest('.osd-nav, .osd-body')) closeOsd(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeOsd(); });
 
   // starfield (Figma Hero 8426:16442 only): points spawn at random depth and come toward the viewer out of the screen centre.
   // x, y in half-screen units (of the longer side), z from ST_FAR to ST_NEAR, drawn at x / z. Fades in with the first screen and out
@@ -1533,7 +1654,7 @@ button.cgc:hover .th { opacity: .28; }
     hlines.style.transform = `translate(${(fl - 890.3 * L).toFixed(1)}px, ${(ft - 861.3 * L).toFixed(1)}px) scale(${L.toFixed(4)})`;
   }
 
-  // section index: rows 0–2 follow the hero frames (II Phi OS = the principles, III Competency = the card deck, Figma Section 6),
+  // section index: rows 0–2 follow the hero frames (II Competency, III Phi OS = the two halves of the list, Figma Section 6),
   // the rest the section under the index; light rows over the white bands, hidden over the footer
   const toc = document.getElementById('toc'), tocA = [...toc.children], mainEl = document.getElementById('top');
   const secs = ['courses', 'structure', 'approach', 'curriculum'].map(id => document.getElementById(id));
@@ -1542,20 +1663,20 @@ button.cgc:hover .th { opacity: .28; }
   function placeToc(left, top) {
     toc.hidden = portrait;
     toc.style.left = (left + 150 * S).toFixed(1) + 'px';
-    // wide, short screens: the facts (design y 576–829) reach the index — it then waits until they have faded (frames 2 → 4)
+    // wide, short screens: the facts (design y 576–829) reach the index — it then waits until they have faded
     tocLate = top + 829 * S + 16 > vh - 60 - 152;
   }
   function updateToc(p, a) {
     const y = toc.getBoundingClientRect().top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
     let on;
-    if (hero.getBoundingClientRect().bottom > mid) on = p < K.f7 ? 0 : p < K.f14 ? 1 : p < OS_IN ? 2 : 3;
+    if (hero.getBoundingClientRect().bottom > mid) on = p < K.f2 ? 0 : p < K.lc + 5.5 * LSTEP ? 1 : p < OS_IN ? 2 : 3;
     else on = tocPhoto.getBoundingClientRect().top <= mid ? 4 : 3;
     for (let i = 1; i < secs.length; i++) if (secs[i].getBoundingClientRect().top <= mid) on = i + 3;
     if (on !== tocOn) { tocA.forEach((el, i) => { el.classList.toggle('on', i === on); el.toggleAttribute('aria-current', i === on); }); tocOn = on; }
     const light = secs[1].getBoundingClientRect().top <= y;
     if (light !== tocLight) { toc.classList.toggle('light', light); tocLight = light; }
     const over = mainEl.getBoundingClientRect().bottom < y + 76; // footer underneath
-    if (tocLate) a *= kf([K.f2, K.f4], [0, 1], p);
+    if (tocLate) a *= kf([K.f1, K.f2], [0, 1], p);
     toc.style.opacity = (over ? 0 : a).toFixed(3);
     toc.style.visibility = over || a <= .002 ? 'hidden' : '';
   }
@@ -1616,20 +1737,20 @@ button.cgc:hover .th { opacity: .28; }
     if (!reduce) drawLoader(ts, 1 - hT); else drawLoader(Infinity, 0);
     ldBg.style.opacity = (1 - hT).toFixed(3);
     ldBg.style.visibility = hT >= .998 ? 'hidden' : '';
-    const stA = hT * kf([K.f4, K.f7], [1, 0], p);
+    const stA = hT * kf([OS_IN, K.f19], [1, 0], p); // 10/25: the starfield and lines stay until PHI OS / 주요 수업들
     drawStars(stA);
     hlines.style.opacity = stA.toFixed(3);
     updateToc(p, hT);
     // the copy rises in, line by line, as the bust lands; multiplied by the scroll fade
     const enter = (a, b) => reduce ? 1 : easeEnter(seg(ts - LD.copy, a, b));
-    // copy: full through frame 1, dim at 2, gone by 4 (Figma Hero 7541:502)
-    const copyA = kf([K.f1, K.f2, K.f4], [1, .4, 0], p);
+    // copy: full through the first screen, dim as the bust starts to grow, gone before the list arrives
+    const copyA = kf([K.f1, K.f2, 1.2], [1, .4, 0], p);
     fade(heroTitle, enter(0, 1.2) * copyA, 24);
     bodyParas.forEach((el, i) => fade(el, enter(.12 + i * .12, 1.32 + i * .12) * copyA, 22));
     fade(facts, enter(.36, 1.56) * copyA, 24);
     ui.style.visibility = copyA <= .002 ? 'hidden' : '';
 
-    // statue: pose by frame, turning from +30° to −27° between frames 1 and 4; it fades under the logo (19) and is gone at 20
+    // statue: from the first screen's bust (A) it grows to the right (N) and cross-fades into the standing statue
     const pose = k => lerp(LOAD[k], kf(POSE_KEYS, POSE_SEQ.map(n => POSE[n][k]), p), hT);
     const aOn = hT * (1 - seg(p, K.f1, K.f4)); // the narrow-screen shift holds on the first screen only
     const x = pose(0) + AX * aOn, y = pose(1) + (1 - lR) * 24, sc = pose(2);
@@ -1638,40 +1759,33 @@ button.cgc:hover .th { opacity: .28; }
     // (244 box px at the first-screen scale); it goes once the turn starts
     const sh = kf([K.f1, K.f2], [.56, 0], p);
     statue.style.filter = sh > .002 ? `drop-shadow(0 0 244px rgba(0,0,0,${sh.toFixed(3)}))` : 'none';
-    const sA = lIn * kf([OS_IN, K.f19, K.f20], [1, .1, 0], p) * (portrait ? lerp(1, lerp(.4, 1, seg(p, K.f1, K.f4)), hT) : 1);
+    const xf = seg(p, 1.08, 1.25); // bust out (1 → 1.12), then the standing statue in — never both at once
+    const sA = lIn * kf([1, 1.12], [1, 0], p) * (portrait ? lerp(1, .4, hT) : 1);
     statue.style.opacity = sA.toFixed(3);
     statue.style.visibility = sA <= .002 ? 'hidden' : '';
-    drawStatue(kf([K.f1, K.f4], [SEQ_0, SEQ_N - 1], p));
+    drawStatue(SEQ_0);
+    const kT = kf([K.f1, K.f4], [0, 1], p), kA = xf * kf([OS_IN, K.f19, K.f20], [1, .1, 0], p) * (portrait ? .4 : 1);
+    const kx = lerp(KAS0[0], KAS[0], kT) + (portrait ? -560 : 0), ky = lerp(KAS0[1], KAS[1], kT), ks = lerp(KAS0[2], KAS[2], kT);
+    kas.style.transform = `translate3d(${kx.toFixed(2)}px, ${ky.toFixed(2)}px, 0) scale(${ks.toFixed(4)})`;
+    kas.style.opacity = kA.toFixed(3);
+    kas.style.visibility = kA <= .002 ? 'hidden' : 'visible';
+    // the list: rises in as the copy goes, out before PHI OS; the bottom fade sits over the statue meanwhile
+    const oA = kf([1.1, K.f4], [0, 1], p) * kf([K.lend + .1, OS_IN], [1, 0], p); // after the copy has gone (1.2)
+    drawList(p, oA);
+    osfade.style.opacity = (kf([K.f2, K.f4], [0, 1], p) * kf([OS_IN, K.f19], [1, 0], p)).toFixed(3);
 
-    // FUNDAMENTALS OVER TOOLS: behind the head, slides to centre with the statue (2 → 4), fades 1 → .5 → .1 → 0 (4 → 7)
+    // FUNDAMENTALS OVER TOOLS: behind the head on the first screen, fades as the bust starts to grow
     // first screen: 788 wide at (1030.9, 170.6) (Figma 7541:502); loading: 682 wide at (619, 173)
-    const fA = fIn * kf([K.f4, K.f5, K.f6, K.f7], [1, .5, .1, 0], p);
-    const fx = lerp(619, kf([K.f1, K.f4], [1030.9, 499], p), hT) + AX * aOn, fy = lerp(173, kf([K.f1, K.f4], [170.6, 173], p), hT) + (1 - fR) * 24;
-    const fs = lerp(682 / 922, kf([K.f1, K.f4], [788 / 922, 1], p), hT);
+    const fA = fIn * kf([K.f1, K.f2], [1, 0], p);
+    const fx = lerp(619, 1030.9, hT) + AX * aOn, fy = lerp(173, 170.6, hT) + (1 - fR) * 24;
+    const fs = lerp(682 / 922, 788 / 922, hT);
     fot.style.transform = `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, 0) scale(${fs.toFixed(4)})`;
     fot.style.opacity = fA.toFixed(3);
     fot.style.visibility = fA <= .002 ? 'hidden' : '';
 
-    // principles: each comes in at half (its frame) then full (the next), all fade together after frame 13
-    const prOut = kf([K.f13, PR_OUT], [1, 0], p);
-    prEls.forEach((el, i) => { el.style.opacity = (kf(PR_FR.slice(i, i + 3), [0, .5, 1], p) * prOut).toFixed(3); });
-
-    // cards: up from below the frame (13 → 14 → 15), out the top (16 → 17 → 18)
-    // one eased rise per card, the front ones setting off earlier so frame 14 shows them staggered; one eased lift out
-    for (let i = 0; i < dys.length; i++) {
-      const start = Math.max(PR_OUT - .1, K.f14 - (1 - RISE14[i] / 1300) * (K.f15 - K.f14) * 1.2);
-      dys[i] = kf([start, K.f15], [1300, 0], p) + kf([K.f16, K.f18], [0, -1500], p);
-    }
-    const show = p > PR_OUT - .1 && p < K.f18 - .02;
-    wraps.forEach(w => { w.style.visibility = show ? '' : 'hidden'; });
-    drawDeck(dys);
-
-    // toggle: in with the cards, half at the close-up (18), gone by 19
-    const tA = kf([PR_OUT - .1, K.f14], [0, 1], p) * kf([K.f17, K.f18, K.f19], [1, .5, 0], p);
-    const tAf = tA * (1 - dimP);
-    segBar.style.opacity = tAf.toFixed(3);
-    segBar.style.visibility = tAf <= .01 ? 'hidden' : 'visible';
-    segBar.style.transform = `translateX(-50%) translateY(${((1 - tAf) * 16).toFixed(1)}px)`;
+    // 10/25: the card deck and its 역량 / 태도 toggle are replaced by the list (kept in the page, never shown)
+    wraps.forEach(w => { w.style.visibility = 'hidden'; });
+    segBar.style.visibility = 'hidden';
 
     // PHI OPERATING SYSTEM: fades in over the statue (OS_IN → 19), then scrolls up like the page (20 → release)
     const lA = kf([OS_IN, K.f19], [0, 1], p);
@@ -1692,7 +1806,7 @@ button.cgc:hover .th { opacity: .28; }
     sp = reduce ? target : sp + (target - sp) * .09; // inertia on the scrub (on top of the page's eased wheel scroll below)
     if (Math.abs(target - sp) < .002) sp = target;
     // the orbit turns only while the deck is fully landed and not yet lifting away
-    const settled = sp >= K.f15 - .02 && sp <= K.f16 + .02, inView = scrollY < hero.offsetTop + hero.offsetHeight;
+    const settled = false, inView = scrollY < hero.offsetTop + hero.offsetHeight; // the deck no longer shows
     animateDeck(now, settled, inView);
     render(sp, clock);
     const y = scrollY;
@@ -1720,7 +1834,7 @@ button.cgc:hover .th { opacity: .28; }
       if (cur !== tgt) raf = requestAnimationFrame(step);
     };
     addEventListener('wheel', e => {
-      if (e.ctrlKey || e.defaultPrevented || !ldDone || dkOpen || document.querySelector('.modal.open')) return; // pinch-zoom; the loading hold, the card focus and an open modal own the wheel
+      if (e.ctrlKey || e.defaultPrevented || !ldDone || dkOpen || document.querySelector('.modal.open, .osd.open')) return; // pinch-zoom; the loading hold, the card focus and an open modal own the wheel
       if (e.target.closest && e.target.closest('textarea, select, [data-native-scroll]')) return;
       e.preventDefault();
       const d = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaMode === 2 ? e.deltaY * innerHeight : e.deltaY;
