@@ -157,10 +157,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .hlines svg { display: block; overflow: visible; }
 .hlines path { vector-effect: non-scaling-stroke; }
 
-/* section index (Figma Black 8426:22361 / White 8426:22910): fixed under the hero facts (design x 150, y 876), type at its own
-   size. Rows 140 × 20, gap 2; others at 20 %, the current one full with a dotted leader to its numeral; hover shows every row
-   underlined. White type over the dark bands, black over the white ones */
-.toc { position: fixed; z-index: 45; left: 150px; top: 876px; width: 140px; display: flex; flex-direction: column; gap: 2px; color: #fff; opacity: 0; transition: color .3s; }
+/* section index (Figma Black 8426:22361 / White 8426:22910): fixed 60 px above the bottom edge, left on the hero copy (design
+   x 150), type at its own size. Rows 140 × 20, gap 2; others at 20 %, the current one full with a dotted leader to its numeral;
+   the row under the pointer full and underlined. White type over the dark bands, black over the white ones */
+.toc { position: fixed; z-index: 45; left: 150px; bottom: 60px; width: 140px; display: flex; flex-direction: column; gap: 2px; color: #fff; opacity: 0; transition: color .3s; }
 .toc.light { color: #000; }
 .toc a { display: flex; align-items: center; gap: 4px; height: 20px; color: inherit; text-decoration: none; opacity: .2; transition: opacity .3s; }
 .toc b { flex: 1 1 auto; font: 700 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Pretendard", sans-serif; white-space: nowrap; }
@@ -169,9 +169,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .toc a.on { opacity: 1; }
 .toc a.on b { flex: 0 0 auto; }
 .toc a.on i { display: block; }
-.toc:hover a { opacity: 1; }
-.toc:hover a b { flex: 1 1 auto; text-decoration: underline; text-underline-offset: from-font; }
-.toc:hover a i { display: none; }
+.toc a:hover { opacity: 1; }
+.toc a:hover b { flex: 1 1 auto; text-decoration: underline; text-underline-offset: from-font; }
+.toc a:hover i { display: none; }
 .toc[hidden] { display: none; }
 @media (max-width: 900px) { .toc { display: none; } }
 .ld { position: absolute; z-index: 0; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; pointer-events: none; }
@@ -801,8 +801,8 @@ button.cgc:hover .th { opacity: .28; }
 
 <nav class="toc" id="toc" aria-label="페이지 목차">
   <a href="#hero" data-p="0"><b>Introduce</b><i></i><span>I</span></a>
-  <a href="#hero" data-p="f9"><b>Competency</b><i></i><span>II</span></a>
-  <a href="#hero" data-p="f15"><b>Phi OS</b><i></i><span>III</span></a>
+  <a href="#hero" data-p="f9"><b>Phi OS</b><i></i><span>II</span></a>
+  <a href="#hero" data-p="f15"><b>Competency</b><i></i><span>III</span></a>
   <a href="#courses"><b>Course</b><i></i><span>IV</span></a>
   <a href="#structure"><b>Structure</b><i></i><span>V</span></a>
   <a href="#approach"><b>Approach</b><i></i><span>VI</span></a>
@@ -1528,20 +1528,22 @@ button.cgc:hover .th { opacity: .28; }
   const hlines = document.getElementById('hlines');
   fetch('assets/hero-lines.svg').then(r => r.text()).then(t => { hlines.innerHTML = t; }).catch(() => {});
   function sizeLines(vw, vh) {
-    const L = Math.max(1, vw / 1920, vh / 1088); // the group overhangs the 1920×1088 frame on every side, so this covers the screen
+    const L = Math.max(1, vw / 1920, vh / 1088); // the export (origin −890.3, −861.3 in the frame) overhangs the 1920×1088 frame on every side
     const fl = (vw - 1920 * L) / 2, ft = (vh - 1088 * L) / 2;
-    hlines.style.transform = `translate(${(fl - 611 * L).toFixed(1)}px, ${(ft - 582 * L).toFixed(1)}px) scale(${L.toFixed(4)})`;
+    hlines.style.transform = `translate(${(fl - 890.3 * L).toFixed(1)}px, ${(ft - 861.3 * L).toFixed(1)}px) scale(${L.toFixed(4)})`;
   }
 
-  // section index: rows 0–2 follow the hero frames (II = the principles, III = the card deck, as in Figma Section 6),
+  // section index: rows 0–2 follow the hero frames (II Phi OS = the principles, III Competency = the card deck, Figma Section 6),
   // the rest the section under the index; light rows over the white bands, hidden over the footer
   const toc = document.getElementById('toc'), tocA = [...toc.children], mainEl = document.getElementById('top');
   const secs = ['courses', 'structure', 'approach', 'curriculum'].map(id => document.getElementById(id));
   const tocPhoto = document.getElementById('cgPhoto');
-  let tocOn = -1, tocLight = null;
+  let tocOn = -1, tocLight = null, tocLate = false;
   function placeToc(left, top) {
     toc.hidden = portrait;
-    toc.style.left = (left + 150 * S).toFixed(1) + 'px'; toc.style.top = (top + 876 * S).toFixed(1) + 'px';
+    toc.style.left = (left + 150 * S).toFixed(1) + 'px';
+    // wide, short screens: the facts (design y 576–829) reach the index — it then waits until they have faded (frames 2 → 4)
+    tocLate = top + 829 * S + 16 > vh - 60 - 152;
   }
   function updateToc(p, a) {
     const y = toc.getBoundingClientRect().top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
@@ -1553,6 +1555,7 @@ button.cgc:hover .th { opacity: .28; }
     const light = secs[1].getBoundingClientRect().top <= y;
     if (light !== tocLight) { toc.classList.toggle('light', light); tocLight = light; }
     const over = mainEl.getBoundingClientRect().bottom < y + 76; // footer underneath
+    if (tocLate) a *= kf([K.f2, K.f4], [0, 1], p);
     toc.style.opacity = (over ? 0 : a).toFixed(3);
     toc.style.visibility = over || a <= .002 ? 'hidden' : '';
   }
