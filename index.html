@@ -199,10 +199,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* 역량 / 태도 list (Figma Section 6 scenario 8445:536, titles Section 7 8445:699): the new statue (statue_kas633, 1350×1800 render,
    Figma box 1665 wide at 1018, 12), the bottom fade over it (0, 640, 1920 × 448, transparent → black), and one column of titles
    centred on x 752 that scrolls through a focus at y 527 — focused 1, the next .9 / .3, then .7 / .2, then .5 / .2 */
-.kas { position: absolute; z-index: 2; left: 0; top: 0; width: 1350px; max-width: none; transform-origin: 0 0; opacity: 0; visibility: hidden; pointer-events: none; will-change: transform, opacity; }
+.kas { position: absolute; z-index: 2; left: 0; top: 0; width: 1350px; max-width: none; transform-origin: 0 0; /* mirrored in JS like Figma */ opacity: 0; visibility: hidden; pointer-events: none; will-change: transform, opacity; }
 /* runs on solid black past the frame so a screen taller than the design never shows the statue again under the fade */
 .osfade { position: absolute; z-index: 3; left: -2000px; right: -2000px; top: 640px; height: 3000px; background: linear-gradient(rgba(0,0,0,0), #000 448px); opacity: 0; pointer-events: none; }
 .stage.portrait .osfade { top: 540px; }
+/* Phi crest (Figma Section 6 frames 0.1 / 0.2, 8445:18402): faint, then full, then fades where COMPETENCY comes in */
+.crest { position: absolute; z-index: 4; left: 0; top: 0; width: 328.115px; max-width: none; opacity: 0; visibility: hidden; pointer-events: none; }
 .osl { position: absolute; z-index: 4; left: 0; top: 0; width: 0; height: 0; visibility: hidden; }
 .osl > * { position: absolute; left: 0; top: 0; width: 900px; padding: 0; transform-origin: 50% 50%; opacity: 0; }
 .osl img { display: block; width: 900px; max-width: none; pointer-events: none; }
@@ -471,7 +473,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: #eee; padding: 0 0
 @media (max-width: 900px) { .foot { flex-direction: column; align-items: stretch; } .foot .r { flex: none; margin: 0; align-items: flex-start; text-align: left; } .foot .info { align-items: flex-start; } }
 
 /* Modal */
-.modal { position: fixed; inset: 0; z-index: 100; overscroll-behavior: contain; display: grid; place-items: center; padding: 24px 16px; background: rgba(0,0,0,.36); opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
+.modal { position: fixed; inset: 0; z-index: 100; overscroll-behavior: contain; display: grid; place-items: center; padding: 24px 16px; background: rgba(0,0,0,.36); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
 .modal.open { opacity: 1; visibility: visible; transition: opacity .3s; }
 .sheet { width: min(1184px, 100%); max-height: min(845px, calc(100svh - 48px)); display: flex; flex-direction: column; background: #fff; border-radius: 16px; filter: drop-shadow(0 0 12px rgba(0,0,0,.27)); transform: translateY(24px) scale(.98); transition: transform .4s cubic-bezier(.2,.8,.2,1); }
 .modal.open .sheet { transform: none; }
@@ -504,6 +506,20 @@ footer { position: sticky; bottom: 0; z-index: 0; background: #eee; padding: 0 0
 .cp .g p b { display: inline-block; min-width: 52px; font-family: var(--font-latin); font-size: 12px; font-weight: 700; letter-spacing: .04em; color: #8d8d8d; }
 .cp .g p.af { color: #0d0d0d; font-weight: 600; }
 .cp .g p.af b { color: #0d0d0d; }
+/* 주요 수업들 popup, dark like apple.com/kr/macbook-pro's dark modals: scrim rgba(29,29,31,.48) + blur 20, black panel with 28 corners,
+   #f5f5f7 text and #86868b secondary, a 36 px #f5f5f7 close circle with a black cross */
+#m-course { background: rgba(29,29,31,.48); }
+#m-course .sheet { background: #000; border-radius: 28px; filter: none; scrollbar-color: #424245 transparent; }
+#m-course .sheet-body { scrollbar-color: #424245 transparent; }
+#m-course .sheet-top { padding: 20px 20px 0; }
+#m-course .x { width: 36px; height: 36px; border-radius: 50%; background: #f5f5f7; transition: background .1s linear; }
+#m-course .x:hover { background: #fff; }
+#m-course .x::before, #m-course .x::after { width: 14px; height: 2px; border-radius: 1px; background: #000; }
+#m-course .sheet-in, #m-course .cp .g i, #m-course .cp .g p.af, #m-course .cp .g p.af b { color: #f5f5f7; }
+#m-course .cp .blk p { color: #d2d2d7; }
+#m-course .cp .ex small, #m-course .cp .g p, #m-course .cp .g p b { color: #86868b; }
+#m-course .blk { border-top-color: rgba(255,255,255,.24); }
+#m-course .cp .ex + .ex, #m-course .cp .g { border-top-color: rgba(255,255,255,.12); }
 /* course popup prev / next: the card-focus arrows (.kf) — translucent circles either side of the sheet, a 01 / 12 count under it.
    Below 1100 px there's no room beside the sheet, so the arrows join the count in a row under it */
 .mwrap { position: relative; width: min(1184px, 100%); display: flex; flex-direction: column; align-items: center; gap: 16px; }
@@ -857,6 +873,7 @@ button.cgc:hover .th { opacity: .28; }
         <div class="statue" id="statue" data-show="a"><img class="st-a" src="assets/statue/a18.webp" alt=""><img class="st-a2" src="assets/statue/a18-low.webp" alt=""><img class="st-b" src="assets/statue/f27.webp" alt="" decoding="async"><img class="st-b2" src="assets/statue/f27-low.webp" alt="" decoding="async"></div>
         <img class="kas" id="kas" src="assets/statue/kas633.webp" alt="" decoding="async">
         <div class="osfade" id="osfade"></div>
+        <img class="crest" id="crest" src="assets/phi-crest.svg" alt="Phi, ESTD. 260420">
         <div class="osl" id="osl" role="list" aria-label="역량과 태도"></div>
         <div id="deck" aria-live="polite"></div>
         <div class="kf" id="kf" aria-hidden="true"><button class="kp" type="button" aria-label="이전 카드" tabindex="-1"></button><button class="kn" type="button" aria-label="다음 카드" tabindex="-1"></button><p class="kc-n" id="kcN"></p></div>
@@ -1055,7 +1072,7 @@ button.cgc:hover .th { opacity: .28; }
      head turned to screen left, picked by the user over the Figma +30°), so the turn plays q04 → q19.
      The turn plays on a canvas from 1800×2900 frames (1200×1933 on phones, to keep memory down; enough below the hips for a
      0.9:1 viewport); the two poses the page rests on (+18°, −27°) are 4500×5000 images shown directly, plus their extensions. */
-  const SEQ_N = 20, SEQ_0 = 4, SW = 1800, SH = 2900;
+  const SEQ_N = 20, SEQ_0 = 4, SEQ_KAS = 12, SW = 1800, SH = 2900; // the turn now stops at q12, where the standing statue takes over
   const small = Math.min(screen.width, screen.height) < 760;
   const seqCv = document.createElement('canvas'), seqCtx = seqCv.getContext('2d'), seqImgs = [];
   let seqReady = false, seqF = -1;
@@ -1511,7 +1528,11 @@ button.cgc:hover .th { opacity: .28; }
   // 역량 / 태도 list scrolls past — COMPETENCY, its five, PHI OS, its five (L = 0 … 11, LSTEP screens apart, from lc) — then the
   // statue darkens under PHI OPERATING SYSTEM (OS_IN → 19 → 20) as before. The old turn / principles / card deck frames are gone.
   const LSTEP = .42, L_N = 11;
-  const K = { f1: .6, f2: .9, f4: 1.5, lc: 1.5, lo: 1.5 + 6 * LSTEP, lend: 1.5 + L_N * LSTEP };
+  // f1 → f3: the bust turns to face the viewer as it grows to the right, then becomes the standing statue (f3 → f3 + .2);
+  // CR: the crest at 10% (frame 0.1), full (0.2), held, then fading in place as the list comes in at f4
+  const K = { f1: .6, f2: .9, f3: 1.2, f4: 2.5, lc: 2.5 };
+  K.lo = K.lc + 6 * LSTEP; K.lend = K.lc + L_N * LSTEP;
+  const CR = [1.3, 1.6, 1.9, 2.1, 2.35];
   const OS_IN = K.lend + .35;
   K.f19 = OS_IN + .5; K.f20 = K.f19 + .4;
   let RUN = K.f20 + .3;
@@ -1528,13 +1549,14 @@ button.cgc:hover .th { opacity: .28; }
   // A = first screen Figma 7541:502 (bust box 886×985 at 903.5, 245.6); LOAD = the loading frames 7541:548 (766.8×852 at 504.2, 238)
   const LOAD = [504.2, 238, 766.772 / 1800];
   const POSE = { A: [903.5, 245.6, 886 / 1800], B: [36.6, 86.9, 1.32], C: [369.4, 397.3, .5948], D: [441.4, 103.5, .5948], E: [-247.7, -12.4, 1.17],
-    N: [1028, 44, .694] }; // N: the bust scaled 1.41× so its head lands on the standing statue's (1764, 308) — the cross-fade point
-  // standing statue (kas633): Figma box at (1018, 12), 1.2333 render px per px; KAS0 puts its head on the first-screen bust's
-  const KAS = [1018, 12, 1.2333], KAS0 = [896, 222, .875];
+    N: [1070, 67.5, .5858] }; // N: the bust at q12 (−6°, the frame whose head and shoulders best fit the standing statue: kas px = .475 q px + (245, 45)) laid over the mirrored standing statue
+  // standing statue (kas633): Figma box 1408.7 × 2220 at (1018, 12), flipped, 1.2333 render px per px
+  // mirrored (Figma flips it): KAS[0] is the right edge, 2426.7; the crop to 0.846 of the width only cuts empty pixels
+  const KAS = [2426.7, 12, 1.2333];
   // 10/19: no zoom-in between the first screen and frame 4 (the frame-2 close pose B is skipped): the bust turns to face the
   // viewer while it slides to the centre and grows only to frame 4's size
   // 10/19 (later): no close-up before PHI OS either — the bust holds frame 14–17's pose D and just darkens under the logo (E unused)
-  const POSE_KEYS = [K.f1, K.f4];
+  const POSE_KEYS = [K.f1, K.f3];
   const POSE_SEQ = ['A', 'N'];
 
   /* principles (Figma frame 13, 7013:1197): five windows onto Group 35, a stack of number + word blocks 496.1 wide, each showing one
@@ -1573,7 +1595,7 @@ button.cgc:hover .th { opacity: .28; }
   ];
   // svg heights (all 900 wide): headings 102, two-line titles 323, one-line 229, three-line 436
   const OS_H = { 'h-competency': 102, 'h-phios': 102, c1: 323, c2: 229, c3: 323, c4: 323, c5: 229, p1: 323, p2: 323, p3: 436, p4: 323, p5: 323 };
-  const osl = document.getElementById('osl'), kas = document.getElementById('kas'), osfade = document.getElementById('osfade');
+  const osl = document.getElementById('osl'), kas = document.getElementById('kas'), osfade = document.getElementById('osfade'), crest = document.getElementById('crest');
   const OSL = []; // { el, h, c (centre in the unscaled stack) }
   {
     let top = 0;
@@ -1596,7 +1618,7 @@ button.cgc:hover .th { opacity: .28; }
     const L = i0 + (f < .5 ? 0 : easeMove((f - .5) / .5));
     const j = Math.min(Math.floor(L), L_N - 1), t = L - j;
     const F = OSL[j].c + (OSL[j + 1].c - OSL[j].c) * t;
-    const cx = portrait ? 960 : 752, rise = (1 - easeMove(seg(p, 1.1, K.f4))) * 260;
+    const cx = portrait ? 960 : 752, rise = (1 - easeMove(seg(p, CR[3] + .15, K.f4))) * 260;
     OSL.forEach((o, i) => {
       const d = Math.abs(i - L), y = OS_FOCUS + (o.c - F) * OS_PACK + rise;
       const sc = kf([0, 1, 2, 3], [1, .9, .7, .5], d), op = kf([0, 1, 2], [1, .3, .2], d) * a;
@@ -1752,27 +1774,31 @@ button.cgc:hover .th { opacity: .28; }
 
     // statue: from the first screen's bust (A) it grows to the right (N) and cross-fades into the standing statue
     const pose = k => lerp(LOAD[k], kf(POSE_KEYS, POSE_SEQ.map(n => POSE[n][k]), p), hT);
-    const aOn = hT * (1 - seg(p, K.f1, K.f4)); // the narrow-screen shift holds on the first screen only
-    const x = pose(0) + AX * aOn, y = pose(1) + (1 - lR) * 24, sc = pose(2);
+    const aOn = hT * (1 - seg(p, K.f1, K.f3)); // the narrow-screen shift holds on the first screen only
+    const x = pose(0) + AX * aOn + (portrait ? -560 * seg(p, K.f1, K.f3) : 0), y = pose(1) + (1 - lR) * 24, sc = pose(2);
     statue.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
     // loading + first screen (Figma 7541:548 / 7541:502): the bust casts 0 0 120px rgba(0,0,0,.56) around its silhouette
     // (244 box px at the first-screen scale); it goes once the turn starts
     const sh = kf([K.f1, K.f2], [.56, 0], p);
     statue.style.filter = sh > .002 ? `drop-shadow(0 0 244px rgba(0,0,0,${sh.toFixed(3)}))` : 'none';
-    const xf = seg(p, 1.08, 1.25); // bust out (1 → 1.12), then the standing statue in — never both at once
-    const sA = lIn * kf([1, 1.12], [1, 0], p) * (portrait ? lerp(1, .4, hT) : 1);
+    // facing front, the bust and the standing statue line up: the statue fades in over it, then the bust goes
+    const xf = seg(p, K.f3, K.f3 + .15);
+    const sA = lIn * kf([K.f3 + .1, K.f3 + .2], [1, 0], p) * (portrait ? lerp(1, .4, hT) : 1);
     statue.style.opacity = sA.toFixed(3);
     statue.style.visibility = sA <= .002 ? 'hidden' : '';
-    drawStatue(SEQ_0);
-    const kT = kf([K.f1, K.f4], [0, 1], p), kA = xf * kf([OS_IN, K.f19, K.f20], [1, .1, 0], p) * (portrait ? .4 : 1);
-    const kx = lerp(KAS0[0], KAS[0], kT) + (portrait ? -560 : 0), ky = lerp(KAS0[1], KAS[1], kT), ks = lerp(KAS0[2], KAS[2], kT);
-    kas.style.transform = `translate3d(${kx.toFixed(2)}px, ${ky.toFixed(2)}px, 0) scale(${ks.toFixed(4)})`;
+    drawStatue(kf([K.f1, K.f3], [SEQ_0, SEQ_KAS], p));
+    const kA = xf * kf([OS_IN, K.f19, K.f20], [1, .1, 0], p) * (portrait ? .4 : 1);
+    kas.style.transform = `translate3d(${KAS[0] + (portrait ? -560 : 0)}px, ${KAS[1]}px, 0) scale(${-KAS[2]}, ${KAS[2]})`;
     kas.style.opacity = kA.toFixed(3);
     kas.style.visibility = kA <= .002 ? 'hidden' : 'visible';
     // the list: rises in as the copy goes, out before PHI OS; the bottom fade sits over the statue meanwhile
-    const oA = kf([1.1, K.f4], [0, 1], p) * kf([K.lend + .1, OS_IN], [1, 0], p); // after the copy has gone (1.2)
+    const oA = kf([CR[3] + .15, K.f4], [0, 1], p) * kf([K.lend + .1, OS_IN], [1, 0], p); // as the crest fades
     drawList(p, oA);
-    osfade.style.opacity = (kf([K.f2, K.f4], [0, 1], p) * kf([OS_IN, K.f19], [1, 0], p)).toFixed(3);
+    const cA = hT * kf(CR, [0, .1, 1, 1, 0], p);
+    crest.style.transform = `translate3d(${587.94 + (portrait ? 208 : 0)}px, 278.94px, 0)`;
+    crest.style.opacity = cA.toFixed(3);
+    crest.style.visibility = cA <= .002 ? 'hidden' : 'visible';
+    osfade.style.opacity = (kf([K.f2, K.f3], [0, 1], p) * kf([OS_IN, K.f19], [1, 0], p)).toFixed(3);
 
     // FUNDAMENTALS OVER TOOLS: behind the head on the first screen, fades as the bust starts to grow
     // first screen: 788 wide at (1030.9, 170.6) (Figma 7541:502); loading: 682 wide at (619, 173)
