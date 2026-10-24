@@ -148,6 +148,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* loading (Figma 7541:548, frames Loding → 4): reliefs and their measuring lines drift outward and dim around the bust, then the
    bust and FUNDAMENTALS OVER TOOLS move into the first screen. Black (#000) under it all, giving way to the hero's #0d0d0d */
 .ld-bg { position: absolute; inset: 0; background: #000; pointer-events: none; }
+/* starfield (screen recording 10/24): fine white points flying out of the centre toward the viewer, no backdrop of its own.
+   Sized to the viewport, not the 1920×1080 canvas, so the field reaches every edge at any aspect; sits under the statue */
+.stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .ld { position: absolute; z-index: 0; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; pointer-events: none; }
 .ld text { font-family: "Pretendard", sans-serif; font-size: 10px; fill: #fff; text-anchor: middle; }
 .pr-w { position: absolute; z-index: 1; overflow: hidden; opacity: 0; }
@@ -778,6 +781,7 @@ button.cgc:hover .th { opacity: .28; }
   <section class="hero" id="hero" aria-label="Phi의 1년제 프로그램">
     <div class="stage" id="stage">
       <div class="ld-bg" id="ldBg"></div>
+      <canvas class="stars" id="stars" aria-hidden="true"></canvas>
       <div class="canvas" id="canvas">
         <svg class="ld" id="ld" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
         <img class="fot" id="fot" src="assets/fundamentals-over-tools.svg" alt="Fundamentals over tools">
@@ -1475,6 +1479,35 @@ button.cgc:hover .th { opacity: .28; }
   const prEls = [...prBox.children];
   const PR_FR = [K.f7, K.f8, K.f9, K.f10, K.f11, K.f12, K.f13];
 
+  // starfield (Figma Hero 8426:16442 only): points spawn at random depth and come toward the viewer out of the screen centre.
+  // x, y in half-screen units (of the longer side), z from ST_FAR to ST_NEAR, drawn at x / z. Fades in with the first screen and out
+  // with FUNDAMENTALS OVER TOOLS (4 → 7), gone as NO.1 comes in (Figma 8426:16482)
+  const stCv = document.getElementById('stars'), stCtx = stCv.getContext('2d');
+  const ST_N = 380, ST_FAR = 4, ST_NEAR = .15, ST_SPEED = .55, ST_ALPHA = .6; // speed in depth units per second
+  const stSpawn = (s, z) => { s.x = (Math.random() * 2 - 1) * 1.2; s.y = (Math.random() * 2 - 1) * 1.2; s.z = z; s.r = .4 + Math.random() * .7; return s; };
+  const stars = Array.from({ length: ST_N }, () => stSpawn({}, ST_NEAR + Math.random() * (ST_FAR - ST_NEAR)));
+  let stW = 0, stH = 0, stLast = 0, stOn = true;
+  function sizeStars() {
+    const dpr = Math.min(devicePixelRatio || 1, 2); stW = stCv.clientWidth; stH = stCv.clientHeight;
+    stCv.width = Math.round(stW * dpr); stCv.height = Math.round(stH * dpr); stCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function drawStars(a) {
+    const now = performance.now(), dt = stLast ? Math.min((now - stLast) / 1000, .05) : 0; stLast = now;
+    if (a <= .002) { if (stOn) { stCtx.clearRect(0, 0, stW, stH); stOn = false; } return; }
+    stOn = true;
+    const cx = stW / 2, cy = stH / 2, u = Math.max(stW, stH) / 2, mv = reduce ? 0 : ST_SPEED * dt;
+    stCtx.clearRect(0, 0, stW, stH); stCtx.fillStyle = '#fff';
+    for (const s of stars) {
+      s.z -= mv;
+      const px = cx + s.x / s.z * u, py = cy + s.y / s.z * u;
+      if (s.z < ST_NEAR || px < -4 || px > stW + 4 || py < -4 || py > stH + 4) { stSpawn(s, ST_FAR); continue; } // off screen: back to the far end
+      const k = 1 - s.z / ST_FAR, r = s.r * (.4 + k); // 0 far → 1 near
+      stCtx.globalAlpha = Math.min(1, k * 1.6) * ST_ALPHA * a;
+      stCtx.fillRect(px - r / 2, py - r / 2, r, r);
+    }
+    stCtx.globalAlpha = 1;
+  }
+
   // cards rise from below, front ones first (frame 14 offsets per FRAME8 card), then lift away together (frame 17)
   const RISE14 = [880.9, 881.2, 552.1, 122, 348.7];
   const dys = [0, 0, 0, 0, 0];
@@ -1497,6 +1530,7 @@ button.cgc:hover .th { opacity: .28; }
     // frame 21: 주요 수업들 starts 518 design px under the logo's top (321) — scroll the logo until that point meets the bottom edge
     RUN = K.f20 + LOGO_HOLD + Math.max(.05, (vh - top - (321 + 518) * S) / vh);
     hero.style.height = (vh * (1 + RUN)) + 'px';
+    sizeStars();
   }
   const fade = (el, a, dy) => { el.style.opacity = a.toFixed(3); el.style.transform = `translateY(${((1 - a) * dy).toFixed(2)}px)`; };
 
@@ -1508,6 +1542,7 @@ button.cgc:hover .th { opacity: .28; }
     if (!reduce) drawLoader(ts, 1 - hT); else drawLoader(Infinity, 0);
     ldBg.style.opacity = (1 - hT).toFixed(3);
     ldBg.style.visibility = hT >= .998 ? 'hidden' : '';
+    drawStars(hT * kf([K.f4, K.f7], [1, 0], p));
     // the copy rises in, line by line, as the bust lands; multiplied by the scroll fade
     const enter = (a, b) => reduce ? 1 : easeEnter(seg(ts - LD.copy, a, b));
     // copy: full through frame 1, dim at 2, gone by 4 (Figma Hero 7541:502)
