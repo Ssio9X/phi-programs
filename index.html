@@ -620,63 +620,69 @@ button.cgc:hover .th { opacity: .28; }
 @media (max-width: 560px) { .cg-grid { grid-template-columns: 1fr; padding-top: 48px; gap: 40px; } .cg-photo { margin-top: 120px; } }
 
 /* ---------- 프로그램 구조 (Figma 6891:839) ---------- */
+.cs-run { position: relative; z-index: 2; }
+.cs-run.cs-enabled { margin-top: -100svh; height: calc(var(--cs-height) + 120svh); }
+.cs-enabled > #structure { position: sticky; top: 0; min-height: 100svh; visibility: hidden; }
+.cs-enabled.cs-visible > #structure { visibility: visible; }
+.cs-overlay { display: none; position: absolute; z-index: 3; inset: 0 0 auto; height: 100svh; pointer-events: none; overflow: hidden; }
+.cs-enabled .cs-overlay { display: block; }
+.cs-overlay canvas, .cs-overlay img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cs-overlay img { object-fit: cover; object-position: center 60%; }
+.cs-enabled .ps2-col > h2, .cs-enabled .ps2-lead { opacity: var(--cs-copy, 0); transform: translateY(calc((1 - var(--cs-copy, 0)) * 20px)); }
+.cs-complete .cs-overlay { display: none; }
 .ps2 { background: #fff; color: #0d0d0d; padding: 100px 0; }
 .ps2-col { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
 .ps2 h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1; color: #000; }
-.ps2-lead { padding-top: 24px; font-size: 20px; font-weight: 700; line-height: 1.6; color: #8d8d8d; } /* Figma 6899:2906 rev. */
-.ps2-h { margin: 52px 0 0; font-size: 27px; font-weight: 700; line-height: 1; }
-.ps2-h small { font-size: 17px; }
-.ps2-course { margin-top: 24px; display: flex; gap: 20px; align-items: stretch; }
-.ps2-course > div { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.ps2-course h4, .ps2-item b { font-size: 21px; font-weight: 700; line-height: 1.2; color: #0d0d0d; }
-.ps2-course h4 { margin: 0; }
-.ps2-course p, .ps2-item p { font-size: 17px; font-weight: 510; /* Medium (Figma 6899:2906 rev.) */ line-height: 1.6; color: #8d8d8d; word-break: keep-all; }
-/* Figma dashed divider: rgba(70,70,70,.2), ~4px dash / 3px gap */
-.ps2-rule { flex: 0 0 1px; min-height: 218px; background: repeating-linear-gradient(to bottom, rgba(70,70,70,.2) 0 4px, transparent 4px 7px); }
-.ps2-other { padding-top: 52px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
-.ps2-item { display: flex; flex-direction: column; gap: 12px; }
-.ps2-box { position: relative; aspect-ratio: 1; border-radius: 24px; background: #edeef0; overflow: hidden; }
-.ps2-pic { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); overflow: hidden; }
-.ps2-pic img { position: absolute; max-width: none; }
-.ps2-item small { font-size: 17px; font-weight: 700; color: #0d0d0d; }
+.ps2-lead { padding-top: 24px; font-size: 20px; font-weight: 510; line-height: 1.6; color: #8d8d8d; }
+.ps2-h { margin: 80px 0 0; padding-bottom: 12px; border-bottom: 1px solid #eee; font-size: 32px; font-weight: 700; line-height: 1.2; }
+.ps2-course { margin-top: 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; align-items: start; }
+.ps2-item { min-width: 0; }
+.ps2-box { width: min(360px, 100%); aspect-ratio: 360 / 470; margin-inline: auto; display: grid; place-items: center; background: #fff; }
+.ps2-box img { width: var(--relief-w); max-width: 92%; height: auto; object-fit: contain; }
+.ps2-course h4 { margin: 40px 0 0; padding-bottom: 12px; border-bottom: 1px solid #eee; font-size: 20px; font-weight: 700; line-height: 1.2; color: #0d0d0d; }
+.ps2-course p, .ps2-other p { margin-top: 12px; font-size: 17px; font-weight: 400; line-height: 1.6; color: #8d8d8d; word-break: keep-all; }
+.ps2-other { margin-top: 80px; padding-top: 80px; border-top: 1px solid #eee; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; align-items: start; }
+.ps2-other h3 { margin: 0; padding-bottom: 12px; border-bottom: 1px solid #eee; font-size: 32px; font-weight: 700; line-height: 1.2; }
 @media (max-width: 900px) {
-  .ps2-course { flex-direction: column; gap: 24px; }
-  .ps2-rule { flex: 0 0 1px; min-height: 0; height: 1px; background: repeating-linear-gradient(to right, rgba(70,70,70,.2) 0 4px, transparent 4px 7px); }
-  .ps2-other { grid-template-columns: 1fr; max-width: 480px; }
+  .ps2-course, .ps2-other { grid-template-columns: 1fr; }
 }
 
-/* ---------- 수업을 관통하는 접근 (Figma 6906:6568, rev. 7013) ---------- */
-.ap2 { background: #fff; color: #000; } /* Figma 7541:1726 */
-.ap2-head { width: calc(100vw - 2 * clamp(16px, 8.33vw, 160px)); margin-inline: auto; padding: clamp(96px, 9.4vw, 180px) 0 52px; }
+/* ---------- 수업을 관통하는 접근 (Figma 8454:19045) ---------- */
+.ap2 { background: #fff; color: #000; }
+.ap2-head { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; padding: 180px 0 52px; }
 .ap2-kicker { font-size: 21px; font-weight: 700; line-height: 1.2; }
 .ap2-head h2 { margin: 24px 0 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1; }
-.ap2-head > p:last-child { margin-top: 24px; font-size: 17px; font-weight: 700; line-height: 1.6; color: #8d8d8d; } /* Figma 7541:1726 rev. */
+.ap2-head > p:last-child { margin-top: 24px; font-size: 20px; font-weight: 510; line-height: 1.6; color: #8d8d8d; }
 .ap2-run { position: relative; }
 .ap2-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 /* card geometry is driven from JS: --m (side inset, px) and --r (corner radius, px) shrink to 0 as it grows */
-.ap2-card { position: absolute; top: 0; bottom: 0; left: var(--m, 160px); right: var(--m, 160px); border-radius: var(--r, 40px); overflow: hidden; background: #0d0d0d; will-change: left, right; }
+.ap2-card { position: absolute; top: 0; bottom: 0; left: var(--m, 18.75vw); right: var(--m, 18.75vw); border-radius: var(--r, 40px); overflow: hidden; background: #0d0d0d; will-change: left, right; }
 .ap2-imgs img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; opacity: 0; transform: scale(1.04); transition: opacity .8s ease, transform 1.4s cubic-bezier(.2,.8,.2,1); }
-.ap2-imgs img:first-child { object-position: 0 0; } /* the rounded card shows the photo's left 1600 (Figma 6892:1007) */
+.ap2-imgs img:first-child { object-position: 0 0; }
+@media (max-aspect-ratio: 1/1) {
+  .ap2-imgs img:first-child { object-position: 40% 0; }
+}
 .ap2-imgs img.on { opacity: 1; transform: none; }
-/* bottom shade + caption + arrows: hidden on the rounded card, fade in once it is full screen */
-.ap2-shade, .ap2-copy, .ap2-arrows { opacity: var(--ui, 0); visibility: var(--uiv, hidden); }
-.ap2-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, #0d0d0d 0%, rgba(13,13,13,.75) 14.884%, rgba(13,13,13,0) 45.188%); }
-.ap2-arrows { position: absolute; left: clamp(16px, 3.125vw, 60px); right: clamp(16px, 3.125vw, 60px); top: 50%; transform: translateY(-50%); display: flex; justify-content: space-between; pointer-events: none; }
-/* Figma 7013:1745: a translucent disc (#efefef at 30 %, frosted like the reference) with a rounded triangle, white when it can
-   go, #9f9f9f at the end */
-.ap2-arrows button { width: 52px; height: 52px; border-radius: 26px; pointer-events: auto; color: #fff; background: rgba(239,239,239,.3);
-  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: transform .2s, background .25s, color .25s; }
-.ap2-arrows button svg { display: block; width: 52px; height: 52px; fill: currentColor; }
-.ap2-arrows button:hover:not(:disabled) { transform: scale(1.06); background: rgba(239,239,239,.42); }
-.ap2-arrows button:disabled { color: #9f9f9f; cursor: default; }
-.ap2-copy { position: absolute; left: 0; right: 0; bottom: clamp(48px, 10.2vh, 110px); display: grid; justify-items: center; color: #fff; text-align: center; pointer-events: none; }
-.ap2-item { grid-area: 1 / 1; align-self: end; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-inline: 16px; opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+/* Bottom shade, caption and pagination fade in once the card fills the screen. */
+.ap2-shade, .ap2-copy, .ap2-dots { opacity: var(--ui, 0); visibility: var(--uiv, hidden); }
+.ap2-shade { position: absolute; left: 0; right: 0; bottom: 0; height: min(523px, 100%); pointer-events: none; background: linear-gradient(to bottom, transparent, #000); }
+.ap2-copy { position: absolute; left: 0; right: 0; bottom: 100px; display: grid; justify-items: center; color: #fff; text-align: center; pointer-events: none; }
+.ap2-item { grid-area: 1 / 1; align-self: end; min-width: 0; max-width: 100%; display: flex; flex-direction: column; align-items: center; gap: 24px; padding-inline: 16px; opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
 .ap2-item.on { opacity: 1; transform: none; transition-delay: .12s; }
 .ap2-item h3 { margin: 0; font-size: clamp(34px, 3.125vw, 60px); font-weight: 700; line-height: 1; white-space: nowrap; }
-.ap2-item p { width: min(800px, 100%); font-size: clamp(15px, 1.1vw, 21px); font-weight: 700; line-height: 1.6; word-break: keep-all; }
-.ap2-item.narrow p { width: min(600px, 100%); }
+.ap2-item p { width: min(600px, 100%); font-size: 20px; font-weight: 700; line-height: 1.6; color: #ddd; word-break: keep-all; }
+.ap2-dots { position: absolute; left: 50%; bottom: 43px; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; }
+/* A 44px-high button surrounds each 10px indicator; visible dots sit 60px above the bottom. */
+.ap2-dots button { position: relative; width: 10px; height: 44px; flex-shrink: 0; transition: width .25s ease; }
+.ap2-dots button::before { content: ''; position: absolute; left: 0; right: 0; top: 17px; height: 10px; border-radius: 5px; background: #404040; transition: background .25s ease; }
+.ap2-dots button[aria-current="true"] { width: 32px; }
+.ap2-dots button[aria-current="true"]::before { background: #fff; }
 @media (max-width: 760px) {
-  .ap2-arrows { top: auto; bottom: 16px; transform: none; }
+  .ap2-item p { font-size: 16px; }
+  .ap2-dots button { width: 24px; }
+  .ap2-dots button[aria-current="true"] { width: 46px; }
+  .ap2-dots button::before { left: 50%; right: auto; width: 10px; transform: translateX(-50%); }
+  .ap2-dots button[aria-current="true"]::before { width: 32px; }
 }
 
 /* ---------- 커리큘럼 (Figma 6892:1052) ---------- */
@@ -914,31 +920,40 @@ button.cgc:hover .th { opacity: .28; }
   </section>
 
   <!-- 프로그램 구조 — Figma 6891:839 -->
+  <div class="cs-run" id="csRun">
   <section class="band ps2" id="structure">
     <div class="ps2-col">
       <h2>프로그램 구조</h2>
       <p class="ps2-lead">코스는 '과목'에 해당하는 개념입니다. Phi의 코스는 일관된 시수가 아니라,<br>학습 목표에 따라 각기 다른 시수와 기간으로 구성됩니다.</p>
-      <h3 class="ps2-h"><small>1)</small> Course</h3>
+      <h3 class="ps2-h">Course</h3>
       <div class="ps2-course">
-        <div><h4>Fundamental</h4><p>4개월 동안 매주 이어지며, 한 분야의 핵심 원리를 전문가와 함께 오래 다지는 수업입니다. 사고방식 위주의 기본기를 학습할 때는 지식을 습득하는 것은 물론, 다양한 맥락에서의 적용이 필요하기 때문에 긴 호흡으로 진행합니다.</p></div>
-        <span class="ps2-rule" aria-hidden="true"></span>
-        <div><h4>Domain</h4><p>1-2개월 단위로 구성되며, 기본기를 단기간에 습득할 수 있는 단위로 쪼개어서 경험하는 수업입니다. 여러 주제를 들어보면서 나에게 더 맞는 주제가 있다면 이후에 심화하여 학습할 수 있습니다.</p></div>
-        <span class="ps2-rule" aria-hidden="true"></span>
-        <div><h4>Ritual</h4><p>한 달에 한 번, 하루 여섯 시간을 통째로 쓰는 수업입니다. 학습 목표에 따라 단기간에 집중적인 학습이 필요한 코스가 있고, 간격을 두고(spaced repetition) 다른 일과를 수행하면서 배우면 효과적인 코스가 있습니다. Ritual은 후자의 수업으로, 반복적인 훈련과 습관화가 필요한 종류의 내용을 배웁니다.</p></div>
+        <article class="ps2-item">
+          <div class="ps2-box"><img src="assets/ps-fundamental.webp" alt="" width="799" height="1024" loading="lazy" style="--relief-w:322.35px"></div>
+          <h4>Fundamental</h4><p>4개월 동안 매주 이어지며, 한 분야의 핵심 원리를 전문가와 함께 오래 다지는 수업입니다. 사고방식 위주의 기본기를 학습할 때는 지식을 습득하는 것은 물론, 다양한 맥락에서의 적용이 필요하기 때문에 긴 호흡으로 진행합니다.</p>
+        </article>
+        <article class="ps2-item">
+          <div class="ps2-box"><img src="assets/ps-domain.webp" alt="" width="797" height="1024" loading="lazy" style="--relief-w:324.1px"></div>
+          <h4>Domain</h4><p>1-2개월 단위로 구성되며, 기본기를 단기간에 습득할 수 있는 단위로 쪼개어서 경험하는 수업입니다. 여러 주제를 들어보면서 나에게 더 맞는 주제가 있다면 이후에 심화하여 학습할 수 있습니다.</p>
+        </article>
+        <article class="ps2-item">
+          <div class="ps2-box"><img src="assets/ps-ritual.webp" alt="" width="797" height="1024" loading="lazy" style="--relief-w:330.13px"></div>
+          <h4>Ritual</h4><p>한 달에 한 번, 하루 여섯 시간을 통째로 쓰는 수업입니다. 학습 목표에 따라 단기간에 집중적인 학습이 필요한 코스가 있고, 간격을 두고(spaced repetition) 다른 일과를 수행하면서 배우면 효과적인 코스가 있습니다. Ritual은 후자의 수업으로, 반복적인 훈련과 습관화가 필요한 종류의 내용을 배웁니다.</p>
+        </article>
       </div>
       <div class="ps2-other">
-        <article class="ps2-item"><div class="ps2-box"><div class="ps2-pic" style="width:96.61%;height:98.44%"><img src="assets/ps-study.webp" alt="" style="height:145.06%;left:-9.17%;top:-23.68%;width:118.2%"></div></div>
-          <p><small>2)</small> <b>Study.</b> 전문가 없이 학습자끼리 학습하는 수업입니다. 궁극적으로 학습자들은 스스로 배울 수 있는 상태가 되어야 합니다. Phi에서는 전문가의 전문성은 물론 학습자의 자율적 학습도 배워야 할 대상으로 여기며, 이를 위해 Learning Design팀이 각종 지원을 제공합니다.</p></article>
-        <article class="ps2-item"><div class="ps2-box"><div class="ps2-pic" style="width:132.29%;height:90.1%"><img src="assets/ps-workshop.webp" alt="" style="height:220.71%;left:-9.96%;top:-42.1%;width:119.79%"></div></div>
-          <p><small>3)</small> <b>Workshop.</b> 학기 중 코스 외 시간에 학습 능력 증진을 위해 제공되는 워크숍입니다.</p></article>
-        <article class="ps2-item"><div class="ps2-box"><div class="ps2-pic" style="width:98.44%;height:100%"><img src="assets/ps-event.webp" alt="" style="height:137.69%;left:-2.67%;top:-17.45%;width:105.21%"></div></div>
-          <p><small>4)</small> <b>Event.</b> OT나 클로징 파티 등 코스를 시작하거나 끝맺음할 때, 혹은 특별한 이벤트가 있을 때 열리는 행사입니다.</p></article>
+        <article class="ps2-item"><h3>Study</h3>
+          <p>전문가 없이 학습자끼리 학습하는 수업입니다. 궁극적으로 학습자들은 스스로 배울 수 있는 상태가 되어야 합니다. Phi에서는 전문가의 전문성은 물론 학습자의 자율적 학습도 배워야 할 대상으로 여기며, 이를 위해 Learning Design팀이 각종 지원을 제공합니다.</p></article>
+        <article class="ps2-item"><h3>Workshop</h3>
+          <p>학기 중 코스 외 시간에 학습 능력 증진을 위해 제공되는 워크숍입니다.</p></article>
+        <article class="ps2-item"><h3>Event</h3>
+          <p>OT나 클로징 파티 등 코스를 시작하거나 끝맺음할 때, 혹은 특별한 이벤트가 있을 때 열리는 행사입니다.</p></article>
       </div>
     </div>
   </section>
+  </div>
 
-  <!-- 수업을 관통하는 접근 — Figma 6906:6568 (rev. 7013): header, then a rounded photo card that grows to full screen,
-       after which the caption + arrows appear and scrolling steps 01 → 06 -->
+  <!-- 수업을 관통하는 접근 — Figma 8454:19045: rounded photo expands to full screen;
+       captions and pagination then appear while scrolling steps 01 → 06. -->
   <section class="ap2" id="approach">
     <div class="ap2-head">
       <p class="ap2-kicker">핵심 수업 장치</p>
@@ -951,10 +966,7 @@ button.cgc:hover .th { opacity: .28; }
           <div class="ap2-imgs" id="ap2Imgs"></div>
           <span class="ap2-shade"></span>
           <div class="ap2-copy" id="ap2Copy" aria-live="polite"></div>
-          <div class="ap2-arrows">
-            <button type="button" id="ap2Prev" aria-label="이전 수업 장치"><svg viewBox="0 0 52 52" aria-hidden="true"><path d="M18.2 23.5751C16.3333 24.6529 16.3333 27.3472 18.2 28.4249L27.8 33.9674C29.6667 35.0452 32 33.698 32 31.5426L32 20.4574C32 18.302 29.6667 16.9548 27.8 18.0326L18.2 23.5751Z"/></svg></button>
-            <button type="button" id="ap2Next" aria-label="다음 수업 장치"><svg viewBox="0 0 52 52" aria-hidden="true"><path d="M33.8 23.5751C35.6667 24.6529 35.6667 27.3472 33.8 28.4249L24.2 33.9674C22.3333 35.0452 20 33.698 20 31.5426L20 20.4574C20 18.302 22.3333 16.9548 24.2 18.0326L33.8 23.5751Z"/></svg></button>
-          </div>
+          <div class="ap2-dots" id="ap2Dots" role="group" aria-label="수업 장치 선택"></div>
         </div>
       </div>
     </div>
@@ -1680,7 +1692,7 @@ button.cgc:hover .th { opacity: .28; }
   // the rest the section under the index; light rows over the white bands, hidden over the footer
   const toc = document.getElementById('toc'), tocA = [...toc.children], mainEl = document.getElementById('top');
   const secs = ['courses', 'structure', 'approach', 'curriculum'].map(id => document.getElementById(id));
-  const tocPhoto = document.getElementById('cgPhoto');
+  const tocPhoto = document.getElementById('cgPhoto'), tocApproachPhoto = document.getElementById('ap2Card');
   let tocOn = -1, tocLight = null, tocLate = false;
   function placeToc(left, top) {
     toc.hidden = portrait;
@@ -1689,13 +1701,22 @@ button.cgc:hover .th { opacity: .28; }
     tocLate = top + 829 * S + 16 > vh - 60 - 152;
   }
   function updateToc(p, a) {
-    const y = toc.getBoundingClientRect().top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
+    const tocRect = toc.getBoundingClientRect(), y = tocRect.top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
     let on;
     if (hero.getBoundingClientRect().bottom > mid) on = p < K.f2 ? 0 : p < K.lc + 5.5 * LSTEP ? 1 : p < OS_IN ? 2 : 3;
     else on = tocPhoto.getBoundingClientRect().top <= mid ? 4 : 3;
     for (let i = 1; i < secs.length; i++) if (secs[i].getBoundingClientRect().top <= mid) on = i + 3;
     if (on !== tocOn) { tocA.forEach((el, i) => { el.classList.toggle('on', i === on); el.toggleAttribute('aria-current', i === on); }); tocOn = on; }
-    const light = secs[1].getBoundingClientRect().top <= y;
+    const photoRect = tocApproachPhoto.getBoundingClientRect(), x = tocRect.left + tocRect.width / 2;
+    const overApproachPhoto = x >= photoRect.left && x <= photoRect.right && y >= photoRect.top && y <= photoRect.bottom;
+    const csRun = document.getElementById('csRun'), csProgress = +(csRun.dataset.progress || 0);
+    const csActive = csRun.classList.contains('cs-visible') && csProgress < 1;
+    const csPending = csRun.classList.contains('cs-enabled') && !csRun.classList.contains('cs-visible');
+    const csHeight = csRun.querySelector('.cs-overlay')?.clientHeight || innerHeight, csU = clamp((csProgress - .14) / .79);
+    const csRadius = -.14 + (Math.hypot(innerWidth / csHeight, 1) / 2 + .32) * csU * csU * (3 - 2 * csU);
+    const overCoursePhoto = csActive && Math.hypot((x / innerWidth - .5) * innerWidth / csHeight, y / csHeight - .5) > csRadius;
+    const light = secs[1].getBoundingClientRect().top <= y && !overApproachPhoto && !overCoursePhoto && !csPending;
+    if (((csPending && csRun.getBoundingClientRect().top <= mid) || (csActive && csProgress < .7)) && tocOn !== 3) { tocA.forEach((el, i) => { el.classList.toggle('on', i === 3); el.toggleAttribute('aria-current', i === 3); }); tocOn = 3; }
     if (light !== tocLight) { toc.classList.toggle('light', light); tocLight = light; }
     const over = mainEl.getBoundingClientRect().bottom < y + 76; // footer underneath
     if (tocLate) a *= kf([K.f1, K.f2], [0, 1], p);
@@ -1973,12 +1994,11 @@ button.cgc:hover .th { opacity: .28; }
   const cgKick = () => { if (!cgRaf) cgRaf = requestAnimationFrame(cgLift); };
   addEventListener('scroll', cgKick, { passive: true }); addEventListener('resize', cgKick); cgLift();
 
-  /* ---------- 수업을 관통하는 접근 (Figma 6906:6568, rev. 7013) ----------
-     Run (sticky stage): 0 → EXPAND  the rounded card grows to full screen (inset 160 → 0, radius 40 → 0)
-                         → +UI_IN    bottom shade, caption and arrows fade in
-                         then STEP per item, 01 → 06; the arrows scroll to the previous / next step. All lengths in viewport heights of scroll. */
-  const AP = [ // [title, copy, narrow caption]. 01: the Figma caption repeats the section intro, so the original 라이브데모 text stays
-    ['Live Demo', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는 문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다.", true],
+  /* ---------- 수업을 관통하는 접근 (Figma 8454:19045) ----------
+     Run (sticky stage): rounded card expands (inset 360 → 0, radius 40 → 0), then caption and dots fade in.
+     Scrolling or selecting a dot advances through the six entries. Lengths are viewport heights of scroll. */
+  const AP = [ // [title, copy]. Retain the original Live Demo copy.
+    ['Live Demo', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는 문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다."],
     ['Peer Critique', '모든 코스에는 관찰 가능한 평가 기준, 즉 루브릭이 있습니다. 전문가는 매주 Learning Design팀과 학습자의 결과물을 리뷰하고, 루브릭 기반으로 주로 하는 실수 패턴을 정의합니다. 학습자는 매 세션 이 패턴을 기준으로 구체적인 피드백을 주고받습니다.'],
     ['Self-Feedback', 'Phi에는 별도의 평가 시스템이 없습니다. 하지만, 학습자 역시 전문가와 동일한 기준으로 자신의 작업을 판단할 수 있도록, 모든 코스에는 정교하게 설계된 루브릭이 있습니다.<br>시작 전과 진행 중 매주, 학습 목표를 어느 정도 달성했고 그 이유가 무엇인지 루브릭 기반으로 작성합니다. 코스가 끝난 뒤에는 시작 전과 후의 자신을 현재의 언어로 다시 평가합니다.'],
     ['Workshop', '정해진 코스 외에도, 학기 중 학습자의 이해도를 높이는 워크숍이 열립니다. 주제는 다양하고, 매 기수 학습자들의 상태를 반영합니다. 예를 들어 Phi의 세션은 시연 위주라 능동적 관찰이 중요한데, 전문가의 암묵지를 분석하고 분해하는 법은 코스 밖 워크숍에서 따로 배웁니다.'],
@@ -1987,34 +2007,35 @@ button.cgc:hover .th { opacity: .28; }
   ];
   const ap2Run = document.getElementById('ap2Run'), ap2Card = document.getElementById('ap2Card');
   const ap2Imgs = document.getElementById('ap2Imgs'), ap2Copy = document.getElementById('ap2Copy');
-  const ap2Prev = document.getElementById('ap2Prev'), ap2Next = document.getElementById('ap2Next');
+  const ap2Dots = document.getElementById('ap2Dots');
   ap2Imgs.innerHTML = AP.map((_, i) => `<img src="assets/ap-${i + 1}.webp" alt=""${i ? ' loading="lazy"' : ''}${i === 0 ? ' class="on"' : ''}>`).join('');
-  ap2Copy.innerHTML = AP.map(([t, d, narrow], i) => `<div class="ap2-item${narrow ? ' narrow' : ''}${i === 0 ? ' on' : ''}" aria-hidden="${i !== 0}"><h3>${t}</h3><p>${d}</p></div>`).join('');
+  ap2Copy.innerHTML = AP.map(([t, d], i) => `<div class="ap2-item${i === 0 ? ' on' : ''}" aria-hidden="${i !== 0}"><h3>${t}</h3><p>${d}</p></div>`).join('');
+  ap2Dots.innerHTML = AP.map(([t], i) => `<button type="button" aria-label="${i + 1}. ${t}" aria-current="${i === 0}"></button>`).join('');
   const ap2ImgEls = [...ap2Imgs.children], ap2Items = [...ap2Copy.children];
   const AP_EXPAND = 1, AP_UI = .3, AP_STEP = 1; // 10/20: ~17 → ~7 screens with the hero ('스크롤 정상화'; was 2.4 · .5 · 2.4)
   let ap2Idx = 0;
   const ap2Top = () => ap2Run.getBoundingClientRect().top + scrollY;
   function ap2Layout() { ap2Run.style.height = (innerHeight * (1 + AP_EXPAND + AP_UI + AP_STEP * AP.length)) + 'px'; }
   function ap2Set(i) {
-    ap2Prev.disabled = i === 0; ap2Next.disabled = i === AP.length - 1;
     if (i === ap2Idx) return; ap2Idx = i;
     ap2ImgEls.forEach((el, k) => el.classList.toggle('on', k === i));
     ap2Items.forEach((el, k) => { el.classList.toggle('on', k === i); el.setAttribute('aria-hidden', k !== i); });
+    [...ap2Dots.children].forEach((el, k) => el.setAttribute('aria-current', k === i));
   }
   function ap2Scroll() {
     const vh = innerHeight, u = (scrollY - ap2Top()) / vh; // viewport heights into the run
     const k = document.documentElement.clientWidth / 1920;
     const e = ease(clamp(u / AP_EXPAND));
-    ap2Card.style.setProperty('--m', (Math.max(16, 160 * k) * (1 - e)).toFixed(1) + 'px');
+    const inset = document.documentElement.clientWidth <= 900 ? 16 : Math.max(16, 360 * k);
+    ap2Card.style.setProperty('--m', (inset * (1 - e)).toFixed(1) + 'px');
     ap2Card.style.setProperty('--r', (Math.max(16, 40 * k) * (1 - e)).toFixed(1) + 'px');
     const ui = clamp((u - AP_EXPAND) / AP_UI);
     ap2Card.style.setProperty('--ui', ui.toFixed(3));
     ap2Card.style.setProperty('--uiv', ui > .01 ? 'visible' : 'hidden');
     ap2Set(Math.max(0, Math.min(AP.length - 1, Math.floor((u - AP_EXPAND - AP_UI) / AP_STEP))));
   }
-  const ap2Go = i => scrollTo({ top: ap2Top() + (AP_EXPAND + AP_UI + AP_STEP * clamp(i, 0, AP.length - 1) + .05) * innerHeight, behavior: 'smooth' });
-  ap2Prev.addEventListener('click', () => ap2Go(ap2Idx - 1));
-  ap2Next.addEventListener('click', () => ap2Go(ap2Idx + 1));
+  const ap2Go = i => scrollTo({ top: ap2Top() + (AP_EXPAND + AP_UI + AP_STEP * clamp(i, 0, AP.length - 1) + .05) * innerHeight, behavior: reduce ? 'instant' : 'smooth' });
+  [...ap2Dots.children].forEach((el, i) => el.addEventListener('click', () => ap2Go(i)));
   addEventListener('scroll', ap2Scroll, { passive: true });
   addEventListener('resize', () => { ap2Layout(); ap2Scroll(); });
   ap2Layout(); ap2Scroll();
@@ -2192,5 +2213,6 @@ button.cgc:hover .th { opacity: .28; }
   addEventListener('keydown', e => { if (e.key === 'Escape') { const m = document.querySelector('.modal.open'); m && closeModal(m); } });
 })();
 </script>
+<script src="assets/course-transition.js"></script>
 
 </body></html>
