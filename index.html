@@ -1025,11 +1025,13 @@ button.cgc:hover .th { opacity: .4; }
 
   /* Statue: Blender renders of the KAS633 scan (scripts/bust.py, extended to the plinth by scripts/bust_tall.py with the same
      camera, so the top 2000 rows are unchanged), lights fixed while the statue turns.
-     q00 → q19 step 3° from +30° to −27° (facing the viewer); the page mirrors them as it always has. The hero opens at +18° (q04,
-     head turned to screen left, picked by the user over the Figma +30°), so the turn plays q04 → q19.
+     The renders step 3° from +30° to −27° (facing the viewer); the page mirrors them as it always has. The hero opens at +18°
+     (head turned to screen left, picked by the user over the Figma +30°) and the turn runs to −6°, where the standing statue takes
+     over. 10/26: the 3° steps showed as jumps (two poses half-blended), so t00 → t24 are 1° steps — every third one the render
+     itself (+18°, +15° … −6°), the two between motion-interpolated from its neighbours (ffmpeg minterpolate, colour and alpha).
      The turn plays on a canvas from 1800×2900 frames (1200×1933 on phones, to keep memory down; enough below the hips for a
      0.9:1 viewport); the two poses the page rests on (+18°, −27°) are 4500×5000 images shown directly, plus their extensions. */
-  const SEQ_N = 20, SEQ_0 = 4, SEQ_KAS = 12, SW = 1800, SH = 2900; // the turn now stops at q12, where the standing statue takes over
+  const SEQ_N = 25, SEQ_0 = 0, SEQ_KAS = 24, SW = 1800, SH = 2900; // t00 (+18°) → t24 (−6°), where the standing statue takes over
   const small = Math.min(screen.width, screen.height) < 760;
   const seqCv = document.createElement('canvas'), seqCtx = seqCv.getContext('2d'), seqImgs = [];
   let seqReady = false, seqF = -1;
@@ -1037,11 +1039,11 @@ button.cgc:hover .th { opacity: .4; }
   seqCtx.imageSmoothingQuality = 'high';
   Promise.all(Array.from({ length: SEQ_N - SEQ_0 }, (_, k) => {
     const i = SEQ_0 + k, im = seqImgs[i] = new Image();
-    im.src = `assets/statue/${small ? 'm' : 'q'}${String(i).padStart(2, '0')}.webp`;
+    im.src = `assets/statue/${small ? 's' : 't'}${String(i).padStart(2, '0')}.webp`; // s: the same at 1200 × 1933
     return im.decode();
   })).then(() => { seqReady = true; seqF = -1; }).catch(() => {}); // until then (or on failure) the nearer still pose stands in
   function drawStatue(f) {
-    const show = f < SEQ_0 + .01 ? 'a' : f > SEQ_N - 1.01 ? 'b' : seqReady ? 'seq' : f < (SEQ_0 + SEQ_N - 1) / 2 ? 'a' : 'b';
+    const show = f < SEQ_0 + .01 || !seqReady ? 'a' : 'seq'; // until the frames are in, the first pose stands in
     if (statue.dataset.show !== show) { statue.dataset.show = show; seqF = -1; } // repaint the canvas when it comes back
     if (show !== 'seq' || Math.abs(f - seqF) < .005) return;
     seqF = f;
