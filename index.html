@@ -60,69 +60,36 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding: calc(env(safe-area-inset-top, 0px) + clamp(16px, 2.3vw, 44px)) 16px 0;
   pointer-events: none;
 }
-.nav-wrap { --nav-h: 48px; --nav-gap: 16px; }
-/* Figma Navigation_Default 7582:2931 / Navigation_Selected 7582:3045: a 200×48 bar (mark + ≡); opened, a 350-wide panel 16 px
-   below it (About · Experts · Admission tiles, the Programs tile, 2기 오픈 알림 신청). The panel drips out of the bar's underside
-   (reference recording): a bulge stretches into a drop, lets go, then grows into the panel and its contents fade in; closing
-   runs it back up. The white shapes (.nb1 bar, .nb2 drop/panel) sit in .goo, blurred and alpha-thresholded while they move so
-   they merge like liquid; the mark, the button and the panel's contents sit above it, unfiltered and sharp */
-.nav { position: relative; pointer-events: auto; width: 200px; height: var(--nav-h); }
-.nav .goo { position: absolute; left: 50%; top: 0; width: 0; height: 0; filter: drop-shadow(0 4px 24px rgba(0,0,0,.06)); transition: filter .3s; }
-.nav.light .goo { filter: drop-shadow(0 4px 24px rgba(0,0,0,.2)); } /* over a white section (Figma 7582:3131): a deeper shadow keeps the bar off the page */
-.nav.open .goo { filter: drop-shadow(0 0 12px rgba(0,0,0,.27)); }
-.nav.moving .goo { filter: url(#navGoo) drop-shadow(0 0 12px rgba(0,0,0,.27)); }
-.nav .nb1, .nav .nb2 { position: absolute; left: 0; top: 0; background: #fff; border-radius: 16px; }
-.nav .nb1 { width: 200px; height: var(--nav-h); transform: translateX(-50%); }
-.nav .nb2 { width: 0; height: 0; visibility: hidden; }
-.nav .bar { position: relative; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; }
-.nav .mark { display: block; width: 32px; height: 32px; }
-.nav .mark { position: relative; }
+/* Figma Hero 8426:16442 Nav: a 656×56 pill — mark 48, About · Programs · Experts · Admissions (80/82 wide, 20 apart), then
+   오픈 알림 신청 (140×42) 32 to the right; padding 4 16 4 24. Under 760 px only the mark and the button remain */
+.nav {
+  pointer-events: auto; position: relative;
+  display: flex; align-items: center; gap: 12px;
+  background: #fff; border-radius: 50px;
+  padding: 4px 16px 4px 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.12); transition: box-shadow .3s;
+}
+.nav.light { box-shadow: 0 4px 24px rgba(0,0,0,.2); } /* over a white section: a deeper shadow keeps the bar off the page */
+.nav .mark { position: relative; display: block; width: 48px; height: 48px; }
 .nav .mark .crop { position: absolute; inset: 0; } /* the static image is a sheet (mark + wordmark): clipped to the mark */
-.nav .mark img { height: 187.39%; left: -33.79%; top: -44.07%; width: 333.13%; }
-/* the spinning mark (phi-logo-rotation-HD.webm, one turn): a 38.4 px canvas centred on the 32 px slot so the rings at rest
-   match the static mark's size, and the wider poses mid-turn have room; the static image shows until the frames load */
+.nav .mark img { height: 179.02%; left: -29.25%; top: -41.92%; width: 318.26%; }
+/* the spinning mark (phi-logo-rotation-HD.webm, one turn): a canvas 1.2× the slot, centred, so the rings at rest match the
+   static mark's size and the wider poses mid-turn have room; the static image shows until the frames load */
 .nav .mark { overflow: visible; }
-.nav .mark canvas { position: absolute; left: -3.2px; top: -3.2px; width: 38.4px; height: 38.4px; }
+.nav .mark canvas { position: absolute; left: -4.8px; top: -4.8px; width: 57.6px; height: 57.6px; }
 .nav .mark.spin img { visibility: hidden; }
-/* ≡ (three 18×2 lines, 4 apart) ↔ × (two 21.6 lines at ±45°) in a 24 box */
-.nav .tog { position: relative; width: 24px; height: 24px; margin-right: -2px; }
-.nav .tog::before { content: ""; position: absolute; inset: -10px; } /* a bigger hit area */
-.nav .tog i { position: absolute; left: 3px; top: 11px; width: 18px; height: 2px; background: #0d0d0d; transition: transform .28s cubic-bezier(.6,0,.2,1), opacity .2s, width .28s cubic-bezier(.6,0,.2,1), left .28s cubic-bezier(.6,0,.2,1); }
-.nav .tog i:nth-child(1) { transform: translateY(-6px); }
-.nav .tog i:nth-child(3) { transform: translateY(6px); }
-.nav.open .tog i { left: 1.18px; width: 21.634px; }
-.nav.open .tog i:nth-child(1) { transform: rotate(45deg); }
-.nav.open .tog i:nth-child(2) { opacity: 0; }
-.nav.open .tog i:nth-child(3) { transform: rotate(-45deg); }
-/* panel 350 wide: padding 12 16, rows 8 apart (Figma 7582:3045 rev.) */
-.nav .menu {
-  position: absolute; left: 50%; top: calc(var(--nav-h) + var(--nav-gap)); width: 350px; transform: translateX(-50%);
-  display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; opacity: 0; visibility: hidden;
-}
-.nav.open .menu.shown { opacity: 1; visibility: visible; transition: opacity .16s ease; }
-.nav .menu .row { display: flex; gap: 8px; }
-.nav .menu .row .tile { flex: 1 1 0; width: auto; min-width: 0; } /* three equal tiles, 8 apart */
-.nav .tile { position: relative; display: block; width: 100px; height: 100px; border-radius: 12px; overflow: hidden; background: #141414; color: #fff; text-decoration: none; }
-.nav .tile b { position: absolute; left: 0; right: 0; top: 8px; font-family: var(--font-latin); font-size: 12px; font-weight: 700; line-height: 15px; text-align: center; }
-.nav .tile .ph { position: absolute; overflow: hidden; }
-.nav .tile .ph img { position: absolute; max-width: none; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
-.nav .tile:hover .ph img { transform: scale(1.05); }
-.nav .t-about .ph { left: calc(50% - 43.33px); top: 17px; width: 86px; height: 86px; }
-.nav .t-about .ph img { left: -11%; top: 4.63%; width: 122%; height: 92.74%; }
-.nav .t-experts .ph { left: calc(50% - 44.33px); top: 16px; width: 88px; height: 88px; }
-.nav .t-experts .ph img { left: -1.28%; top: 8.55%; width: 102.2%; height: 83.12%; }
-.nav .t-adm .ph { left: -1px; top: 20px; width: 102px; height: 82px; }
-.nav .t-adm .ph img { inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.nav .t-prog { width: 318px; height: 146px; background: #000; }
-.nav .t-prog b { left: 12px; right: auto; top: 12px; font-size: 20px; line-height: 24px; text-align: left; }
-.nav .t-prog .ph { left: 83px; top: -25px; width: 248px; height: 214px; }
-.nav .t-prog .ph img { inset: 0; width: 100%; height: 100%; }
+.nav .right { display: flex; align-items: center; gap: 32px; }
+.nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; align-items: center; }
+.nav li a { display: block; width: 80px; text-align: center; color: var(--mute); font-size: 15px; text-decoration: none; transition: color .2s; }
+.nav li a:hover { color: var(--ink); }
+.nav li a.on { width: 82px; color: var(--ink); font-size: 18px; font-weight: 700; }
 .nav .cta {
-  display: grid; place-items: center; height: 42px; border-radius: 10px; background: #0d0d0d; color: #fff;
-  font-family: var(--font-latin); font-weight: 600; font-size: 14px; transition: background .2s;
+  width: 140px; height: 42px; border-radius: 26px; background: var(--ink); color: #fff;
+  font-family: var(--font-latin); font-weight: 600; font-size: 14px;
+  display: grid; place-items: center; transition: transform .2s;
 }
-.nav .cta:hover { background: #2a2a2a; }
-@media (max-width: 400px) { .nav .menu { width: calc(100vw - 24px); } .nav .menu .row, .nav .t-prog { width: 100%; } }
+.nav .cta:hover { transform: scale(1.03); }
+@media (max-width: 760px) { .nav ul { display: none; } .nav .right { gap: 12px; } }
 
 /* ---------- Hero (pinned scroll story, Figma 시나리오 7013:1724, frames Hero → 20) ----------
    Copy + FUNDAMENTALS OVER TOOLS over the turning statue → the five Phi OS principles → the card orbit → close-up → PHI OPERATING SYSTEM.
@@ -610,26 +577,20 @@ footer { position: sticky; bottom: 0; z-index: 0; background: #eee; padding: 0 0
 .cgc .m b { font-weight: 700; }
 button.cgc { cursor: pointer; }
 button.cgc:hover .th { opacity: .28; }
-.cg-photo { --lift: 2.5; position: relative; margin-top: 160px; height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
+.cg { --cg-gap: 60px; } /* space under the last card row while the grid holds still */
+/* the grid stops once its last row sits --cg-gap above the bottom of the screen (JS sets --cg-stick = innerHeight − grid − gap)
+   and holds there while the photo lights up over it */
+.cg-grid { position: sticky; top: var(--cg-stick, 0px); }
+/* classroom photo: its pin starts on that same screen, over the held cards (transparent until the light starts), pinned for --lift
+   screens. assets/course-transition.js opens the lit room from the centre of the cards (WebGL); without it the photo fades in */
+.cg-photo { --lift: 2; position: relative; z-index: 1; pointer-events: none; margin-top: calc(var(--cg-gap) - 100vh); margin-top: calc(var(--cg-gap) - 100svh); height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
 .cg-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-.cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; }
-/* dark → light: a solid #0d0d0d veil (same as the section, so the photo arrives unseen) fades out while the room eases back into frame; JS drives --o and the image scale */
-.cg-pin img { will-change: transform; }
-.cg-veil { position: absolute; inset: 0; background: #0d0d0d; opacity: 1; will-change: opacity; }
-@media (max-width: 1000px) { .cg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .cg-photo { margin-top: 200px; } }
-@media (max-width: 560px) { .cg-grid { grid-template-columns: 1fr; padding-top: 48px; gap: 40px; } .cg-photo { margin-top: 120px; } }
+.cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; opacity: 0; }
+.cg-pin canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+@media (max-width: 1000px) { .cg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+@media (max-width: 560px) { .cg-grid { grid-template-columns: 1fr; padding-top: 48px; gap: 40px; } }
 
 /* ---------- 프로그램 구조 (Figma 6891:839) ---------- */
-.cs-run { position: relative; z-index: 2; }
-.cs-run.cs-enabled { margin-top: -100svh; height: calc(var(--cs-height) + 120svh); }
-.cs-enabled > #structure { position: sticky; top: 0; min-height: 100svh; visibility: hidden; }
-.cs-enabled.cs-visible > #structure { visibility: visible; }
-.cs-overlay { display: none; position: absolute; z-index: 3; inset: 0 0 auto; height: 100svh; pointer-events: none; overflow: hidden; }
-.cs-enabled .cs-overlay { display: block; }
-.cs-overlay canvas, .cs-overlay img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cs-overlay img { object-fit: cover; object-position: center 60%; }
-.cs-enabled .ps2-col > h2, .cs-enabled .ps2-lead { opacity: var(--cs-copy, 0); transform: translateY(calc((1 - var(--cs-copy, 0)) * 20px)); }
-.cs-complete .cs-overlay { display: none; }
 .ps2 { background: #fff; color: #0d0d0d; padding: 100px 0; }
 .ps2-col { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
 .ps2 h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1; color: #000; }
@@ -831,25 +792,17 @@ button.cgc:hover .th { opacity: .28; }
 
 <div class="nav-wrap">
   <nav class="nav" id="nav" aria-label="주요 메뉴">
-    <div class="goo" aria-hidden="true"><span class="nb1"></span><span class="nb2" id="navDrop"></span></div>
-    <div class="bar">
-      <a class="mark" href="#top" aria-label="Phi Institute of Design"><span class="crop"><img src="assets/logo-mark.webp" alt=""></span></a>
-      <button class="tog" id="navTog" type="button" aria-expanded="false" aria-controls="navMenu" aria-label="메뉴 열기"><i></i><i></i><i></i></button>
-    </div>
-    <div class="menu" id="navMenu">
-      <div class="row">
-        <a class="tile t-about" href="#"><span class="ph"><img src="assets/nav/about.webp" alt=""></span><b>About</b></a>
-        <a class="tile t-experts" href="#"><span class="ph"><img src="assets/nav/experts.webp" alt=""></span><b>Experts</b></a>
-        <a class="tile t-adm" href="#"><span class="ph"><img src="assets/nav/admission.webp" alt=""></span><b>Admission</b></a>
-      </div>
-      <a class="tile t-prog" href="#top" aria-current="page"><span class="ph"><img src="assets/nav/programs.webp" alt=""></span><b>Programs</b></a>
-      <button class="cta" type="button">2기 오픈 알림 신청</button>
+    <a class="mark" href="#top" aria-label="Phi Institute of Design"><span class="crop"><img src="assets/logo-mark.webp" alt=""></span></a>
+    <div class="right">
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a class="on" href="#top" aria-current="page">Programs</a></li>
+        <li><a href="#">Experts</a></li>
+        <li><a href="#">Admissions</a></li>
+      </ul>
+      <button class="cta" type="button">오픈 알림 신청</button>
     </div>
   </nav>
-  <!-- blur + alpha threshold: the two white shapes melt into each other while the drop moves -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="navGoo" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur in="SourceGraphic" stdDeviation="5"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/>
-  </filter></svg>
 </div>
 
 <nav class="toc" id="toc" aria-label="페이지 목차">
@@ -908,19 +861,18 @@ button.cgc:hover .th { opacity: .28; }
     </div>
   </section>
 
-  <!-- 주요 수업들 — Figma 6906:4503: intro copy, 3-column course grid, then the classroom photo fading up out of the dark -->
+  <!-- 주요 수업들 — Figma 6906:4503: intro copy, 3-column course grid, then the classroom photo opening from its centre -->
   <section class="band cg" id="courses">
     <div class="cg-col cg-head">
       <h2>주요 수업들</h2>
       <p>상기된 역량과 태도를 중심으로 수업들이 설계되었습니다.<br>이를 토대로 디지털 프로덕트 디자인과 브랜딩 분야에서 자신의 가능성을 펼칠 수 있도록 합니다.<br>본 주요 수업들은 1학기에 진행되는 수업들이며, 2학기는 1학기의 성취에 따라 학습 효과를 보완, 증폭할 수 있는 방향으로 준비됩니다.</p>
     </div>
     <div class="cg-col cg-grid" id="cgGrid"></div>
-    <!-- classroom photo: pinned while it brightens out of the dark over two screens of scroll -->
-    <div class="cg-photo" id="cgPhoto" aria-hidden="true"><div class="cg-pin"><img src="assets/classroom-courses.webp" alt=""><span class="cg-veil" id="cgVeil"></span></div></div>
+    <!-- classroom photo: opens from the centre of the held card grid, then stays lit for the rest of its pin -->
+    <div class="cg-photo" id="cgPhoto" aria-hidden="true"><div class="cg-pin"><img src="assets/classroom-courses.webp" alt=""></div></div>
   </section>
 
   <!-- 프로그램 구조 — Figma 6891:839 -->
-  <div class="cs-run" id="csRun">
   <section class="band ps2" id="structure">
     <div class="ps2-col">
       <h2>프로그램 구조</h2>
@@ -950,7 +902,6 @@ button.cgc:hover .th { opacity: .28; }
       </div>
     </div>
   </section>
-  </div>
 
   <!-- 수업을 관통하는 접근 — Figma 8454:19045: rounded photo expands to full screen;
        captions and pagination then appear while scrolling steps 01 → 06. -->
@@ -1692,7 +1643,7 @@ button.cgc:hover .th { opacity: .28; }
   // the rest the section under the index; light rows over the white bands, hidden over the footer
   const toc = document.getElementById('toc'), tocA = [...toc.children], mainEl = document.getElementById('top');
   const secs = ['courses', 'structure', 'approach', 'curriculum'].map(id => document.getElementById(id));
-  const tocPhoto = document.getElementById('cgPhoto'), tocApproachPhoto = document.getElementById('ap2Card');
+  const tocApproachPhoto = document.getElementById('ap2Card');
   let tocOn = -1, tocLight = null, tocLate = false;
   function placeToc(left, top) {
     toc.hidden = portrait;
@@ -1704,19 +1655,12 @@ button.cgc:hover .th { opacity: .28; }
     const tocRect = toc.getBoundingClientRect(), y = tocRect.top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
     let on;
     if (hero.getBoundingClientRect().bottom > mid) on = p < K.f2 ? 0 : p < K.lc + 5.5 * LSTEP ? 1 : p < OS_IN ? 2 : 3;
-    else on = tocPhoto.getBoundingClientRect().top <= mid ? 4 : 3;
+    else on = 3; // the classroom photo still belongs to Course
     for (let i = 1; i < secs.length; i++) if (secs[i].getBoundingClientRect().top <= mid) on = i + 3;
     if (on !== tocOn) { tocA.forEach((el, i) => { el.classList.toggle('on', i === on); el.toggleAttribute('aria-current', i === on); }); tocOn = on; }
     const photoRect = tocApproachPhoto.getBoundingClientRect(), x = tocRect.left + tocRect.width / 2;
     const overApproachPhoto = x >= photoRect.left && x <= photoRect.right && y >= photoRect.top && y <= photoRect.bottom;
-    const csRun = document.getElementById('csRun'), csProgress = +(csRun.dataset.progress || 0);
-    const csActive = csRun.classList.contains('cs-visible') && csProgress < 1;
-    const csPending = csRun.classList.contains('cs-enabled') && !csRun.classList.contains('cs-visible');
-    const csHeight = csRun.querySelector('.cs-overlay')?.clientHeight || innerHeight, csU = clamp((csProgress - .14) / .79);
-    const csRadius = -.14 + (Math.hypot(innerWidth / csHeight, 1) / 2 + .32) * csU * csU * (3 - 2 * csU);
-    const overCoursePhoto = csActive && Math.hypot((x / innerWidth - .5) * innerWidth / csHeight, y / csHeight - .5) > csRadius;
-    const light = secs[1].getBoundingClientRect().top <= y && !overApproachPhoto && !overCoursePhoto && !csPending;
-    if (((csPending && csRun.getBoundingClientRect().top <= mid) || (csActive && csProgress < .7)) && tocOn !== 3) { tocA.forEach((el, i) => { el.classList.toggle('on', i === 3); el.toggleAttribute('aria-current', i === 3); }); tocOn = 3; }
+    const light = secs[1].getBoundingClientRect().top <= y && !overApproachPhoto;
     if (light !== tocLight) { toc.classList.toggle('light', light); tocLight = light; }
     const over = mainEl.getBoundingClientRect().bottom < y + 76; // footer underneath
     if (tocLate) a *= kf([K.f1, K.f2], [0, 1], p);
@@ -1974,25 +1918,25 @@ button.cgc:hover .th { opacity: .28; }
     if (e.key === 'ArrowLeft') { e.preventDefault(); courseStep(-1); } else if (e.key === 'ArrowRight') { e.preventDefault(); courseStep(1); }
   });
   cgGrid.addEventListener('click', e => { const c = e.target.closest('button.cgc'); if (c) courseOpen(+c.dataset.i); });
-  // classroom photo: dark → light. t runs from the photo entering the viewport (0) to the end of its pin (1);
-  // the veil fades out over t .25 → .85 so the room is fully lit for the last stretch, and the image settles from 1.08 → 1
-  const cgPhoto = document.getElementById('cgPhoto'), cgVeil = document.getElementById('cgVeil'), cgImg = cgPhoto.querySelector('img');
-  // pinned for 4 screens (--lift) and eased toward the scroll with the hero's inertia, so the light comes up slowly
+  // classroom photo, in screens of scroll from the moment the grid holds (0) to the end of the pin (2): the lit room opens from
+  // the centre of the cards over 0 → 1.4 (window.cgReveal, assets/course-transition.js) and stays lit. Eased with the hero's inertia.
+  const cgPhoto = document.getElementById('cgPhoto'), cgImg = cgPhoto.querySelector('img');
+  const cgStick = () => cgGrid.style.setProperty('--cg-stick', Math.min(0, innerHeight - cgGrid.offsetHeight - parseFloat(getComputedStyle(cgGrid).getPropertyValue('--cg-gap'))) + 'px');
   let cgT = -1, cgRaf = 0;
   function cgLift() {
     // rect-based: offsetTop would be relative to the .band section, not the page
-    const r = cgPhoto.getBoundingClientRect();
-    const target = clamp((innerHeight - r.top) / r.height);
+    const target = Math.max(0, Math.min(2, -cgPhoto.getBoundingClientRect().top / innerHeight));
     cgT = cgT < 0 || reduce ? target : cgT + (target - cgT) * .06;
     if (Math.abs(target - cgT) < .0005) cgT = target;
-    // the veil starts lifting as soon as the photo comes in (no black stretch) and is gone by 70 %
-    const u = clamp(cgT / .7), e = u * u * (3 - 2 * u); // smoothstep
-    cgVeil.style.opacity = (1 - e).toFixed(3);
-    cgImg.style.transform = `scale(${(1.08 - .08 * e).toFixed(4)})`;
+    const v = clamp(cgT / 1.4), fx = window.cgReveal;
+    if (fx && fx.ready) { cgImg.style.opacity = 0; fx.draw(v); }
+    else cgImg.style.opacity = (v * v * (3 - 2 * v)).toFixed(3); // no WebGL: the photo fades in over the cards
     cgRaf = cgT !== target ? requestAnimationFrame(cgLift) : 0;
   }
+  window.cgLiftKick = () => { cgT = -1; cgLift(); };
+  new ResizeObserver(() => { cgStick(); cgLift(); }).observe(cgGrid);
   const cgKick = () => { if (!cgRaf) cgRaf = requestAnimationFrame(cgLift); };
-  addEventListener('scroll', cgKick, { passive: true }); addEventListener('resize', cgKick); cgLift();
+  addEventListener('scroll', cgKick, { passive: true }); addEventListener('resize', () => { cgStick(); cgKick(); }); cgStick(); cgLift();
 
   /* ---------- 수업을 관통하는 접근 (Figma 8454:19045) ----------
      Run (sticky stage): rounded card expands (inset 360 → 0, radius 40 → 0), then caption and dots fade in.
@@ -2132,48 +2076,7 @@ button.cgc:hover .th { opacity: .28; }
     }).catch(() => {});
   }
 
-  /* ---------- Nav menu: a gooey drop (motion measured off the reference recording, 30 fps; shapes from Figma 7582:3045) ----------
-     open  560 ms: the bar's underside bulges, stretches into a drop, lets go 16 px below, then grows (fast, then settling) into
-                   the 350-wide panel, its top edge staying put as it unrolls downward; the contents fade in at the end
-     close 460 ms: the contents go at once, the panel pulls in to a drop, rises and melts back into the bar. ≡ ↔ × throughout */
-  const nav = document.getElementById('nav'), navTog = document.getElementById('navTog');
-  const navDrop = document.getElementById('navDrop'), navMenu = document.getElementById('navMenu');
-  let navOpen = false, navAnim = null, navText = 0, navY = 0;
-  const NAV_H = 48, NAV_G = 16;
-  // [offset, width, height (px, or a fraction of the panel's when ≤ 1), top below the bar's bottom edge, corner radius]
-  // once the drop has let go it keeps ≥ 10 px clear of the bar, so the blur never bridges the two while it grows
-  const NAV_OPEN = [[0, 18, 18, -23, 9], [.18, 22, 22, -13, 11], [.3, 26, 30, -7, 13], [.42, 30, 30, 3, 15], [.48, 40, 34, NAV_G, 16],
-    [.56, .3, .18, NAV_G, 16], [.64, .48, .36, NAV_G, 16], [.74, .7, .6, NAV_G, 16], [.82, .88, .84, NAV_G, 16], [.9, .97, .96, NAV_G, 16], [1, 1, 1, NAV_G, 16]];
-  const NAV_CLOSE = [[0, 1, 1, NAV_G, 16], [.14, .75, .7, NAV_G, 16], [.24, .45, .4, NAV_G, 16], [.32, .25, .2, NAV_G, 16], [.4, 50, 40, NAV_G, 16],
-    [.48, 36, 34, NAV_G - 4, 16], [.56, 30, 30, 6, 15], [.66, 28, 30, -4, 14], [.8, 24, 24, -12, 12], [1, 16, 16, -22, 8]];
-  const navFrames = (rows, W, Hp) => rows.map(([offset, w, h, top, r]) => ({
-    offset, width: (w <= 1 ? w * W : w) + 'px', height: (h <= 1 ? h * Hp : h) + 'px', borderRadius: r + 'px',
-    transform: `translate(-50%, ${NAV_H + top}px)`
-  }));
-  function navSet(open) {
-    if (open === navOpen || (navAnim && navAnim.playState === 'running')) return;
-    navOpen = open; navY = scrollY;
-    nav.classList.toggle('open', open);
-    navTog.setAttribute('aria-expanded', open); navTog.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-    clearTimeout(navText);
-    const W = navMenu.offsetWidth, Hp = navMenu.offsetHeight;
-    navDrop.style.visibility = 'visible'; nav.classList.add('moving');
-    if (navAnim) navAnim.cancel();
-    if (open) {
-      navAnim = navDrop.animate(navFrames(NAV_OPEN, W, Hp), { duration: reduce ? 1 : 560, fill: 'forwards' });
-      navText = setTimeout(() => navMenu.classList.add('shown'), reduce ? 0 : 520);
-      navAnim.onfinish = () => nav.classList.remove('moving');
-    } else {
-      navMenu.classList.remove('shown');
-      navAnim = navDrop.animate(navFrames(NAV_CLOSE, W, Hp), { duration: reduce ? 1 : 460, fill: 'forwards' });
-      navAnim.onfinish = () => { nav.classList.remove('moving'); navDrop.style.visibility = 'hidden'; };
-    }
-  }
-  navTog.addEventListener('click', () => navSet(!navOpen));
-  navMenu.addEventListener('click', e => { if (e.target.closest('a')) navSet(false); });
-  document.addEventListener('click', e => { if (navOpen && !nav.contains(e.target)) navSet(false); });
-  addEventListener('keydown', e => { if (e.key === 'Escape' && navOpen) { navSet(false); navTog.focus(); } });
-  addEventListener('scroll', () => { if (navOpen && Math.abs(scrollY - navY) > 80) navSet(false); }, { passive: true });
+  const nav = document.getElementById('nav'), NAV_H = 56;
   // light or dark behind the bar: the first painted background under its centre (photos and canvases count as dark)
   const navWrapEl = nav.parentElement;
   let navToneRaf = 0;
