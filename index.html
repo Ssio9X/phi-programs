@@ -1711,7 +1711,7 @@ button.cgc:hover .th { opacity: .28; }
       toc.classList.toggle('away', away); toc.inert = away; tocAway = away;
     }
     // wide, short screens: the facts (design y 576–829) reach the index — it then waits until they have faded
-    tocLate = top + 829 * S + 16 > vh - 50 - 152;
+    tocLate = top + 829 * S + 16 > vh - 50 - 152 && facts.getBoundingClientRect().left < tocLeft + 140 + 16;
   }
   function updateToc(p, a) {
     const tocRect = toc.getBoundingClientRect(), y = tocRect.top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
