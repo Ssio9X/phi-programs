@@ -160,7 +160,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* section index (Figma Black 8426:22361 / White 8426:22910): fixed 60 px above the bottom edge, left on the hero copy (design
    x 150), type at its own size. Rows 140 × 20, gap 2; others at 20 %, the current one full with a dotted leader to its numeral;
    the row under the pointer full and underlined. White type over the dark bands, black over the white ones */
-.toc { position: fixed; z-index: 45; left: 150px; bottom: 60px; width: 140px; display: flex; flex-direction: column; gap: 2px; color: #fff; opacity: 0; transition: color .3s; }
+.toc { position: fixed; z-index: 45; left: 50px; bottom: 50px; width: 140px; display: flex; flex-direction: column; gap: 2px; color: #fff; opacity: 0; transition: color .3s; }
 .toc.light { color: #000; }
 .toc a { display: flex; align-items: center; gap: 4px; height: 20px; color: inherit; text-decoration: none; opacity: .2; transition: opacity .3s; }
 .toc b { flex: 1 1 auto; font: 700 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Pretendard", sans-serif; white-space: nowrap; }
@@ -173,7 +173,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .toc a:hover b { flex: 1 1 auto; text-decoration: underline; text-underline-offset: from-font; }
 .toc a:hover i { display: none; }
 .toc[hidden] { display: none; }
-@media (max-width: 900px) { .toc { display: none; } }
+/* narrow windows: rows slide right and fade, top row first, so the list leans like a staircase on the way (and back) */
+.toc a { transition: opacity .3s, transform .55s cubic-bezier(.2,.8,.2,1); }
+.toc.moving a { transition: opacity .4s ease calc(var(--i) * 40ms), transform .55s cubic-bezier(.2,.8,.2,1) calc(var(--i) * 40ms); }
+.toc.away a { opacity: 0; transform: translateX(160px); }
+.toc.away a.on, .toc.away a:hover { opacity: 0; }
 
 /* item sheet (Figma 8445:336): the hero behind frosted (black 60 % + blur), the group's five rows on the left (2 px bar, Pretendard
    16, current SemiBold white, others Medium 40 %), the title (457 wide) with its Korean name (SF Pro Heavy 14, #aaa) and text
@@ -1693,12 +1697,21 @@ button.cgc:hover .th { opacity: .28; }
   const toc = document.getElementById('toc'), tocA = [...toc.children], mainEl = document.getElementById('top');
   const secs = ['courses', 'structure', 'approach', 'curriculum'].map(id => document.getElementById(id));
   const tocPhoto = document.getElementById('cgPhoto'), tocApproachPhoto = document.getElementById('ap2Card');
-  let tocOn = -1, tocLight = null, tocLate = false;
+  let tocOn = -1, tocLight = null, tocLate = false, tocAway = null, tocMoveT = 0;
+  [...toc.children].forEach((el, i) => el.style.setProperty('--i', i));
   function placeToc(left, top) {
     toc.hidden = portrait;
-    toc.style.left = (left + 150 * S).toFixed(1) + 'px';
+    const tocLeft = left + 50 * S; // Figma 8445:460: 50 in from the left of the 1920 frame, 50 up from the bottom
+    toc.style.left = tocLeft.toFixed(1) + 'px';
+    // narrow windows: once the index would run into the widest text column (curriculum, 1280) it slides off, row by row
+    // (Shopify Editions index); measured, that is where it first overlaps text below the hero
+    const away = tocLeft + 140 > (document.documentElement.clientWidth - 1280) / 2;
+    if (away !== tocAway) {
+      if (tocAway !== null && !reduce) { toc.classList.add('moving'); clearTimeout(tocMoveT); tocMoveT = setTimeout(() => toc.classList.remove('moving'), 900); }
+      toc.classList.toggle('away', away); toc.inert = away; tocAway = away;
+    }
     // wide, short screens: the facts (design y 576–829) reach the index — it then waits until they have faded
-    tocLate = top + 829 * S + 16 > vh - 60 - 152;
+    tocLate = top + 829 * S + 16 > vh - 50 - 152;
   }
   function updateToc(p, a) {
     const tocRect = toc.getBoundingClientRect(), y = tocRect.top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
