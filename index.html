@@ -176,6 +176,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .stage.portrait .osfade { top: 540px; }
 /* Phi crest (Figma Section 6 frames 0.1 / 0.2, 8445:18402): faint, then full, then fades where COMPETENCY comes in */
 .crest { position: absolute; z-index: 4; left: 0; top: 0; width: 328.115px; max-width: none; opacity: 0; visibility: hidden; pointer-events: none; }
+.crest.oscrest { width: 376.461px; } /* Phi OS emblem (Figma 8611:5545 / 8611:5646): the same faint → full beat before the 태도 list */
 .osl { position: absolute; z-index: 4; left: 0; top: 0; width: 0; height: 0; visibility: hidden; }
 .osl > * { position: absolute; left: 0; top: 0; width: 900px; padding: 0; transform-origin: 50% 50%; opacity: 0; }
 .osl img { display: block; width: 900px; max-width: none; pointer-events: none; }
@@ -563,36 +564,33 @@ footer { position: sticky; bottom: 0; z-index: 0; background: #eee; padding: 0 0
 .mc-plus i::before { width: 3.4px; height: 17px; }
 .mc-plus i::after { width: 17px; height: 3.4px; }
 
-/* ---------- 주요 수업들 grid (Figma 7013:1497) ---------- */
-/* hero stage is #000, this section #0d0d0d: blend the first stretch so the hand-off has no seam */
-.cg { background: #0d0d0d; color: #fff; }
+/* ---------- 주요 수업들 grid (Figma 8426:16310) ---------- */
+/* white: it follows the classroom photo the hero ends on (80 under it) and runs into 프로그램 구조 */
+.cg { background: #fff; color: #000; padding: 80px 0 156px; }
 .cg-col { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
-.cg-head { display: flex; flex-direction: column; gap: 24px; } /* no top padding: the hero hands over with 주요 수업들 518 design px under the PHI OS logo */
+.cg-head { display: flex; flex-direction: column; gap: 24px; }
 .cg-head h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1.2; }
-.cg-head p { max-width: 800px; font-size: var(--lead); line-height: 1.6; color: #a6a6a6; text-wrap: pretty; } /* Figma 7013:1497 rev. */
+.cg-head p { max-width: 800px; font-size: var(--lead); font-weight: 510; line-height: 1.6; color: #8d8d8d; text-wrap: pretty; }
 .cg-grid { padding-top: 60px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 52px 24px; }
-/* card: thumbnail (white at 20% until the course photos arrive) over title + 국문명 / 강사 */
-.cgc { display: flex; flex-direction: column; padding: 0; background: none; color: #fff; text-align: left; font: inherit; }
-.cgc .th { aspect-ratio: 384 / 264; border-radius: 16px; background: #fff; opacity: .2; transition: opacity .35s; }
+/* card: thumbnail (#d9d9d9 at 20% until the course photos arrive) over title + 국문명 / 강사 */
+.cgc { display: flex; flex-direction: column; padding: 0; background: none; color: #000; text-align: left; font: inherit; }
+.cgc .th { aspect-ratio: 384 / 264; border-radius: 16px; background: #d9d9d9; opacity: .2; transition: opacity .35s; }
 .cgc .tx { display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 0; }
 .cgc h3 { margin: 0; min-height: 2.4em; font-size: 24px; font-weight: 860; line-height: 1.2; }
 .cgc .m { display: flex; justify-content: space-between; gap: 12px; font-size: 16px; line-height: 1.6; color: #a9a9a9; white-space: nowrap; }
 .cgc .m span { font-weight: 510; }
 .cgc .m b { font-weight: 700; }
 button.cgc { cursor: pointer; }
-button.cgc:hover .th { opacity: .28; }
-.cg { --cg-gap: 60px; } /* space under the last card row while the grid holds still */
-/* the grid stops once its last row sits --cg-gap above the bottom of the screen (JS sets --cg-stick = innerHeight − grid − gap)
-   and holds there while the photo lights up over it */
-.cg-grid { position: sticky; top: var(--cg-stick, 0px); }
-/* classroom photo: its pin starts on that same screen, over the held cards (transparent until the light starts), pinned for --lift
-   screens. assets/course-transition.js opens the lit room from the centre of the cards (WebGL); without it the photo fades in */
-.cg-photo { --lift: 3.6; position: relative; z-index: 1; pointer-events: none; margin-top: calc(var(--cg-gap) - 100vh); margin-top: calc(var(--cg-gap) - 100svh); height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
-.cg-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+button.cgc:hover .th { opacity: .4; }
+@media (max-width: 1000px) { .cg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+@media (max-width: 560px) { .cg { padding-bottom: 100px; } .cg-grid { grid-template-columns: 1fr; padding-top: 48px; gap: 40px; } }
+/* classroom photo, in the hero canvas under PHI OS: the pin is the screen (placed and counter-scaled in layout()), the photo covers
+   it, the light (canvas) opens it, then black at 10% as in Figma */
+.cg-photo { position: absolute; z-index: 20; left: 0; top: 0; width: 0; height: 0; pointer-events: none; visibility: hidden; }
+.cg-pin { position: absolute; left: 0; top: 0; overflow: hidden; transform-origin: 0 0; }
 .cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; opacity: 0; }
 .cg-pin canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-@media (max-width: 1000px) { .cg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
-@media (max-width: 560px) { .cg-grid { grid-template-columns: 1fr; padding-top: 48px; gap: 40px; } }
+.cg-dim { position: absolute; inset: 0; background: #000; opacity: 0; }
 
 /* ---------- 프로그램 구조 (Figma 6891:839) ---------- */
 .ps2 { background: #fff; color: #0d0d0d; padding: 100px 0; }
@@ -831,9 +829,13 @@ button.cgc:hover .th { opacity: .28; }
         <img class="kas" id="kas" src="assets/statue/kas633.webp" alt="" decoding="async">
         <div class="osfade" id="osfade"></div>
         <img class="crest" id="crest" src="assets/phi-crest.svg" alt="Phi, ESTD. 260420">
+        <img class="crest oscrest" id="osCrest" src="assets/phi-os-emblem.svg" alt="Phi OS">
         <div class="osl" id="osl" role="list" aria-label="역량과 태도"></div>
         <div id="deck" aria-live="polite"></div>
         <div class="kf" id="kf" aria-hidden="true"><button class="kp" type="button" aria-label="이전 카드" tabindex="-1"></button><button class="kn" type="button" aria-label="다음 카드" tabindex="-1"></button><p class="kc-n" id="kcN"></p></div>
+        <!-- classroom photo (Figma 8611:6603): once the Phi OS list has gone, it lights up over the statue from the centre of the
+             screen (assets/course-transition.js), then PHI OPERATING SYSTEM settles on it -->
+        <div class="cg-photo" id="cgPhoto" aria-hidden="true"><div class="cg-pin"><img src="assets/classroom-courses.webp" alt=""><i class="cg-dim"></i></div></div>
         <img class="phios" id="phios" src="assets/phi-operating-system.svg" alt="Phi Operating System">
       </div>
       <div class="ui" id="ui">
@@ -859,15 +861,13 @@ button.cgc:hover .th { opacity: .28; }
     </div>
   </section>
 
-  <!-- 주요 수업들 — Figma 6906:4503: intro copy, 3-column course grid, then the classroom photo opening from its centre -->
+  <!-- 주요 수업들 — Figma 8426:16310: white, intro copy over a 3-column course grid (photos to come) -->
   <section class="band cg" id="courses">
     <div class="cg-col cg-head">
       <h2>주요 수업들</h2>
       <p>상기된 역량과 태도를 중심으로 수업들이 설계되었습니다.<br>이를 토대로 디지털 프로덕트 디자인과 브랜딩 분야에서 자신의 가능성을 펼칠 수 있도록 합니다.<br>본 주요 수업들은 1학기에 진행되는 수업들이며, 2학기는 1학기의 성취에 따라 학습 효과를 보완, 증폭할 수 있는 방향으로 준비됩니다.</p>
     </div>
     <div class="cg-col cg-grid" id="cgGrid"></div>
-    <!-- classroom photo: opens from the centre of the held card grid, then stays lit for the rest of its pin -->
-    <div class="cg-photo" id="cgPhoto" aria-hidden="true"><div class="cg-pin"><img src="assets/classroom-courses.webp" alt=""></div></div>
   </section>
 
   <!-- 프로그램 구조 — Figma 6891:839 -->
@@ -1483,20 +1483,24 @@ button.cgc:hover .th { opacity: .28; }
   // cards out 1, logo 1
   // 10/25 (Figma scenario 8445:536): after the first screen the bust grows to the right and becomes the standing statue, and the
   // 역량 / 태도 list scrolls past — COMPETENCY, its five, PHI OS, its five (L = 0 … 11, LSTEP screens apart, from lc) — then the
-  // statue darkens under PHI OPERATING SYSTEM (OS_IN → 19 → 20) as before. The old turn / principles / card deck frames are gone.
-  const LSTEP = .42, L_N = 11;
+  // statue darkens under PHI OPERATING SYSTEM. The old turn / principles / card deck frames are gone.
+  // 10/26 (Figma 8445:536 + 8611:5069 rev.): the two halves are now their own scenes — the Phi crest, then COMPETENCY and its five,
+  // which lift away; the Phi OS emblem (faint, full), then PHI OS and its five, which lift away and leave the statue on its own.
+  // There the classroom photo lights up from the centre (rv0 → rv1, as slow as the old card-grid reveal) and PHI OPERATING SYSTEM
+  // settles on it (Figma 8611:6603); the pin then lets go and the white 주요 수업들 follows.
+  const LSTEP = .42;
   // f1 → f3: the bust turns to face the viewer as it grows to the right, then becomes the standing statue (f3 → f3 + .2);
   // CR: the crest at 10% (frame 0.1), full (0.2), held, then fading in place as the list comes in at f4
   const K = { f1: .6, f2: .9, f3: 1.2, f4: 2.5, lc: 2.5 };
-  K.lo = K.lc + 6 * LSTEP; K.lend = K.lc + L_N * LSTEP;
   const CR = [1.3, 1.6, 1.9, 2.1, 2.35];
-  const OS_IN = K.lend + .35;
-  K.f19 = OS_IN + .5; K.f20 = K.f19 + .4;
-  let RUN = K.f20 + .3;
-  // PHI OS holds a beat after frame 20, then rises with the raw scroll (not the eased scrub): when the pin lets go the page's own
-  // scroll takes over at the same speed, so the logo never jumps ahead as the eased value catches up
-  const LOGO_HOLD = .3;
-  let rawP = 0;
+  K.aOut = [K.lc + 5 * LSTEP + .3, K.lc + 5 * LSTEP + .7]; // REFRAMING held, then the list lifts away
+  const CR2 = CR.map(v => v + K.aOut[0] + .2 - CR[0]); // the Phi OS emblem, same beat as the crest
+  K.f4b = K.f4 + CR2[0] - CR[0]; K.lc2 = K.f4b;
+  K.bOut = [K.lc2 + 5 * LSTEP + .3, K.lc2 + 5 * LSTEP + .9];
+  K.lo = CR2[1];
+  K.rv0 = K.bOut[1] + .3; K.rv1 = K.rv0 + 2.8; // statue alone, then the light opens the photo over 2.8 screens
+  K.lg = [K.rv1 - .5, K.rv1];
+  const RUN = K.rv1 + .4;
   let AX = 0; // first-screen shift for narrow screens (layout())
   let S = 1, vh = innerHeight, portrait = false, sp = 0, clock = 0, lastNow = null, lastY = scrollY;
 
@@ -1553,7 +1557,10 @@ button.cgc:hover .th { opacity: .28; }
   // svg heights (all 900 wide): headings 102, two-line titles 323, one-line 229, three-line 436
   const OS_H = { 'h-competency': 102, 'h-phios': 102, c1: 323, c2: 229, c3: 323, c4: 323, c5: 229, p1: 323, p2: 323, p3: 436, p4: 323, p5: 323 };
   const osl = document.getElementById('osl'), kas = document.getElementById('kas'), osfade = document.getElementById('osfade'), crest = document.getElementById('crest');
-  const OSL = []; // { el, h, c (centre in the unscaled stack) }
+  const osCrest = document.getElementById('osCrest');
+  const cgPhoto = document.getElementById('cgPhoto'), cgPin = cgPhoto.firstElementChild, cgImg = cgPin.querySelector('img'), cgDim = cgPin.querySelector('.cg-dim');
+  window.cgLiftKick = () => {}; // the hero's frame loop redraws the light every frame
+  const OSL = []; // { el, h, c (centre in the unscaled stack), g (group) }
   {
     let top = 0;
     OS_GROUPS.forEach((g, gi) => [[g.head], ...g.items].forEach((it, k) => {
@@ -1562,25 +1569,34 @@ button.cgc:hover .th { opacity: .28; }
       else el.setAttribute('role', 'presentation');
       el.innerHTML = `<img src="assets/os/${name}.svg" alt="" width="900" height="${OS_H[name]}" decoding="async">`;
       osl.appendChild(el);
-      OSL.push({ el, h: OS_H[name], c: top + OS_H[name] / 2 }); top += OS_H[name] + 72; // Section 7 column gap
+      OSL.push({ el, h: OS_H[name], c: top + OS_H[name] / 2, g: gi }); top += OS_H[name] + 72; // Section 7 column gap
     }));
   }
   const OS_FOCUS = 527, OS_PACK = .95; // focus centre (Figma frames 1–3); neighbours sit a little closer than the flat stack
   let osVis = false;
-  function drawList(p, a) {
-    if (a <= .002) { if (osVis) { osl.style.visibility = 'hidden'; osVis = false; } return; }
+  // each group: [crest timing, list start, lift-away]; its rows rise in as the crest fades, step through the head and five, hold,
+  // then lift away and fade
+  const OS_RUN = [[CR, K.lc, K.aOut], [CR2, K.lc2, K.bOut]];
+  function drawList(p) {
+    const st = OS_RUN.map(([cr, lc, out]) => {
+      const a = kf([cr[3] + .15, lc], [0, 1], p) * kf(out, [1, 0], p);
+      // L: which row is in focus; each row holds a little (half the step is spent settling on it)
+      const raw = clamp((p - lc) / LSTEP, 0, 5), i0 = Math.floor(raw), f = raw - i0;
+      const L = i0 + (f < .5 ? 0 : easeMove((f - .5) / .5));
+      const dy = (1 - easeMove(seg(p, cr[3] + .15, lc))) * 260 - easeMove(seg(p, out[0], out[1])) * 420;
+      return { a, L, dy };
+    });
+    const any = st[0].a > .002 || st[1].a > .002;
+    if (!any) { if (osVis) { osl.style.visibility = 'hidden'; osVis = false; } return; }
     if (!osVis) { osl.style.visibility = 'visible'; osVis = true; }
-    // L: which row is in focus; each row holds a little (half the step is spent settling on it)
-    const raw = clamp((p - K.lc) / LSTEP, 0, L_N), i0 = Math.floor(raw), f = raw - i0;
-    const L = i0 + (f < .5 ? 0 : easeMove((f - .5) / .5));
-    const j = Math.min(Math.floor(L), L_N - 1), t = L - j;
-    const F = OSL[j].c + (OSL[j + 1].c - OSL[j].c) * t;
-    const cx = portrait ? 960 : 752, rise = (1 - easeMove(seg(p, CR[3] + .15, K.f4))) * 260;
+    const cx = portrait ? 960 : 752;
     OSL.forEach((o, i) => {
-      const d = Math.abs(i - L), y = OS_FOCUS + (o.c - F) * OS_PACK + rise;
+      const { a, L, dy } = st[o.g], base = o.g * 6, j = Math.min(Math.floor(L), 4), t = L - j;
+      const F = OSL[base + j].c + (OSL[base + j + 1].c - OSL[base + j].c) * t;
+      const d = Math.abs(i - base - L), y = OS_FOCUS + (o.c - F) * OS_PACK + dy;
       const sc = kf([0, 1, 2, 3], [1, .9, .7, .5], d), op = kf([0, 1, 2], [1, .3, .2], d) * a;
-      const on = y + o.h / 2 > -200 && y - o.h / 2 < 1280 + (vh / S - 1080);
-      o.el.style.visibility = on && op > .002 ? '' : 'hidden';
+      const on = op > .002 && y + o.h / 2 > -200 && y - o.h / 2 < 1280 + (vh / S - 1080);
+      o.el.style.visibility = on ? '' : 'hidden';
       if (!on) return;
       o.el.style.opacity = op.toFixed(3);
       o.el.style.transform = `translate3d(${(cx - 450).toFixed(1)}px, ${(y - o.h / 2).toFixed(1)}px, 0) scale(${sc.toFixed(4)})`;
@@ -1657,13 +1673,13 @@ button.cgc:hover .th { opacity: .28; }
   function updateToc(p, a) {
     const tocRect = toc.getBoundingClientRect(), y = tocRect.top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
     let on;
-    if (hero.getBoundingClientRect().bottom > mid) on = p < K.f2 ? 0 : p < K.lc + 5.5 * LSTEP ? 1 : p < OS_IN ? 2 : 3;
-    else on = 3; // the classroom photo still belongs to Course
+    if (hero.getBoundingClientRect().bottom > mid) on = p < K.f2 ? 0 : p < K.aOut[1] ? 1 : p < (K.rv0 + K.rv1) / 2 ? 2 : 3;
+    else on = 3; // the classroom photo belongs to Course
     for (let i = 1; i < secs.length; i++) if (secs[i].getBoundingClientRect().top <= mid) on = i + 3;
     if (on !== tocOn) { tocA.forEach((el, i) => { el.classList.toggle('on', i === on); el.toggleAttribute('aria-current', i === on); }); tocOn = on; }
     const photoRect = tocApproachPhoto.getBoundingClientRect(), x = tocRect.left + tocRect.width / 2;
     const overApproachPhoto = x >= photoRect.left && x <= photoRect.right && y >= photoRect.top && y <= photoRect.bottom;
-    const light = secs[1].getBoundingClientRect().top <= y && !overApproachPhoto;
+    const light = secs[0].getBoundingClientRect().top <= y && !overApproachPhoto;
     if (light !== tocLight) { toc.classList.toggle('light', light); tocLight = light; }
     const over = mainEl.getBoundingClientRect().bottom < y + 76; // footer underneath
     if (tocLate) a *= kf([K.f1, K.f2], [0, 1], p);
@@ -1712,9 +1728,10 @@ button.cgc:hover .th { opacity: .28; }
     // narrow (portrait) screens see only the middle vw/S of the design: slide the first screen's bust + logo left until their
     // right edge (logo 1819, bust 1789 design px) is inside, so neither is cut off (rule: no cut-off ends inside the screen)
     AX = portrait ? Math.min(0, 960 + vw / S / 2 - 1835) : 0;
-    // frame 21: 주요 수업들 starts 518 design px under the logo's top (321) — scroll the logo until that point meets the bottom edge
-    RUN = K.f20 + LOGO_HOLD + Math.max(.05, (vh - top - (321 + 518) * S) / vh);
     hero.style.height = (vh * (1 + RUN)) + 'px';
+    // the classroom photo's pin is the whole screen, in screen px (counter-scaled out of the design canvas)
+    cgPin.style.width = vw + 'px'; cgPin.style.height = vh + 'px';
+    cgPin.style.transform = `translate(${(-left / S).toFixed(2)}px, ${(-top / S).toFixed(2)}px) scale(${(1 / S).toFixed(5)})`;
     sizeStars(); sizeLines(vw, vh); placeToc(left, top);
   }
   const fade = (el, a, dy) => { el.style.opacity = a.toFixed(3); el.style.transform = `translateY(${((1 - a) * dy).toFixed(2)}px)`; };
@@ -1727,7 +1744,7 @@ button.cgc:hover .th { opacity: .28; }
     if (!reduce) drawLoader(ts, 1 - hT); else drawLoader(Infinity, 0);
     ldBg.style.opacity = (1 - hT).toFixed(3);
     ldBg.style.visibility = hT >= .998 ? 'hidden' : '';
-    const stA = hT * kf([OS_IN, K.f19], [1, 0], p); // 10/25: the starfield and lines stay until PHI OS / 주요 수업들
+    const stA = hT * kf([K.rv0, K.rv0 + 1], [1, 0], p); // the starfield and lines stay until the photo lights up
     drawStars(stA);
     hlines.style.opacity = stA.toFixed(3);
     updateToc(p, hT);
@@ -1755,18 +1772,22 @@ button.cgc:hover .th { opacity: .28; }
     statue.style.opacity = sA.toFixed(3);
     statue.style.visibility = sA <= .002 ? 'hidden' : '';
     drawStatue(kf([K.f1, K.f3], [SEQ_0, SEQ_KAS], p));
-    const kA = xf * kf([OS_IN, K.f19, K.f20], [1, .1, 0], p) * (portrait ? .4 : 1);
+    const kA = xf * kf([K.rv1 - .3, K.rv1], [1, 0], p) * (portrait ? .4 : 1); // under the photo by then
     kas.style.transform = `translate3d(${KAS[0] + (portrait ? -560 : 0)}px, ${KAS[1]}px, 0) scale(${-KAS[2]}, ${KAS[2]})`;
     kas.style.opacity = kA.toFixed(3);
     kas.style.visibility = kA <= .002 ? 'hidden' : 'visible';
-    // the list: rises in as the copy goes, out before PHI OS; the bottom fade sits over the statue meanwhile
-    const oA = kf([CR[3] + .15, K.f4], [0, 1], p) * kf([K.lend + .1, OS_IN], [1, 0], p); // as the crest fades
-    drawList(p, oA);
+    // the lists: each rises in as its crest fades and lifts away when done; the bottom fade sits over the statue meanwhile
+    drawList(p);
+    // crests centred on the list column (x 752), centre y 544: the Phi crest 328 × 530, the Phi OS emblem 376 × 582
     const cA = hT * kf(CR, [0, .1, 1, 1, 0], p);
     crest.style.transform = `translate3d(${587.94 + (portrait ? 208 : 0)}px, 278.94px, 0)`;
     crest.style.opacity = cA.toFixed(3);
     crest.style.visibility = cA <= .002 ? 'hidden' : 'visible';
-    osfade.style.opacity = (kf([K.f2, K.f3], [0, 1], p) * kf([OS_IN, K.f19], [1, 0], p)).toFixed(3);
+    const oC = kf(CR2, [0, .1, 1, 1, 0], p);
+    osCrest.style.transform = `translate3d(${563.77 + (portrait ? 208 : 0)}px, 252.85px, 0)`;
+    osCrest.style.opacity = oC.toFixed(3);
+    osCrest.style.visibility = oC <= .002 ? 'hidden' : 'visible';
+    osfade.style.opacity = (kf([K.f2, K.f3], [0, 1], p) * kf([K.rv1 - .3, K.rv1], [1, 0], p)).toFixed(3);
 
     // FUNDAMENTALS OVER TOOLS: behind the head on the first screen, fades as the bust starts to grow
     // first screen: 788 wide at (1030.9, 170.6) (Figma 7541:502); loading: 682 wide at (619, 173)
@@ -1781,11 +1802,18 @@ button.cgc:hover .th { opacity: .28; }
     wraps.forEach(w => { w.style.visibility = 'hidden'; });
     segBar.style.visibility = 'hidden';
 
-    // PHI OPERATING SYSTEM: fades in over the statue (OS_IN → 19), then scrolls up like the page (20 → release)
-    const lA = kf([OS_IN, K.f19], [0, 1], p);
+    // classroom photo: the light opens it from the centre (window.cgReveal, assets/course-transition.js); without WebGL it fades in
+    const v = seg(p, K.rv0, K.rv1), rv = window.cgReveal;
+    cgPhoto.style.visibility = v > 0 ? 'visible' : 'hidden';
+    if (v > 0) {
+      if (rv && rv.ready) { cgImg.style.opacity = 0; rv.draw(v); }
+      else cgImg.style.opacity = (v * v * (3 - 2 * v)).toFixed(3);
+    }
+    cgDim.style.opacity = (.1 * seg(p, K.rv1 - .6, K.rv1)).toFixed(3);
+    // PHI OPERATING SYSTEM settles on the photo (Figma 8611:6603); the stage then scrolls away with it
+    const lA = kf(K.lg, [0, 1], p);
     phios.style.opacity = lA.toFixed(3);
     phios.style.visibility = lA <= .002 ? 'hidden' : '';
-    phios.style.transform = `translate3d(0, ${(-Math.max(0, rawP - K.f20 - LOGO_HOLD) * vh / S).toFixed(2)}px, 0)`;
   }
 
   function tick(now) {
@@ -1796,7 +1824,7 @@ button.cgc:hover .th { opacity: .28; }
     if (ldSkip && clock < LD_UNLOCK + 3) clock = LD_UNLOCK + 3;
     if (ldReady) clock += dt * (scrollY > 10 ? 4 : 1);
     if (!ldDone && clock >= LD_UNLOCK) ldDone = true;
-    const target = clamp((scrollY - hero.offsetTop) / vh, 0, RUN); rawP = target;
+    const target = clamp((scrollY - hero.offsetTop) / vh, 0, RUN);
     sp = reduce ? target : sp + (target - sp) * .09; // inertia on the scrub (on top of the page's eased wheel scroll below)
     if (Math.abs(target - sp) < .002) sp = target;
     // the orbit turns only while the deck is fully landed and not yet lifting away
@@ -1921,25 +1949,6 @@ button.cgc:hover .th { opacity: .28; }
     if (e.key === 'ArrowLeft') { e.preventDefault(); courseStep(-1); } else if (e.key === 'ArrowRight') { e.preventDefault(); courseStep(1); }
   });
   cgGrid.addEventListener('click', e => { const c = e.target.closest('button.cgc'); if (c) courseOpen(+c.dataset.i); });
-  // classroom photo, in screens of scroll from the moment the grid holds (0) to the end of the pin (3.6): the lit room opens from
-  // the centre of the cards over 0 → 2.8 (window.cgReveal, assets/course-transition.js) and stays lit. Eased with the hero's inertia.
-  const cgPhoto = document.getElementById('cgPhoto'), cgImg = cgPhoto.querySelector('img');
-  const cgStick = () => cgGrid.style.setProperty('--cg-stick', Math.min(0, innerHeight - cgGrid.offsetHeight - parseFloat(getComputedStyle(cgGrid).getPropertyValue('--cg-gap'))) + 'px');
-  let cgT = -1, cgRaf = 0;
-  function cgLift() {
-    // rect-based: offsetTop would be relative to the .band section, not the page
-    const target = Math.max(0, Math.min(3.6, -cgPhoto.getBoundingClientRect().top / innerHeight));
-    cgT = cgT < 0 || reduce ? target : cgT + (target - cgT) * .06;
-    if (Math.abs(target - cgT) < .0005) cgT = target;
-    const v = clamp(cgT / 2.8), fx = window.cgReveal;
-    if (fx && fx.ready) { cgImg.style.opacity = 0; fx.draw(v); }
-    else cgImg.style.opacity = (v * v * (3 - 2 * v)).toFixed(3); // no WebGL: the photo fades in over the cards
-    cgRaf = cgT !== target ? requestAnimationFrame(cgLift) : 0;
-  }
-  window.cgLiftKick = () => { cgT = -1; cgLift(); };
-  new ResizeObserver(() => { cgStick(); cgLift(); }).observe(cgGrid);
-  const cgKick = () => { if (!cgRaf) cgRaf = requestAnimationFrame(cgLift); };
-  addEventListener('scroll', cgKick, { passive: true }); addEventListener('resize', () => { cgStick(); cgKick(); }); cgStick(); cgLift();
 
   /* ---------- 수업을 관통하는 접근 (Figma 8454:19045) ----------
      Run (sticky stage): rounded card expands (inset 360 → 0, radius 40 → 0), then caption and dots fade in.
