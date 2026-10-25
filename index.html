@@ -1701,7 +1701,7 @@ button.cgc:hover .th { opacity: .28; }
   [...toc.children].forEach((el, i) => el.style.setProperty('--i', i));
   function placeToc(left, top) {
     toc.hidden = portrait;
-    const tocLeft = left + 50 * S; // Figma 8445:460: 50 in from the left of the 1920 frame, 50 up from the bottom
+    const tocLeft = 50; // Figma 8445:460: 50 in from the left, 50 up from the bottom — held to the window's edge, not the centred canvas, on wide screens
     toc.style.left = tocLeft.toFixed(1) + 'px';
     // narrow windows: once the index would run into the widest text column (curriculum, 1280) it slides off, row by row
     // (Shopify Editions index); measured, that is where it first overlaps text below the hero
