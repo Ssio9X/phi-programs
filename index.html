@@ -1789,7 +1789,8 @@ button.cgc:hover .th { opacity: .4; }
     osCrest.style.transform = `translate3d(${563.77 + (portrait ? 208 : 0)}px, 252.85px, 0)`;
     osCrest.style.opacity = oC.toFixed(3);
     osCrest.style.visibility = oC <= .002 ? 'hidden' : 'visible';
-    osfade.style.opacity = (kf([K.f2, K.f3], [0, 1], p) * kf([K.rv1 - .3, K.rv1], [1, 0], p)).toFixed(3);
+    // 10/26: the bottom fade is on from the first screen (Figma Hero 8426:16442, 8611:7597), in as the loading hands over
+    osfade.style.opacity = (hT * kf([K.rv1 - .3, K.rv1], [1, 0], p)).toFixed(3);
 
     // FUNDAMENTALS OVER TOOLS: behind the head on the first screen, fades as the bust starts to grow
     // first screen: 788 wide at (1030.9, 170.6) (Figma 7541:502); loading: 682 wide at (619, 173)
