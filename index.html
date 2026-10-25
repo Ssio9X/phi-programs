@@ -684,12 +684,6 @@ button.cgc:hover .th { opacity: .28; }
 .cu-list small { display: block; font-size: 16px; font-weight: 700; line-height: 1.5; color: #8b95a1; }
 .cu-list strong { display: block; font-size: 18px; font-weight: 700; line-height: 1.7; color: #191f28; }
 .cu-list span { display: block; font-size: 16px; line-height: 1.7; color: #6b7684; }
-.cu-arrows { display: flex; }
-.cu-arrows button { width: 57px; height: 57px; }
-.cu-arrows path { fill: #5f5f5f; transition: fill .2s; }
-.cu-arrows button:hover:not(:disabled) path { fill: #131313; }
-.cu-arrows button:disabled { cursor: default; opacity: .15; }
-.cu-arrows button:disabled path { fill: #131313; }
 .cu-photo { flex: 1 1 0; min-width: 0; height: 700px; border-radius: 40px; overflow: hidden; position: relative; background: #f2f3f5; }
 .cu-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; opacity: 0; transform: scale(1.03); transition: opacity .6s ease, transform 1.2s cubic-bezier(.2,.8,.2,1); }
 .cu-photo img.on { opacity: 1; transform: none; }
@@ -938,10 +932,6 @@ button.cgc:hover .th { opacity: .28; }
         <div class="cu-body">
           <div class="cu-left">
             <div class="cu-panels" id="cuPanels"></div>
-            <div class="cu-arrows">
-              <button type="button" id="cuPrev" aria-label="이전 기간"><svg viewBox="0 0 57 57" width="57" height="57" aria-hidden="true"><path transform="rotate(180 28.5 28.5)" d="M36.8286 30.1781H15V27.4781H36.8286L26.5754 17.2249L28.5 15.3281L42 28.8281L28.5 42.3281L26.5754 40.4314L36.8286 30.1781Z"/></svg></button>
-              <button type="button" id="cuNext" aria-label="다음 기간"><svg viewBox="0 0 57 57" width="57" height="57" aria-hidden="true"><path d="M36.8286 30.1781H15V27.4781H36.8286L26.5754 17.2249L28.5 15.3281L42 28.8281L28.5 42.3281L26.5754 40.4314L36.8286 30.1781Z"/></svg></button>
-            </div>
           </div>
           <div class="cu-photo" id="cuPhoto" aria-hidden="true"></div>
         </div>
@@ -2020,7 +2010,6 @@ button.cgc:hover .th { opacity: .28; }
              ['증명서', '수료증 · 졸업증 발급', '수료·졸업 기준을 충족하면 각각 발급됩니다.']] }
   ];
   const cuTabs = document.getElementById('cuTabs'), cuPanels = document.getElementById('cuPanels'), cuPhoto = document.getElementById('cuPhoto');
-  const cuPrev = document.getElementById('cuPrev'), cuNext = document.getElementById('cuNext');
   cuTabs.innerHTML = CU.map((c, i) => `<button class="cu-tab" type="button" role="tab" id="cuTab${i}" aria-controls="cuPanel${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" style="--g:${c.grow}">${c.tab[0]}<i aria-hidden="true"></i>${c.tab[1]}</button>`).join('');
   cuPanels.innerHTML = CU.map((c, i) => `<div class="cu-panel${i === 0 ? ' on' : ''}" role="tabpanel" id="cuPanel${i}" aria-labelledby="cuTab${i}">
       <div><h3>${c.title}</h3><p class="cu-date">${c.date}${c.badge ? `<b>${c.badge}</b>` : ''}</p><p class="cu-desc">${c.desc}</p></div>
@@ -2034,7 +2023,6 @@ button.cgc:hover .th { opacity: .28; }
     cuTabEls.forEach((t, k) => { t.setAttribute('aria-selected', k === cuIdx); t.tabIndex = k === cuIdx ? 0 : -1; });
     cuPanelEls.forEach((p, k) => p.classList.toggle('on', k === cuIdx));
     cuImgs.forEach((m, k) => m.classList.toggle('on', k === cuIdx));
-    cuPrev.disabled = cuIdx === 0; cuNext.disabled = cuIdx === CU.length - 1;
     if (focus) cuTabEls[cuIdx].focus();
   }
   // pinned: the scroll walks the periods — each holds for CU_STEP screens — and the tabs / arrows scroll to one
@@ -2057,8 +2045,6 @@ button.cgc:hover .th { opacity: .28; }
     if (e.key === 'ArrowRight') { e.preventDefault(); cuTo(cuIdx + 1, true); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); cuTo(cuIdx - 1, true); }
   });
-  cuPrev.addEventListener('click', () => cuTo(cuIdx - 1));
-  cuNext.addEventListener('click', () => cuTo(cuIdx + 1));
   cuGo(0); cuScroll();
 
   /* ---------- Nav mark: one turn, a 2 s rest, again ----------
