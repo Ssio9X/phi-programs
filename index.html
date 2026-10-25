@@ -614,26 +614,20 @@ footer { position: sticky; bottom: 0; z-index: 0; background: #eee; padding: 0 0
 .cgc .m b { font-weight: 700; }
 button.cgc { cursor: pointer; }
 button.cgc:hover .th { opacity: .28; }
-.cg-photo { --lift: 2.5; position: relative; margin-top: 160px; height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
+.cg { --cg-gap: 60px; } /* space under the last card row while the grid holds still */
+/* the grid stops once its last row sits --cg-gap above the bottom of the screen (JS sets --cg-stick = innerHeight − grid − gap)
+   and holds there while the photo lights up over it */
+.cg-grid { position: sticky; top: var(--cg-stick, 0px); }
+/* classroom photo: its pin starts on that same screen, over the held cards (transparent until the light starts), pinned for --lift
+   screens. assets/course-transition.js opens the lit room from the centre of the cards (WebGL); without it the photo fades in */
+.cg-photo { --lift: 2; position: relative; z-index: 1; pointer-events: none; margin-top: calc(var(--cg-gap) - 100vh); margin-top: calc(var(--cg-gap) - 100svh); height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
 .cg-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-.cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; }
-/* dark → light: a solid #0d0d0d veil (same as the section, so the photo arrives unseen) fades out while the room eases back into frame; JS drives --o and the image scale */
-.cg-pin img { will-change: transform; }
-.cg-veil { position: absolute; inset: 0; background: #0d0d0d; opacity: 1; will-change: opacity; }
-@media (max-width: 1000px) { .cg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .cg-photo { margin-top: 200px; } }
-@media (max-width: 560px) { .cg-grid { grid-template-columns: 1fr; padding-top: 48px; gap: 40px; } .cg-photo { margin-top: 120px; } }
+.cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; opacity: 0; }
+.cg-pin canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+@media (max-width: 1000px) { .cg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+@media (max-width: 560px) { .cg-grid { grid-template-columns: 1fr; padding-top: 48px; gap: 40px; } }
 
 /* ---------- 프로그램 구조 (Figma 6891:839) ---------- */
-.cs-run { position: relative; z-index: 2; }
-.cs-run.cs-enabled { margin-top: -100svh; height: calc(var(--cs-height) + 120svh); }
-.cs-enabled > #structure { position: sticky; top: 0; min-height: 100svh; visibility: hidden; }
-.cs-enabled.cs-visible > #structure { visibility: visible; }
-.cs-overlay { display: none; position: absolute; z-index: 3; inset: 0 0 auto; height: 100svh; pointer-events: none; overflow: hidden; }
-.cs-enabled .cs-overlay { display: block; }
-.cs-overlay canvas, .cs-overlay img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cs-overlay img { object-fit: cover; object-position: center 60%; }
-.cs-enabled .ps2-col > h2, .cs-enabled .ps2-lead { opacity: var(--cs-copy, 0); transform: translateY(calc((1 - var(--cs-copy, 0)) * 20px)); }
-.cs-complete .cs-overlay { display: none; }
 .ps2 { background: #fff; color: #0d0d0d; padding: 100px 0; }
 .ps2-col { width: min(1200px, calc(100vw - 32px)); margin-inline: auto; }
 .ps2 h2 { margin: 0; font-size: clamp(34px, 2.7vw, 52px); font-weight: 700; line-height: 1; color: #000; }
@@ -912,19 +906,18 @@ button.cgc:hover .th { opacity: .28; }
     </div>
   </section>
 
-  <!-- 주요 수업들 — Figma 6906:4503: intro copy, 3-column course grid, then the classroom photo fading up out of the dark -->
+  <!-- 주요 수업들 — Figma 6906:4503: intro copy, 3-column course grid, then the classroom photo opening from its centre -->
   <section class="band cg" id="courses">
     <div class="cg-col cg-head">
       <h2>주요 수업들</h2>
       <p>상기된 역량과 태도를 중심으로 수업들이 설계되었습니다.<br>이를 토대로 디지털 프로덕트 디자인과 브랜딩 분야에서 자신의 가능성을 펼칠 수 있도록 합니다.<br>본 주요 수업들은 1학기에 진행되는 수업들이며, 2학기는 1학기의 성취에 따라 학습 효과를 보완, 증폭할 수 있는 방향으로 준비됩니다.</p>
     </div>
     <div class="cg-col cg-grid" id="cgGrid"></div>
-    <!-- classroom photo: pinned while it brightens out of the dark over two screens of scroll -->
-    <div class="cg-photo" id="cgPhoto" aria-hidden="true"><div class="cg-pin"><img src="assets/classroom-courses.webp" alt=""><span class="cg-veil" id="cgVeil"></span></div></div>
+    <!-- classroom photo: opens from the centre of the held card grid, then stays lit for the rest of its pin -->
+    <div class="cg-photo" id="cgPhoto" aria-hidden="true"><div class="cg-pin"><img src="assets/classroom-courses.webp" alt=""></div></div>
   </section>
 
   <!-- 프로그램 구조 — Figma 6891:839 -->
-  <div class="cs-run" id="csRun">
   <section class="band ps2" id="structure">
     <div class="ps2-col">
       <h2>프로그램 구조</h2>
@@ -954,7 +947,6 @@ button.cgc:hover .th { opacity: .28; }
       </div>
     </div>
   </section>
-  </div>
 
   <!-- 수업을 관통하는 접근 — Figma 8454:19045: rounded photo expands to full screen;
        captions and pagination then appear while scrolling steps 01 → 06. -->
@@ -1696,7 +1688,7 @@ button.cgc:hover .th { opacity: .28; }
   // the rest the section under the index; light rows over the white bands, hidden over the footer
   const toc = document.getElementById('toc'), tocA = [...toc.children], mainEl = document.getElementById('top');
   const secs = ['courses', 'structure', 'approach', 'curriculum'].map(id => document.getElementById(id));
-  const tocPhoto = document.getElementById('cgPhoto'), tocApproachPhoto = document.getElementById('ap2Card');
+  const tocApproachPhoto = document.getElementById('ap2Card');
   let tocOn = -1, tocLight = null, tocLate = false, tocAway = null, tocMoveT = 0;
   [...toc.children].forEach((el, i) => el.style.setProperty('--i', i));
   function placeToc(left, top) {
@@ -1717,19 +1709,12 @@ button.cgc:hover .th { opacity: .28; }
     const tocRect = toc.getBoundingClientRect(), y = tocRect.top + 76, mid = innerHeight / 2; // colour: the band under the index; row: the one in view
     let on;
     if (hero.getBoundingClientRect().bottom > mid) on = p < K.f2 ? 0 : p < K.lc + 5.5 * LSTEP ? 1 : p < OS_IN ? 2 : 3;
-    else on = tocPhoto.getBoundingClientRect().top <= mid ? 4 : 3;
+    else on = 3; // the classroom photo still belongs to Course
     for (let i = 1; i < secs.length; i++) if (secs[i].getBoundingClientRect().top <= mid) on = i + 3;
     if (on !== tocOn) { tocA.forEach((el, i) => { el.classList.toggle('on', i === on); el.toggleAttribute('aria-current', i === on); }); tocOn = on; }
     const photoRect = tocApproachPhoto.getBoundingClientRect(), x = tocRect.left + tocRect.width / 2;
     const overApproachPhoto = x >= photoRect.left && x <= photoRect.right && y >= photoRect.top && y <= photoRect.bottom;
-    const csRun = document.getElementById('csRun'), csProgress = +(csRun.dataset.progress || 0);
-    const csActive = csRun.classList.contains('cs-visible') && csProgress < 1;
-    const csPending = csRun.classList.contains('cs-enabled') && !csRun.classList.contains('cs-visible');
-    const csHeight = csRun.querySelector('.cs-overlay')?.clientHeight || innerHeight, csU = clamp((csProgress - .14) / .79);
-    const csRadius = -.14 + (Math.hypot(innerWidth / csHeight, 1) / 2 + .32) * csU * csU * (3 - 2 * csU);
-    const overCoursePhoto = csActive && Math.hypot((x / innerWidth - .5) * innerWidth / csHeight, y / csHeight - .5) > csRadius;
-    const light = secs[1].getBoundingClientRect().top <= y && !overApproachPhoto && !overCoursePhoto && !csPending;
-    if (((csPending && csRun.getBoundingClientRect().top <= mid) || (csActive && csProgress < .7)) && tocOn !== 3) { tocA.forEach((el, i) => { el.classList.toggle('on', i === 3); el.toggleAttribute('aria-current', i === 3); }); tocOn = 3; }
+    const light = secs[1].getBoundingClientRect().top <= y && !overApproachPhoto;
     if (light !== tocLight) { toc.classList.toggle('light', light); tocLight = light; }
     const over = mainEl.getBoundingClientRect().bottom < y + 76; // footer underneath
     if (tocLate) a *= kf([K.f1, K.f2], [0, 1], p);
@@ -1987,25 +1972,25 @@ button.cgc:hover .th { opacity: .28; }
     if (e.key === 'ArrowLeft') { e.preventDefault(); courseStep(-1); } else if (e.key === 'ArrowRight') { e.preventDefault(); courseStep(1); }
   });
   cgGrid.addEventListener('click', e => { const c = e.target.closest('button.cgc'); if (c) courseOpen(+c.dataset.i); });
-  // classroom photo: dark → light. t runs from the photo entering the viewport (0) to the end of its pin (1);
-  // the veil fades out over t .25 → .85 so the room is fully lit for the last stretch, and the image settles from 1.08 → 1
-  const cgPhoto = document.getElementById('cgPhoto'), cgVeil = document.getElementById('cgVeil'), cgImg = cgPhoto.querySelector('img');
-  // pinned for 4 screens (--lift) and eased toward the scroll with the hero's inertia, so the light comes up slowly
+  // classroom photo, in screens of scroll from the moment the grid holds (0) to the end of the pin (2): the lit room opens from
+  // the centre of the cards over 0 → 1.4 (window.cgReveal, assets/course-transition.js) and stays lit. Eased with the hero's inertia.
+  const cgPhoto = document.getElementById('cgPhoto'), cgImg = cgPhoto.querySelector('img');
+  const cgStick = () => cgGrid.style.setProperty('--cg-stick', Math.min(0, innerHeight - cgGrid.offsetHeight - parseFloat(getComputedStyle(cgGrid).getPropertyValue('--cg-gap'))) + 'px');
   let cgT = -1, cgRaf = 0;
   function cgLift() {
     // rect-based: offsetTop would be relative to the .band section, not the page
-    const r = cgPhoto.getBoundingClientRect();
-    const target = clamp((innerHeight - r.top) / r.height);
+    const target = Math.max(0, Math.min(2, -cgPhoto.getBoundingClientRect().top / innerHeight));
     cgT = cgT < 0 || reduce ? target : cgT + (target - cgT) * .06;
     if (Math.abs(target - cgT) < .0005) cgT = target;
-    // the veil starts lifting as soon as the photo comes in (no black stretch) and is gone by 70 %
-    const u = clamp(cgT / .7), e = u * u * (3 - 2 * u); // smoothstep
-    cgVeil.style.opacity = (1 - e).toFixed(3);
-    cgImg.style.transform = `scale(${(1.08 - .08 * e).toFixed(4)})`;
+    const v = clamp(cgT / 1.4), fx = window.cgReveal;
+    if (fx && fx.ready) { cgImg.style.opacity = 0; fx.draw(v); }
+    else cgImg.style.opacity = (v * v * (3 - 2 * v)).toFixed(3); // no WebGL: the photo fades in over the cards
     cgRaf = cgT !== target ? requestAnimationFrame(cgLift) : 0;
   }
+  window.cgLiftKick = () => { cgT = -1; cgLift(); };
+  new ResizeObserver(() => { cgStick(); cgLift(); }).observe(cgGrid);
   const cgKick = () => { if (!cgRaf) cgRaf = requestAnimationFrame(cgLift); };
-  addEventListener('scroll', cgKick, { passive: true }); addEventListener('resize', cgKick); cgLift();
+  addEventListener('scroll', cgKick, { passive: true }); addEventListener('resize', () => { cgStick(); cgKick(); }); cgStick(); cgLift();
 
   /* ---------- 수업을 관통하는 접근 (Figma 8454:19045) ----------
      Run (sticky stage): rounded card expands (inset 360 → 0, radius 40 → 0), then caption and dots fade in.
