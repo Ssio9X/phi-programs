@@ -1951,7 +1951,8 @@ button.cgc:hover .th { opacity: .4; }
   cgGrid.addEventListener('click', e => { const c = e.target.closest('button.cgc'); if (c) courseOpen(+c.dataset.i); });
 
   /* ---------- 수업을 관통하는 접근 (Figma 8454:19045) ----------
-     Run (sticky stage): rounded card expands (inset 360 → 0, radius 40 → 0), then caption and dots fade in.
+     10/26 (motion of Figma 8611:6657): the rounded card widens as it scrolls up into view (column width with its top at 87% of
+     the screen → full bleed, square corners, by 26%), then pins at the top; caption and dots fade in.
      Scrolling or selecting a dot advances through the six entries. Lengths are viewport heights of scroll. */
   const AP = [ // [title, copy]. Retain the original Live Demo copy.
     ['Live Demo', "전문가가 학습자의 과제를 실시간으로 푸는 과정을 시연합니다. 푸는 과정에서 '나라면?'이라는 문두를 활용하여 학습자와 전문가의 차이가 나는 지점을 직접적으로 드러냅니다."],
@@ -1968,7 +1969,8 @@ button.cgc:hover .th { opacity: .4; }
   ap2Copy.innerHTML = AP.map(([t, d], i) => `<div class="ap2-item${i === 0 ? ' on' : ''}" aria-hidden="${i !== 0}"><h3>${t}</h3><p>${d}</p></div>`).join('');
   ap2Dots.innerHTML = AP.map(([t], i) => `<button type="button" aria-label="${i + 1}. ${t}" aria-current="${i === 0}"></button>`).join('');
   const ap2ImgEls = [...ap2Imgs.children], ap2Items = [...ap2Copy.children];
-  const AP_EXPAND = 1, AP_UI = .3, AP_STEP = 1; // 10/20: ~17 → ~7 screens with the hero ('스크롤 정상화'; was 2.4 · .5 · 2.4)
+  const AP_EXPAND = .3, AP_UI = .3, AP_STEP = 1; // AP_EXPAND: now only the full-screen hold before the caption (the widening happens on the way up)
+  const AP_FROM = .87, AP_TO = .26; // card top, in screen heights, where the widening starts / ends
   let ap2Idx = 0;
   const ap2Top = () => ap2Run.getBoundingClientRect().top + scrollY;
   function ap2Layout() { ap2Run.style.height = (innerHeight * (1 + AP_EXPAND + AP_UI + AP_STEP * AP.length)) + 'px'; }
@@ -1981,7 +1983,7 @@ button.cgc:hover .th { opacity: .4; }
   function ap2Scroll() {
     const vh = innerHeight, u = (scrollY - ap2Top()) / vh; // viewport heights into the run
     const k = document.documentElement.clientWidth / 1920;
-    const e = ease(clamp(u / AP_EXPAND));
+    const e = ease(clamp((AP_FROM - ap2Run.getBoundingClientRect().top / vh) / (AP_FROM - AP_TO)));
     const inset = document.documentElement.clientWidth <= 900 ? 16 : Math.max(16, 360 * k);
     ap2Card.style.setProperty('--m', (inset * (1 - e)).toFixed(1) + 'px');
     ap2Card.style.setProperty('--r', (Math.max(16, 40 * k) * (1 - e)).toFixed(1) + 'px');
