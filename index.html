@@ -587,7 +587,7 @@ button.cgc:hover .th { opacity: .28; }
 .cg-grid { position: sticky; top: var(--cg-stick, 0px); }
 /* classroom photo: its pin starts on that same screen, over the held cards (transparent until the light starts), pinned for --lift
    screens. assets/course-transition.js opens the lit room from the centre of the cards (WebGL); without it the photo fades in */
-.cg-photo { --lift: 2; position: relative; z-index: 1; pointer-events: none; margin-top: calc(var(--cg-gap) - 100vh); margin-top: calc(var(--cg-gap) - 100svh); height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
+.cg-photo { --lift: 3.6; position: relative; z-index: 1; pointer-events: none; margin-top: calc(var(--cg-gap) - 100vh); margin-top: calc(var(--cg-gap) - 100svh); height: calc(100vh * (1 + var(--lift))); height: calc(100svh * (1 + var(--lift))); }
 .cg-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .cg-pin img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; max-width: none; opacity: 0; }
 .cg-pin canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -1931,17 +1931,17 @@ button.cgc:hover .th { opacity: .28; }
     if (e.key === 'ArrowLeft') { e.preventDefault(); courseStep(-1); } else if (e.key === 'ArrowRight') { e.preventDefault(); courseStep(1); }
   });
   cgGrid.addEventListener('click', e => { const c = e.target.closest('button.cgc'); if (c) courseOpen(+c.dataset.i); });
-  // classroom photo, in screens of scroll from the moment the grid holds (0) to the end of the pin (2): the lit room opens from
-  // the centre of the cards over 0 → 1.4 (window.cgReveal, assets/course-transition.js) and stays lit. Eased with the hero's inertia.
+  // classroom photo, in screens of scroll from the moment the grid holds (0) to the end of the pin (3.6): the lit room opens from
+  // the centre of the cards over 0 → 2.8 (window.cgReveal, assets/course-transition.js) and stays lit. Eased with the hero's inertia.
   const cgPhoto = document.getElementById('cgPhoto'), cgImg = cgPhoto.querySelector('img');
   const cgStick = () => cgGrid.style.setProperty('--cg-stick', Math.min(0, innerHeight - cgGrid.offsetHeight - parseFloat(getComputedStyle(cgGrid).getPropertyValue('--cg-gap'))) + 'px');
   let cgT = -1, cgRaf = 0;
   function cgLift() {
     // rect-based: offsetTop would be relative to the .band section, not the page
-    const target = Math.max(0, Math.min(2, -cgPhoto.getBoundingClientRect().top / innerHeight));
+    const target = Math.max(0, Math.min(3.6, -cgPhoto.getBoundingClientRect().top / innerHeight));
     cgT = cgT < 0 || reduce ? target : cgT + (target - cgT) * .06;
     if (Math.abs(target - cgT) < .0005) cgT = target;
-    const v = clamp(cgT / 1.4), fx = window.cgReveal;
+    const v = clamp(cgT / 2.8), fx = window.cgReveal;
     if (fx && fx.ready) { cgImg.style.opacity = 0; fx.draw(v); }
     else cgImg.style.opacity = (v * v * (3 - 2 * v)).toFixed(3); // no WebGL: the photo fades in over the cards
     cgRaf = cgT !== target ? requestAnimationFrame(cgLift) : 0;
