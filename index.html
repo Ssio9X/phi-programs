@@ -94,7 +94,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* ---------- Hero (pinned scroll story, Figma 시나리오 7013:1724, frames Hero → 20) ----------
    Copy + FUNDAMENTALS OVER TOOLS over the turning statue → the five Phi OS principles → the card orbit → close-up → PHI OPERATING SYSTEM.
    Settled: the deck orbits the statue; the toggle flips the cards over to the other set, farthest first (Figma 7541:2600). */
-.hero { position: relative; background: #0d0d0d; }
+.hero { position: relative; background: #000; } /* 10/26: pure black, so the bottom fade (to #000) leaves no band */
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; z-index: 0; }
 .canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
 .statue { position: absolute; z-index: 2; left: 0; top: 0; width: 1800px; height: 3700px; transform-origin: 0 0; will-change: transform, opacity; pointer-events: none; }
@@ -1575,6 +1575,8 @@ button.cgc:hover .th { opacity: .4; }
     }));
   }
   const OS_FOCUS = 527, OS_PACK = .95; // focus centre (Figma frames 1–3); neighbours sit a little closer than the flat stack
+  // 10/26: on screens taller than the design the focus (and the crests) follow the middle of the screen, not design y 527
+  let osDy = 0;
   let osVis = false;
   // each group: [crest timing, list start, lift-away]; its rows rise in as the crest fades, step through the head and five, hold,
   // then lift away and fade
@@ -1595,8 +1597,9 @@ button.cgc:hover .th { opacity: .4; }
     OSL.forEach((o, i) => {
       const { a, L, dy } = st[o.g], base = o.g * 6, j = Math.min(Math.floor(L), 4), t = L - j;
       const F = OSL[base + j].c + (OSL[base + j + 1].c - OSL[base + j].c) * t;
-      const d = Math.abs(i - base - L), y = OS_FOCUS + (o.c - F) * OS_PACK + dy;
-      const sc = kf([0, 1, 2, 3], [1, .9, .7, .5], d), op = kf([0, 1, 2], [1, .3, .2], d) * a;
+      const d = Math.abs(i - base - L), y = OS_FOCUS + osDy + (o.c - F) * OS_PACK + dy;
+      // 10/26: the focused row stands out more than in Figma (.9 / .3 next to it) — neighbours smaller and dimmer
+      const sc = kf([0, 1, 2, 3], [1, .82, .66, .5], d), op = kf([0, 1, 2], [1, .18, .08], d) * a;
       const on = op > .002 && y + o.h / 2 > -200 && y - o.h / 2 < 1280 + (vh / S - 1080);
       o.el.style.visibility = on ? '' : 'hidden';
       if (!on) return;
@@ -1731,6 +1734,10 @@ button.cgc:hover .th { opacity: .4; }
     // right edge (logo 1819, bust 1789 design px) is inside, so neither is cut off (rule: no cut-off ends inside the screen)
     AX = portrait ? Math.min(0, 960 + vw / S / 2 - 1835) : 0;
     hero.style.height = (vh * (1 + RUN)) + 'px';
+    // the focus follows the screen's middle; the bottom fade sits on the screen's bottom edge so a tall screen still shows the
+    // statue's body below the design frame (portrait keeps its higher fade)
+    osDy = (vh / 2 - top) / S - 540;
+    osfade.style.top = portrait ? '' : ((vh - top) / S - 448).toFixed(1) + 'px';
     // the classroom photo's pin is the whole screen, in screen px (counter-scaled out of the design canvas)
     cgPin.style.width = vw + 'px'; cgPin.style.height = vh + 'px';
     cgPin.style.transform = `translate(${(-left / S).toFixed(2)}px, ${(-top / S).toFixed(2)}px) scale(${(1 / S).toFixed(5)})`;
@@ -1782,11 +1789,11 @@ button.cgc:hover .th { opacity: .4; }
     drawList(p);
     // crests centred on the list column (x 752), centre y 544: the Phi crest 328 × 530, the Phi OS emblem 376 × 582
     const cA = hT * kf(CR, [0, .1, 1, 1, 0], p);
-    crest.style.transform = `translate3d(${587.94 + (portrait ? 208 : 0)}px, 278.94px, 0)`;
+    crest.style.transform = `translate3d(${587.94 + (portrait ? 208 : 0)}px, ${(278.94 + osDy).toFixed(1)}px, 0)`;
     crest.style.opacity = cA.toFixed(3);
     crest.style.visibility = cA <= .002 ? 'hidden' : 'visible';
     const oC = kf(CR2, [0, .1, 1, 1, 0], p);
-    osCrest.style.transform = `translate3d(${563.77 + (portrait ? 208 : 0)}px, 252.85px, 0)`;
+    osCrest.style.transform = `translate3d(${563.77 + (portrait ? 208 : 0)}px, ${(252.85 + osDy).toFixed(1)}px, 0)`;
     osCrest.style.opacity = oC.toFixed(3);
     osCrest.style.visibility = oC <= .002 ? 'hidden' : 'visible';
     // 10/26: the bottom fade is on from the first screen (Figma Hero 8426:16442, 8611:7597), in as the loading hands over
@@ -1973,7 +1980,7 @@ button.cgc:hover .th { opacity: .4; }
   ap2Dots.innerHTML = AP.map(([t], i) => `<button type="button" aria-label="${i + 1}. ${t}" aria-current="${i === 0}"></button>`).join('');
   const ap2ImgEls = [...ap2Imgs.children], ap2Items = [...ap2Copy.children];
   const AP_EXPAND = .3, AP_UI = .3, AP_STEP = 1; // AP_EXPAND: now only the full-screen hold before the caption (the widening happens on the way up)
-  const AP_FROM = .87, AP_TO = .26; // card top, in screen heights, where the widening starts / ends
+  const AP_FROM = 1, AP_TO = .26; // card top, in screen heights, where the widening starts (as it comes into view) / ends
   let ap2Idx = 0;
   const ap2Top = () => ap2Run.getBoundingClientRect().top + scrollY;
   function ap2Layout() { ap2Run.style.height = (innerHeight * (1 + AP_EXPAND + AP_UI + AP_STEP * AP.length)) + 'px'; }
@@ -1987,7 +1994,8 @@ button.cgc:hover .th { opacity: .4; }
     const vh = innerHeight, u = (scrollY - ap2Top()) / vh; // viewport heights into the run
     const k = document.documentElement.clientWidth / 1920;
     const e = ease(clamp((AP_FROM - ap2Run.getBoundingClientRect().top / vh) / (AP_FROM - AP_TO)));
-    const inset = document.documentElement.clientWidth <= 900 ? 16 : Math.max(16, 360 * k);
+    // starts at the text column's edges (the 1200 column of 핵심 수업 장치, 16 in from the sides on narrow screens)
+    const vw = document.documentElement.clientWidth, inset = (vw - Math.min(1200, vw - 32)) / 2;
     ap2Card.style.setProperty('--m', (inset * (1 - e)).toFixed(1) + 'px');
     ap2Card.style.setProperty('--r', (Math.max(16, 40 * k) * (1 - e)).toFixed(1) + 'px');
     const ui = clamp((u - AP_EXPAND) / AP_UI);
