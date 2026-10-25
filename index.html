@@ -60,69 +60,36 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding: calc(env(safe-area-inset-top, 0px) + clamp(16px, 2.3vw, 44px)) 16px 0;
   pointer-events: none;
 }
-.nav-wrap { --nav-h: 48px; --nav-gap: 16px; }
-/* Figma Navigation_Default 7582:2931 / Navigation_Selected 7582:3045: a 200×48 bar (mark + ≡); opened, a 350-wide panel 16 px
-   below it (About · Experts · Admission tiles, the Programs tile, 2기 오픈 알림 신청). The panel drips out of the bar's underside
-   (reference recording): a bulge stretches into a drop, lets go, then grows into the panel and its contents fade in; closing
-   runs it back up. The white shapes (.nb1 bar, .nb2 drop/panel) sit in .goo, blurred and alpha-thresholded while they move so
-   they merge like liquid; the mark, the button and the panel's contents sit above it, unfiltered and sharp */
-.nav { position: relative; pointer-events: auto; width: 200px; height: var(--nav-h); }
-.nav .goo { position: absolute; left: 50%; top: 0; width: 0; height: 0; filter: drop-shadow(0 4px 24px rgba(0,0,0,.06)); transition: filter .3s; }
-.nav.light .goo { filter: drop-shadow(0 4px 24px rgba(0,0,0,.2)); } /* over a white section (Figma 7582:3131): a deeper shadow keeps the bar off the page */
-.nav.open .goo { filter: drop-shadow(0 0 12px rgba(0,0,0,.27)); }
-.nav.moving .goo { filter: url(#navGoo) drop-shadow(0 0 12px rgba(0,0,0,.27)); }
-.nav .nb1, .nav .nb2 { position: absolute; left: 0; top: 0; background: #fff; border-radius: 16px; }
-.nav .nb1 { width: 200px; height: var(--nav-h); transform: translateX(-50%); }
-.nav .nb2 { width: 0; height: 0; visibility: hidden; }
-.nav .bar { position: relative; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; }
-.nav .mark { display: block; width: 32px; height: 32px; }
-.nav .mark { position: relative; }
+/* Figma Hero 8426:16442 Nav: a 656×56 pill — mark 48, About · Programs · Experts · Admissions (80/82 wide, 20 apart), then
+   오픈 알림 신청 (140×42) 32 to the right; padding 4 16 4 24. Under 760 px only the mark and the button remain */
+.nav {
+  pointer-events: auto; position: relative;
+  display: flex; align-items: center; gap: 12px;
+  background: #fff; border-radius: 50px;
+  padding: 4px 16px 4px 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.12); transition: box-shadow .3s;
+}
+.nav.light { box-shadow: 0 4px 24px rgba(0,0,0,.2); } /* over a white section: a deeper shadow keeps the bar off the page */
+.nav .mark { position: relative; display: block; width: 48px; height: 48px; }
 .nav .mark .crop { position: absolute; inset: 0; } /* the static image is a sheet (mark + wordmark): clipped to the mark */
-.nav .mark img { height: 187.39%; left: -33.79%; top: -44.07%; width: 333.13%; }
-/* the spinning mark (phi-logo-rotation-HD.webm, one turn): a 38.4 px canvas centred on the 32 px slot so the rings at rest
-   match the static mark's size, and the wider poses mid-turn have room; the static image shows until the frames load */
+.nav .mark img { height: 179.02%; left: -29.25%; top: -41.92%; width: 318.26%; }
+/* the spinning mark (phi-logo-rotation-HD.webm, one turn): a canvas 1.2× the slot, centred, so the rings at rest match the
+   static mark's size and the wider poses mid-turn have room; the static image shows until the frames load */
 .nav .mark { overflow: visible; }
-.nav .mark canvas { position: absolute; left: -3.2px; top: -3.2px; width: 38.4px; height: 38.4px; }
+.nav .mark canvas { position: absolute; left: -4.8px; top: -4.8px; width: 57.6px; height: 57.6px; }
 .nav .mark.spin img { visibility: hidden; }
-/* ≡ (three 18×2 lines, 4 apart) ↔ × (two 21.6 lines at ±45°) in a 24 box */
-.nav .tog { position: relative; width: 24px; height: 24px; margin-right: -2px; }
-.nav .tog::before { content: ""; position: absolute; inset: -10px; } /* a bigger hit area */
-.nav .tog i { position: absolute; left: 3px; top: 11px; width: 18px; height: 2px; background: #0d0d0d; transition: transform .28s cubic-bezier(.6,0,.2,1), opacity .2s, width .28s cubic-bezier(.6,0,.2,1), left .28s cubic-bezier(.6,0,.2,1); }
-.nav .tog i:nth-child(1) { transform: translateY(-6px); }
-.nav .tog i:nth-child(3) { transform: translateY(6px); }
-.nav.open .tog i { left: 1.18px; width: 21.634px; }
-.nav.open .tog i:nth-child(1) { transform: rotate(45deg); }
-.nav.open .tog i:nth-child(2) { opacity: 0; }
-.nav.open .tog i:nth-child(3) { transform: rotate(-45deg); }
-/* panel 350 wide: padding 12 16, rows 8 apart (Figma 7582:3045 rev.) */
-.nav .menu {
-  position: absolute; left: 50%; top: calc(var(--nav-h) + var(--nav-gap)); width: 350px; transform: translateX(-50%);
-  display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; opacity: 0; visibility: hidden;
-}
-.nav.open .menu.shown { opacity: 1; visibility: visible; transition: opacity .16s ease; }
-.nav .menu .row { display: flex; gap: 8px; }
-.nav .menu .row .tile { flex: 1 1 0; width: auto; min-width: 0; } /* three equal tiles, 8 apart */
-.nav .tile { position: relative; display: block; width: 100px; height: 100px; border-radius: 12px; overflow: hidden; background: #141414; color: #fff; text-decoration: none; }
-.nav .tile b { position: absolute; left: 0; right: 0; top: 8px; font-family: var(--font-latin); font-size: 12px; font-weight: 700; line-height: 15px; text-align: center; }
-.nav .tile .ph { position: absolute; overflow: hidden; }
-.nav .tile .ph img { position: absolute; max-width: none; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
-.nav .tile:hover .ph img { transform: scale(1.05); }
-.nav .t-about .ph { left: calc(50% - 43.33px); top: 17px; width: 86px; height: 86px; }
-.nav .t-about .ph img { left: -11%; top: 4.63%; width: 122%; height: 92.74%; }
-.nav .t-experts .ph { left: calc(50% - 44.33px); top: 16px; width: 88px; height: 88px; }
-.nav .t-experts .ph img { left: -1.28%; top: 8.55%; width: 102.2%; height: 83.12%; }
-.nav .t-adm .ph { left: -1px; top: 20px; width: 102px; height: 82px; }
-.nav .t-adm .ph img { inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.nav .t-prog { width: 318px; height: 146px; background: #000; }
-.nav .t-prog b { left: 12px; right: auto; top: 12px; font-size: 20px; line-height: 24px; text-align: left; }
-.nav .t-prog .ph { left: 83px; top: -25px; width: 248px; height: 214px; }
-.nav .t-prog .ph img { inset: 0; width: 100%; height: 100%; }
+.nav .right { display: flex; align-items: center; gap: 32px; }
+.nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; align-items: center; }
+.nav li a { display: block; width: 80px; text-align: center; color: var(--mute); font-size: 15px; text-decoration: none; transition: color .2s; }
+.nav li a:hover { color: var(--ink); }
+.nav li a.on { width: 82px; color: var(--ink); font-size: 18px; font-weight: 700; }
 .nav .cta {
-  display: grid; place-items: center; height: 42px; border-radius: 10px; background: #0d0d0d; color: #fff;
-  font-family: var(--font-latin); font-weight: 600; font-size: 14px; transition: background .2s;
+  width: 140px; height: 42px; border-radius: 26px; background: var(--ink); color: #fff;
+  font-family: var(--font-latin); font-weight: 600; font-size: 14px;
+  display: grid; place-items: center; transition: transform .2s;
 }
-.nav .cta:hover { background: #2a2a2a; }
-@media (max-width: 400px) { .nav .menu { width: calc(100vw - 24px); } .nav .menu .row, .nav .t-prog { width: 100%; } }
+.nav .cta:hover { transform: scale(1.03); }
+@media (max-width: 760px) { .nav ul { display: none; } .nav .right { gap: 12px; } }
 
 /* ---------- Hero (pinned scroll story, Figma 시나리오 7013:1724, frames Hero → 20) ----------
    Copy + FUNDAMENTALS OVER TOOLS over the turning statue → the five Phi OS principles → the card orbit → close-up → PHI OPERATING SYSTEM.
@@ -829,25 +796,17 @@ button.cgc:hover .th { opacity: .28; }
 
 <div class="nav-wrap">
   <nav class="nav" id="nav" aria-label="주요 메뉴">
-    <div class="goo" aria-hidden="true"><span class="nb1"></span><span class="nb2" id="navDrop"></span></div>
-    <div class="bar">
-      <a class="mark" href="#top" aria-label="Phi Institute of Design"><span class="crop"><img src="assets/logo-mark.webp" alt=""></span></a>
-      <button class="tog" id="navTog" type="button" aria-expanded="false" aria-controls="navMenu" aria-label="메뉴 열기"><i></i><i></i><i></i></button>
-    </div>
-    <div class="menu" id="navMenu">
-      <div class="row">
-        <a class="tile t-about" href="#"><span class="ph"><img src="assets/nav/about.webp" alt=""></span><b>About</b></a>
-        <a class="tile t-experts" href="#"><span class="ph"><img src="assets/nav/experts.webp" alt=""></span><b>Experts</b></a>
-        <a class="tile t-adm" href="#"><span class="ph"><img src="assets/nav/admission.webp" alt=""></span><b>Admission</b></a>
-      </div>
-      <a class="tile t-prog" href="#top" aria-current="page"><span class="ph"><img src="assets/nav/programs.webp" alt=""></span><b>Programs</b></a>
-      <button class="cta" type="button">2기 오픈 알림 신청</button>
+    <a class="mark" href="#top" aria-label="Phi Institute of Design"><span class="crop"><img src="assets/logo-mark.webp" alt=""></span></a>
+    <div class="right">
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a class="on" href="#top" aria-current="page">Programs</a></li>
+        <li><a href="#">Experts</a></li>
+        <li><a href="#">Admissions</a></li>
+      </ul>
+      <button class="cta" type="button">오픈 알림 신청</button>
     </div>
   </nav>
-  <!-- blur + alpha threshold: the two white shapes melt into each other while the drop moves -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="navGoo" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur in="SourceGraphic" stdDeviation="5"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/>
-  </filter></svg>
 </div>
 
 <nav class="toc" id="toc" aria-label="페이지 목차">
@@ -2130,48 +2089,7 @@ button.cgc:hover .th { opacity: .28; }
     }).catch(() => {});
   }
 
-  /* ---------- Nav menu: a gooey drop (motion measured off the reference recording, 30 fps; shapes from Figma 7582:3045) ----------
-     open  560 ms: the bar's underside bulges, stretches into a drop, lets go 16 px below, then grows (fast, then settling) into
-                   the 350-wide panel, its top edge staying put as it unrolls downward; the contents fade in at the end
-     close 460 ms: the contents go at once, the panel pulls in to a drop, rises and melts back into the bar. ≡ ↔ × throughout */
-  const nav = document.getElementById('nav'), navTog = document.getElementById('navTog');
-  const navDrop = document.getElementById('navDrop'), navMenu = document.getElementById('navMenu');
-  let navOpen = false, navAnim = null, navText = 0, navY = 0;
-  const NAV_H = 48, NAV_G = 16;
-  // [offset, width, height (px, or a fraction of the panel's when ≤ 1), top below the bar's bottom edge, corner radius]
-  // once the drop has let go it keeps ≥ 10 px clear of the bar, so the blur never bridges the two while it grows
-  const NAV_OPEN = [[0, 18, 18, -23, 9], [.18, 22, 22, -13, 11], [.3, 26, 30, -7, 13], [.42, 30, 30, 3, 15], [.48, 40, 34, NAV_G, 16],
-    [.56, .3, .18, NAV_G, 16], [.64, .48, .36, NAV_G, 16], [.74, .7, .6, NAV_G, 16], [.82, .88, .84, NAV_G, 16], [.9, .97, .96, NAV_G, 16], [1, 1, 1, NAV_G, 16]];
-  const NAV_CLOSE = [[0, 1, 1, NAV_G, 16], [.14, .75, .7, NAV_G, 16], [.24, .45, .4, NAV_G, 16], [.32, .25, .2, NAV_G, 16], [.4, 50, 40, NAV_G, 16],
-    [.48, 36, 34, NAV_G - 4, 16], [.56, 30, 30, 6, 15], [.66, 28, 30, -4, 14], [.8, 24, 24, -12, 12], [1, 16, 16, -22, 8]];
-  const navFrames = (rows, W, Hp) => rows.map(([offset, w, h, top, r]) => ({
-    offset, width: (w <= 1 ? w * W : w) + 'px', height: (h <= 1 ? h * Hp : h) + 'px', borderRadius: r + 'px',
-    transform: `translate(-50%, ${NAV_H + top}px)`
-  }));
-  function navSet(open) {
-    if (open === navOpen || (navAnim && navAnim.playState === 'running')) return;
-    navOpen = open; navY = scrollY;
-    nav.classList.toggle('open', open);
-    navTog.setAttribute('aria-expanded', open); navTog.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-    clearTimeout(navText);
-    const W = navMenu.offsetWidth, Hp = navMenu.offsetHeight;
-    navDrop.style.visibility = 'visible'; nav.classList.add('moving');
-    if (navAnim) navAnim.cancel();
-    if (open) {
-      navAnim = navDrop.animate(navFrames(NAV_OPEN, W, Hp), { duration: reduce ? 1 : 560, fill: 'forwards' });
-      navText = setTimeout(() => navMenu.classList.add('shown'), reduce ? 0 : 520);
-      navAnim.onfinish = () => nav.classList.remove('moving');
-    } else {
-      navMenu.classList.remove('shown');
-      navAnim = navDrop.animate(navFrames(NAV_CLOSE, W, Hp), { duration: reduce ? 1 : 460, fill: 'forwards' });
-      navAnim.onfinish = () => { nav.classList.remove('moving'); navDrop.style.visibility = 'hidden'; };
-    }
-  }
-  navTog.addEventListener('click', () => navSet(!navOpen));
-  navMenu.addEventListener('click', e => { if (e.target.closest('a')) navSet(false); });
-  document.addEventListener('click', e => { if (navOpen && !nav.contains(e.target)) navSet(false); });
-  addEventListener('keydown', e => { if (e.key === 'Escape' && navOpen) { navSet(false); navTog.focus(); } });
-  addEventListener('scroll', () => { if (navOpen && Math.abs(scrollY - navY) > 80) navSet(false); }, { passive: true });
+  const nav = document.getElementById('nav'), NAV_H = 56;
   // light or dark behind the bar: the first painted background under its centre (photos and canvases count as dark)
   const navWrapEl = nav.parentElement;
   let navToneRaf = 0;
