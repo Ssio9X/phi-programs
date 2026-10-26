@@ -144,6 +144,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .toc a { transition: opacity .3s, transform .55s cubic-bezier(.2,.8,.2,1); }
 .toc.moving a { transition: opacity .4s ease calc(var(--i) * 40ms), transform .55s cubic-bezier(.2,.8,.2,1) calc(var(--i) * 40ms); }
 .toc.away a { opacity: 0; transform: translateX(160px); }
+/* 10/27: as the last band's edge comes up to the index, the rows leave bottom row first (fade, a little to the left) instead of
+   vanishing at once; they come back the same way */
+.toc.off a { opacity: 0; transform: translateX(-14px); pointer-events: none; transition: opacity .35s ease calc((6 - var(--i)) * 45ms), transform .5s cubic-bezier(.2,.8,.2,1) calc((6 - var(--i)) * 45ms); }
+.toc.off a.on, .toc.off a:hover { opacity: 0; }
 .toc.away a.on, .toc.away a:hover { opacity: 0; }
 
 /* item sheet (Figma 8445:336): the hero behind frosted (black 60 % + blur), the group's five rows on the left (2 px bar, Pretendard
@@ -430,7 +434,12 @@ button.cc:hover::after, button.cc:focus-visible::after { opacity: 1; transform: 
 .lunch { position: absolute; left: 62px; right: 0; margin-inline: auto; width: 1096px; height: 78px; top: 188px; border-radius: 16px; background: rgba(217,217,217,.5); display: grid; place-items: center; color: var(--ink-2); font-size: 24px; font-weight: 500; }
 
 /* Hiring */
-.hire-wrap { border-radius: 0 0 52px 52px; filter: drop-shadow(0 29px 8px rgba(0,0,0,.04)); }
+.hire-wrap { border-radius: 0 0 52px 52px; filter: drop-shadow(0 29px 8px rgba(0,0,0,.04)); transform-origin: 50% 100%; }
+/* 10/27: as the footer comes out from under it, the band draws back (JS: scale 1 → .94 from its foot, corners 52 → 72, a deeper
+   shadow) and the wordmark's three lines rise into place one after another */
+.foot .mark { position: relative; }
+.foot .mark .ln { position: absolute; inset: 0; will-change: transform, opacity; }
+.foot .mark .ln img { width: 100%; height: auto; }
 
 /* Footer (revealed) */
 .content { position: relative; z-index: 1; }
@@ -449,7 +458,7 @@ footer { position: sticky; bottom: 0; z-index: 0; background: #eee; padding: 0 0
 .foot .info p { font-size: 12px; white-space: pre; }
 .foot .info p + p { margin-top: -2px; }
 .foot .info .cr { font-size: 11px; } /* not .copy: that is the hero copy block (absolutely placed) */
-@media (max-width: 900px) { .foot { flex-direction: column; align-items: stretch; } .foot .r { flex: none; margin: 0; align-items: flex-start; text-align: left; } .foot .info { align-items: flex-start; } }
+@media (max-width: 900px) { .foot { flex-direction: column; align-items: stretch; } .foot .mark { flex: none; } /* 10/27: its 1037 basis became a 1037-tall box in the column */ .foot .r { flex: none; margin: 0; align-items: flex-start; text-align: left; } .foot .info { align-items: flex-start; } }
 
 /* Modal */
 .modal { position: fixed; inset: 0; z-index: 100; overscroll-behavior: contain; display: grid; place-items: center; padding: 24px 16px; background: rgba(0,0,0,.36); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
@@ -951,7 +960,7 @@ button.cgc:hover .th { opacity: .4; }
 
 <footer>
   <div class="foot">
-    <div class="mark"><img src="assets/footer-wordmark.svg" width="1037" height="570" alt="Phi Institute of Design"></div>
+    <div class="mark"><img class="m0" src="assets/footer-wordmark.svg" width="1037" height="570" alt="Phi Institute of Design"></div>
     <div class="r">
       <nav aria-label="정책"><a href="#">개인정보처리방침</a><a href="#">이용약관</a><a href="#">채용</a></nav>
       <div class="info"><p>02-556-8681   contact@phi.design</p><p>서울 성동구  ·  사업자등록번호 안내</p><p class="cr">© 2026 Phi Institute of Design. All rights reserved.</p></div>
@@ -1717,7 +1726,7 @@ button.cgc:hover .th { opacity: .4; }
   const toc = document.getElementById('toc'), tocA = [...toc.children], mainEl = document.getElementById('top');
   const secs = ['courses', 'structure', 'approach', 'curriculum'].map(id => document.getElementById(id));
   const tocApproachPhoto = document.getElementById('ap2Card');
-  let tocOn = -1, tocLight = null, tocLate = false, tocAway = null, tocMoveT = 0;
+  let tocOn = -1, tocLight = null, tocLate = false, tocAway = null, tocMoveT = 0, tocOff = false;
   [...toc.children].forEach((el, i) => el.style.setProperty('--i', i));
   function placeToc(left, top) {
     toc.hidden = portrait;
@@ -1728,7 +1737,7 @@ button.cgc:hover .th { opacity: .4; }
     const away = tocLeft + 140 > (document.documentElement.clientWidth - 1280) / 2;
     if (away !== tocAway) {
       if (tocAway !== null && !reduce) { toc.classList.add('moving'); clearTimeout(tocMoveT); tocMoveT = setTimeout(() => toc.classList.remove('moving'), 900); }
-      toc.classList.toggle('away', away); toc.inert = away; tocAway = away;
+      toc.classList.toggle('away', away); toc.inert = away || tocOff; tocAway = away;
     }
     // wide, short screens: the facts (design y 576–829) reach the index — it then waits until they have faded
     tocLate = top + 829 * S + 16 > vh - 50 - 152 && facts.getBoundingClientRect().left < tocLeft + 140 + 16;
@@ -1744,10 +1753,11 @@ button.cgc:hover .th { opacity: .4; }
     const overApproachPhoto = x >= photoRect.left && x <= photoRect.right && y >= photoRect.top && y <= photoRect.bottom;
     const light = secs[0].getBoundingClientRect().top <= y && !overApproachPhoto;
     if (light !== tocLight) { toc.classList.toggle('light', light); tocLight = light; }
-    const over = mainEl.getBoundingClientRect().bottom < y + 76; // footer underneath
+    const over = mainEl.getBoundingClientRect().bottom < tocRect.bottom + 48; // the footer is about to come under the index
+    if (over !== tocOff) { toc.classList.toggle('off', over); toc.inert = over || tocAway; tocOff = over; }
     if (tocLate) a *= kf([K.f1, K.f2], [0, 1], p);
-    toc.style.opacity = (over ? 0 : a).toFixed(3);
-    toc.style.visibility = over || a <= .002 ? 'hidden' : '';
+    toc.style.opacity = a.toFixed(3);
+    toc.style.visibility = a <= .002 ? 'hidden' : '';
   }
   tocA.forEach(el => el.addEventListener('click', e => {
     const k = el.dataset.p; if (k == null) return;
@@ -1936,6 +1946,36 @@ button.cgc:hover .th { opacity: .4; }
     addEventListener('scroll', () => { // someone else scrolled (keys, scrollbar, scrollTo): follow them
       if (Math.abs(scrollY - own) > 2) { tgt = cur = scrollY; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
     }, { passive: true });
+  }
+
+  /* ---------- Footer reveal (10/27) ----------
+     f: how much of the footer is out from under the last band (0 → 1). The band draws back from its foot (scale 1 → .94, corners
+     52 → 72, deeper shadow); the wordmark's three lines (cut where the glyph rows end: 0–172, 172–355.5, 355.5–570 of 570) rise
+     60 px and fade in one after another */
+  {
+    const band = document.querySelector('.hire-wrap'), foot = document.querySelector('footer'), mk = foot.querySelector('.mark'), m0 = mk.querySelector('.m0');
+    const cuts = [0, 172, 355.5, 570].map(v => v / 570 * 100);
+    m0.style.visibility = 'hidden'; // keeps the size and the alt text; the three copies draw it
+    const lns = [0, 1, 2].map(i => {
+      const d = document.createElement('div'); d.className = 'ln'; d.setAttribute('aria-hidden', 'true');
+      d.style.clipPath = `inset(${cuts[i].toFixed(2)}% -10% ${(100 - cuts[i + 1]).toFixed(2)}% -10%)`;
+      d.innerHTML = '<img src="assets/footer-wordmark.svg" alt="">'; mk.appendChild(d); return d;
+    });
+    let footRaf = 0;
+    function footFx() {
+      footRaf = 0;
+      const f = reduce ? 1 : clamp((innerHeight - mainEl.getBoundingClientRect().bottom) / foot.offsetHeight);
+      band.style.transform = f > 0 ? `scale(${(1 - .06 * f).toFixed(4)})` : '';
+      const rr = (52 + 20 * f).toFixed(1) + 'px';
+      band.style.borderRadius = `0 0 ${rr} ${rr}`;
+      band.style.filter = `drop-shadow(0 29px ${(8 + 24 * f).toFixed(1)}px rgba(0,0,0,${(.04 + .1 * f).toFixed(3)}))`;
+      lns.forEach((l, i) => {
+        const t = clamp((f - i * .12) / .64), e = 1 - Math.pow(1 - t, 3);
+        l.style.transform = `translateY(${((1 - e) * 60).toFixed(1)}px)`; l.style.opacity = e.toFixed(3);
+      });
+    }
+    addEventListener('scroll', () => { if (!footRaf) footRaf = requestAnimationFrame(footFx); }, { passive: true });
+    addEventListener('resize', footFx); footFx();
   }
 
   /* ---------- Content reveal (cards rise in as their band enters) ---------- */
