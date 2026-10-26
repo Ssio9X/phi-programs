@@ -37,7 +37,7 @@
 html { scroll-behavior: auto; }
 body {
   margin: 0;
-  background: var(--panel);
+  background: #eee; /* the footer's colour: it shows beside the last band as that draws back, so no seam (10/27, was --panel #f5f5f5) */
   color: var(--ink);
   font-family: var(--font);
   -webkit-font-smoothing: antialiased;
@@ -435,11 +435,7 @@ button.cc:hover::after, button.cc:focus-visible::after { opacity: 1; transform: 
 
 /* Hiring */
 .hire-wrap { border-radius: 0 0 52px 52px; filter: drop-shadow(0 29px 8px rgba(0,0,0,.04)); transform-origin: 50% 100%; }
-/* 10/27: as the footer comes out from under it, the band draws back (JS: scale 1 → .94 from its foot, corners 52 → 72, a deeper
-   shadow) and the wordmark's three lines rise into place one after another */
-.foot .mark { position: relative; }
-.foot .mark .ln { position: absolute; inset: 0; will-change: transform, opacity; }
-.foot .mark .ln img { width: 100%; height: auto; }
+/* 10/27: as the footer comes out from under it, the band draws back (JS: scale 1 → .94 from its foot, corners 52 → 72, a deeper shadow) */
 
 /* Footer (revealed) */
 .content { position: relative; z-index: 1; }
@@ -960,7 +956,7 @@ button.cgc:hover .th { opacity: .4; }
 
 <footer>
   <div class="foot">
-    <div class="mark"><img class="m0" src="assets/footer-wordmark.svg" width="1037" height="570" alt="Phi Institute of Design"></div>
+    <div class="mark"><img src="assets/footer-wordmark.svg" width="1037" height="570" alt="Phi Institute of Design"></div>
     <div class="r">
       <nav aria-label="정책"><a href="#">개인정보처리방침</a><a href="#">이용약관</a><a href="#">채용</a></nav>
       <div class="info"><p>02-556-8681   contact@phi.design</p><p>서울 성동구  ·  사업자등록번호 안내</p><p class="cr">© 2026 Phi Institute of Design. All rights reserved.</p></div>
@@ -1950,17 +1946,9 @@ button.cgc:hover .th { opacity: .4; }
 
   /* ---------- Footer reveal (10/27) ----------
      f: how much of the footer is out from under the last band (0 → 1). The band draws back from its foot (scale 1 → .94, corners
-     52 → 72, deeper shadow); the wordmark's three lines (cut where the glyph rows end: 0–172, 172–355.5, 355.5–570 of 570) rise
-     60 px and fade in one after another */
+     52 → 72, deeper shadow). The wordmark stays still (its line-by-line rise was taken out on request) */
   {
-    const band = document.querySelector('.hire-wrap'), foot = document.querySelector('footer'), mk = foot.querySelector('.mark'), m0 = mk.querySelector('.m0');
-    const cuts = [0, 172, 355.5, 570].map(v => v / 570 * 100);
-    m0.style.visibility = 'hidden'; // keeps the size and the alt text; the three copies draw it
-    const lns = [0, 1, 2].map(i => {
-      const d = document.createElement('div'); d.className = 'ln'; d.setAttribute('aria-hidden', 'true');
-      d.style.clipPath = `inset(${cuts[i].toFixed(2)}% -10% ${(100 - cuts[i + 1]).toFixed(2)}% -10%)`;
-      d.innerHTML = '<img src="assets/footer-wordmark.svg" alt="">'; mk.appendChild(d); return d;
-    });
+    const band = document.querySelector('.hire-wrap'), foot = document.querySelector('footer');
     let footRaf = 0;
     function footFx() {
       footRaf = 0;
@@ -1969,10 +1957,6 @@ button.cgc:hover .th { opacity: .4; }
       const rr = (52 + 20 * f).toFixed(1) + 'px';
       band.style.borderRadius = `0 0 ${rr} ${rr}`;
       band.style.filter = `drop-shadow(0 29px ${(8 + 24 * f).toFixed(1)}px rgba(0,0,0,${(.04 + .1 * f).toFixed(3)}))`;
-      lns.forEach((l, i) => {
-        const t = clamp((f - i * .12) / .64), e = 1 - Math.pow(1 - t, 3);
-        l.style.transform = `translateY(${((1 - e) * 60).toFixed(1)}px)`; l.style.opacity = e.toFixed(3);
-      });
     }
     addEventListener('scroll', () => { if (!footRaf) footRaf = requestAnimationFrame(footFx); }, { passive: true });
     addEventListener('resize', footFx); footFx();
