@@ -175,8 +175,14 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .osfade { position: absolute; z-index: 3; left: -2000px; right: -2000px; top: 640px; height: 3000px; background: linear-gradient(rgba(0,0,0,0), #000 448px); opacity: 0; pointer-events: none; }
 .stage.portrait .osfade { top: 540px; }
 /* Phi crest (Figma Section 6 frames 0.1 / 0.2, 8445:18402): faint, then full, then fades where COMPETENCY comes in */
-.crest { position: absolute; z-index: 4; left: 0; top: 0; width: 328.115px; max-width: none; opacity: 0; visibility: hidden; pointer-events: none; }
-.crest.oscrest { width: 376.461px; } /* Phi OS emblem (Figma 8611:5545 / 8611:5646): the same faint → full beat before the 태도 list */
+/* 10/27 (Figma 8445:18405 / 8445:18219): the crest (243.9 × 394.1, top 280) with the group's title under it (the list heading at
+   .7778, 700 × 79.3, 469 below the crest's top), faint then full together; the list then starts at NO.1. The Phi OS emblem
+   (8611:5545) and PHI OS take the same places, the emblem at the crest's height */
+.crest { position: absolute; z-index: 4; left: 0; top: 0; width: 700px; height: 549px; opacity: 0; visibility: hidden; pointer-events: none; }
+.crest img { position: absolute; max-width: none; }
+.crest .cr-mark { left: 228.03px; top: 0; width: 243.94px; }
+.crest.oscrest .cr-mark { left: 222.6px; width: 254.8px; }
+.crest .cr-title { left: 0; top: 469px; width: 700px; }
 .osl { position: absolute; z-index: 4; left: 0; top: 0; width: 0; height: 0; visibility: hidden; }
 .osl > * { position: absolute; left: 0; top: 0; width: 900px; padding: 0; transform-origin: 50% 50%; opacity: 0; }
 .osl img { display: block; width: 900px; max-width: none; pointer-events: none; }
@@ -828,8 +834,8 @@ button.cgc:hover .th { opacity: .4; }
         <div class="statue" id="statue" data-show="a"><img class="st-a" src="assets/statue/a18.webp" alt=""><img class="st-a2" src="assets/statue/a18-low.webp" alt=""><img class="st-b" src="assets/statue/f27.webp" alt="" decoding="async"><img class="st-b2" src="assets/statue/f27-low.webp" alt="" decoding="async"></div>
         <img class="kas" id="kas" src="assets/statue/kas633.webp" alt="" decoding="async">
         <div class="osfade" id="osfade"></div>
-        <img class="crest" id="crest" src="assets/phi-crest.svg" alt="Phi, ESTD. 260420">
-        <img class="crest oscrest" id="osCrest" src="assets/phi-os-emblem.svg" alt="Phi OS">
+        <div class="crest" id="crest" role="img" aria-label="Phi, ESTD. 260420 — Competency"><img class="cr-mark" src="assets/phi-crest.svg" alt=""><img class="cr-title" src="assets/os/h-competency.svg" alt=""></div>
+        <div class="crest oscrest" id="osCrest" role="img" aria-label="Phi OS"><img class="cr-mark" src="assets/phi-os-emblem.svg" alt=""><img class="cr-title" src="assets/os/h-phios.svg" alt=""></div>
         <div class="osl" id="osl" role="list" aria-label="역량과 태도"></div>
         <div id="deck" aria-live="polite"></div>
         <div class="kf" id="kf" aria-hidden="true"><button class="kp" type="button" aria-label="이전 카드" tabindex="-1"></button><button class="kn" type="button" aria-label="다음 카드" tabindex="-1"></button><p class="kc-n" id="kcN"></p></div>
@@ -1495,10 +1501,10 @@ button.cgc:hover .th { opacity: .4; }
   // CR: the crest at 10% (frame 0.1), full (0.2), held, then fading in place as the list comes in at f4
   const K = { f1: .6, f2: .9, f3: 1.2, f4: 2.5, lc: 2.5 };
   const CR = [1.3, 1.6, 1.9, 2.1, 2.35];
-  K.aOut = [K.lc + 5 * LSTEP + .3, K.lc + 5 * LSTEP + .7]; // REFRAMING held, then the list lifts away
+  K.aOut = [K.lc + 4 * LSTEP + .3, K.lc + 4 * LSTEP + .7]; // REFRAMING held, then the list lifts away
   const CR2 = CR.map(v => v + K.aOut[0] + .2 - CR[0]); // the Phi OS emblem, same beat as the crest
   K.f4b = K.f4 + CR2[0] - CR[0]; K.lc2 = K.f4b;
-  K.bOut = [K.lc2 + 5 * LSTEP + .3, K.lc2 + 5 * LSTEP + .9];
+  K.bOut = [K.lc2 + 4 * LSTEP + .3, K.lc2 + 4 * LSTEP + .9];
   K.lo = CR2[1];
   K.rv0 = K.bOut[1] + .3; K.rv1 = K.rv0 + 2.8; // statue alone, then the light opens the photo over 2.8 screens
   K.lg = [K.rv1 - .5, K.rv1];
@@ -1565,10 +1571,10 @@ button.cgc:hover .th { opacity: .4; }
   const OSL = []; // { el, h, c (centre in the unscaled stack), g (group) }
   {
     let top = 0;
-    OS_GROUPS.forEach((g, gi) => [[g.head], ...g.items].forEach((it, k) => {
-      const el = document.createElement(k ? 'button' : 'div'), name = it[0];
-      if (k) { el.type = 'button'; el.setAttribute('role', 'listitem'); el.setAttribute('aria-label', `NO.${k} ${it[3]} ${it[1]}`); el.tabIndex = -1; el.addEventListener('click', () => openOsd(gi, k - 1)); }
-      else el.setAttribute('role', 'presentation');
+    // 10/27: the group heading now comes with its crest, so each list starts at NO.1
+    OS_GROUPS.forEach((g, gi) => g.items.forEach((it, k0) => {
+      const k = k0 + 1, el = document.createElement('button'), name = it[0];
+      el.type = 'button'; el.setAttribute('role', 'listitem'); el.setAttribute('aria-label', `NO.${k} ${it[3]} ${it[1]}`); el.tabIndex = -1; el.addEventListener('click', () => openOsd(gi, k - 1));
       el.innerHTML = `<img src="assets/os/${name}.svg" alt="" width="900" height="${OS_H[name]}" decoding="async">`;
       osl.appendChild(el);
       OSL.push({ el, h: OS_H[name], c: top + OS_H[name] / 2, g: gi }); top += OS_H[name] + 72; // Section 7 column gap
@@ -1585,7 +1591,7 @@ button.cgc:hover .th { opacity: .4; }
     const st = OS_RUN.map(([cr, lc, out]) => {
       const a = kf([cr[3] + .15, lc], [0, 1], p) * kf(out, [1, 0], p);
       // L: which row is in focus; each row holds a little (half the step is spent settling on it)
-      const raw = clamp((p - lc) / LSTEP, 0, 5), i0 = Math.floor(raw), f = raw - i0;
+      const raw = clamp((p - lc) / LSTEP, 0, 4), i0 = Math.floor(raw), f = raw - i0;
       const L = i0 + (f < .5 ? 0 : easeMove((f - .5) / .5));
       const dy = (1 - easeMove(seg(p, cr[3] + .15, lc))) * 260 - easeMove(seg(p, out[0], out[1])) * 420;
       return { a, L, dy };
@@ -1595,7 +1601,7 @@ button.cgc:hover .th { opacity: .4; }
     if (!osVis) { osl.style.visibility = 'visible'; osVis = true; }
     const cx = portrait ? 960 : 752;
     OSL.forEach((o, i) => {
-      const { a, L, dy } = st[o.g], base = o.g * 6, j = Math.min(Math.floor(L), 4), t = L - j;
+      const { a, L, dy } = st[o.g], base = o.g * 5, j = Math.min(Math.floor(L), 3), t = L - j;
       const F = OSL[base + j].c + (OSL[base + j + 1].c - OSL[base + j].c) * t;
       // + 10 screen px: centred exactly, the focused row read a little high (10/27)
       const d = Math.abs(i - base - L), y = OS_FOCUS + osDy + 10 / S + (o.c - F) * OS_PACK + dy;
@@ -1790,11 +1796,11 @@ button.cgc:hover .th { opacity: .4; }
     drawList(p);
     // crests centred on the list column (x 752), centre y 544: the Phi crest 328 × 530, the Phi OS emblem 376 × 582
     const cA = hT * kf(CR, [0, .1, 1, 1, 0], p);
-    crest.style.transform = `translate3d(${587.94 + (portrait ? 208 : 0)}px, ${(278.94 + osDy).toFixed(1)}px, 0)`;
+    crest.style.transform = `translate3d(${402 + (portrait ? 208 : 0)}px, ${(280 + osDy).toFixed(1)}px, 0)`; // centred on the list column (752)
     crest.style.opacity = cA.toFixed(3);
     crest.style.visibility = cA <= .002 ? 'hidden' : 'visible';
     const oC = kf(CR2, [0, .1, 1, 1, 0], p);
-    osCrest.style.transform = `translate3d(${563.77 + (portrait ? 208 : 0)}px, ${(252.85 + osDy).toFixed(1)}px, 0)`;
+    osCrest.style.transform = `translate3d(${402 + (portrait ? 208 : 0)}px, ${(280 + osDy).toFixed(1)}px, 0)`;
     osCrest.style.opacity = oC.toFixed(3);
     osCrest.style.visibility = oC <= .002 ? 'hidden' : 'visible';
     // 10/26: the bottom fade is on from the first screen (Figma Hero 8426:16442, 8611:7597), in as the loading hands over
