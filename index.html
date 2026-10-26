@@ -1633,23 +1633,29 @@ button.cgc:hover .th { opacity: .4; }
     osdFrom = document.activeElement; osd.classList.add('open'); // the page stays put through the sheet's own wheel / touch / key handlers: overflow hidden on the root un-sticks the hero stage, which then leaves nothing to show through (10/27)
     osdNav.querySelector('[aria-current="true"]').focus();
   }
-  function closeOsd() {
+  // 10/27: the page behind follows the sheet — each step moves the scroll (hidden under the blur) to that row of the list, so
+  // closing shows the item last read, not the one the sheet was opened on
+  const osdRowY = k => hero.offsetTop + (OS_RUN[osdG][1] + (k + .25) * LSTEP) * innerHeight; // a quarter into the row's hold
+  function closeOsd(onward) {
     if (!osd.classList.contains('open')) return;
     osd.classList.remove('open');
     osdFrom && osdFrom.focus && osdFrom.focus({ preventScroll: true });
+    // past the last item: carry on down — to where this list has lifted away (the next emblem, or the statue on its own)
+    if (onward) scrollTo({ top: hero.offsetTop + OS_RUN[osdG][2][1] * innerHeight, behavior: reduce ? 'instant' : 'smooth' });
   }
   // 10/27: scrolling (wheel, swipe, ↑↓) steps to the next / previous item; the text leaves upward and the next comes up from below
   const osdBody = osd.querySelector('.osd-body');
   let osdAnim = null;
   function stepOsdTo(k) {
     const n = OS_GROUPS[osdG].items.length;
-    if (k >= n) { closeOsd(); return; } // 10/27: one more step down past the last item closes the sheet
+    if (k >= n) { closeOsd(true); return; } // 10/27: one more step down past the last item closes the sheet
     k = Math.max(0, k);
     if (k === osdI) return;
     const dir = k > osdI ? 1 : -1;
     [...osdNav.querySelectorAll('button')].forEach((b, i) => b.setAttribute('aria-current', i === k ? 'true' : 'false'));
     if (osdNav.contains(document.activeElement)) osdNav.querySelector('[aria-current="true"]').focus({ preventScroll: true });
     osdI = k;
+    scrollTo({ top: osdRowY(k), behavior: 'instant' });
     if (reduce) { showOsd(osdG, k); return; }
     osdAnim && osdAnim.cancel();
     osdAnim = osdBody.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateY(${-dir * 28}px)` }], { duration: 180, easing: 'cubic-bezier(.4,0,1,1)' });
