@@ -149,7 +149,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* item sheet (Figma 8445:336): the hero behind frosted (black 60 % + blur), the group's five rows on the left (2 px bar, Pretendard
    16, current SemiBold white, others Medium 40 %), the title (457 wide) with its Korean name (SF Pro Heavy 14, #aaa) and text
    (SF Pro Semibold 18 / 1.6, #ddd, 500 wide) in the middle */
-.osd { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; background: rgba(0,0,0,.6); -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s; }
+/* 10/27: the page shows through, like the course modal (#m-course: rgba(29,29,31,.48) + blur 20) */
+.osd { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; overscroll-behavior: contain; background: rgba(29,29,31,.48); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s; }
 .osd.open { opacity: 1; visibility: visible; transition: opacity .35s ease; }
 .osd-nav { position: absolute; left: clamp(24px, 6.25vw, 120px); top: 50%; transform: translateY(-50%); margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
 .osd-nav button { display: block; height: 28px; padding: 0 0 0 10px; border-left: 2px solid rgba(255,255,255,.4); color: rgba(255,255,255,.4); font: 500 16px/28px "Pretendard", sans-serif; text-align: left; white-space: nowrap; transition: color .2s, border-color .2s; }
@@ -1620,23 +1621,64 @@ button.cgc:hover .th { opacity: .4; }
   const osd = document.getElementById('osd'), osdNav = document.getElementById('osdNav');
   const osdT = document.getElementById('osdT'), osdK = document.getElementById('osdK'), osdD = document.getElementById('osdD');
   let osdG = -1, osdFrom = null;
+  let osdI = 0;
   function showOsd(gi, k) {
-    const it = OS_GROUPS[gi].items[k];
+    const it = OS_GROUPS[gi].items[k]; osdI = k;
     osdT.src = `assets/os/${it[0]}.svg`; osdT.alt = `NO.${k + 1} ${it[3]}`; osdK.textContent = it[1]; osdD.textContent = it[2];
     [...osdNav.querySelectorAll('button')].forEach((b, i) => b.setAttribute('aria-current', i === k ? 'true' : 'false'));
   }
   function openOsd(gi, k) {
     if (osdG !== gi) { osdNav.innerHTML = OS_GROUPS[gi].items.map((it, i) => `<li><button type="button" data-k="${i}">${it[1]}</button></li>`).join(''); osdG = gi; }
     showOsd(gi, k);
-    osdFrom = document.activeElement; osd.classList.add('open'); document.documentElement.style.overflow = 'hidden';
+    osdFrom = document.activeElement; osd.classList.add('open'); // the page stays put through the sheet's own wheel / touch / key handlers: overflow hidden on the root un-sticks the hero stage, which then leaves nothing to show through (10/27)
     osdNav.querySelector('[aria-current="true"]').focus();
   }
   function closeOsd() {
     if (!osd.classList.contains('open')) return;
-    osd.classList.remove('open'); document.documentElement.style.overflow = '';
+    osd.classList.remove('open');
     osdFrom && osdFrom.focus && osdFrom.focus({ preventScroll: true });
   }
-  osdNav.addEventListener('click', e => { const b = e.target.closest('button'); if (b) showOsd(osdG, +b.dataset.k); });
+  // 10/27: scrolling (wheel, swipe, ↑↓) steps to the next / previous item; the text leaves upward and the next comes up from below
+  const osdBody = osd.querySelector('.osd-body');
+  let osdAnim = null;
+  function stepOsdTo(k) {
+    const n = OS_GROUPS[osdG].items.length; k = Math.max(0, Math.min(n - 1, k));
+    if (k === osdI) return;
+    const dir = k > osdI ? 1 : -1;
+    [...osdNav.querySelectorAll('button')].forEach((b, i) => b.setAttribute('aria-current', i === k ? 'true' : 'false'));
+    if (osdNav.contains(document.activeElement)) osdNav.querySelector('[aria-current="true"]').focus({ preventScroll: true });
+    osdI = k;
+    if (reduce) { showOsd(osdG, k); return; }
+    osdAnim && osdAnim.cancel();
+    osdAnim = osdBody.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateY(${-dir * 28}px)` }], { duration: 180, easing: 'cubic-bezier(.4,0,1,1)' });
+    osdAnim.onfinish = () => {
+      showOsd(osdG, osdI);
+      osdAnim = osdBody.animate([{ opacity: 0, transform: `translateY(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    };
+  }
+  osdNav.addEventListener('click', e => { const b = e.target.closest('button'); if (b) stepOsdTo(+b.dataset.k); });
+  // one step per gesture: a trackpad's momentum keeps sending wheel events, so a new step needs a pause in them or a long gap
+  let osdWheelT = 0, osdStepT = 0;
+  osd.addEventListener('wheel', e => {
+    e.preventDefault();
+    const now = performance.now(), fresh = now - osdWheelT > 220; osdWheelT = now;
+    if (Math.abs(e.deltaY) < 4 || !(fresh && now - osdStepT > 300 || now - osdStepT > 900)) return;
+    osdStepT = now; stepOsdTo(osdI + Math.sign(e.deltaY));
+  }, { passive: false });
+  let osdTouchY = null;
+  osd.addEventListener('touchstart', e => { osdTouchY = e.touches[0].clientY; }, { passive: true });
+  osd.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+  osd.addEventListener('touchend', e => {
+    if (osdTouchY == null) return;
+    const dy = osdTouchY - e.changedTouches[0].clientY; osdTouchY = null;
+    if (Math.abs(dy) > 40) stepOsdTo(osdI + Math.sign(dy));
+  });
+  addEventListener('keydown', e => {
+    if (!osd.classList.contains('open')) return;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); stepOsdTo(osdI + 1); }
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); stepOsdTo(osdI - 1); }
+    else if (e.key === 'Home' || e.key === 'End') e.preventDefault();
+  });
   osd.addEventListener('click', e => { if (!e.target.closest('.osd-nav, .osd-body')) closeOsd(); });
   addEventListener('keydown', e => { if (e.key === 'Escape') closeOsd(); });
 
