@@ -115,7 +115,7 @@ Phi 1년제 프로그램 페이지를 Figma 파일 `SYr3Mjh6cOEh81jKnqmqCZ`("[1�
 ### 10/27
 - `d5a9bbd` 목록 강조 줄을 화면 중앙보다 10px 아래로.
 - 네비 회전 로고 57.6 → 48(자리에 딱 맞춤), 정지 이미지도 같은 크기로.
-- 역량/태도 상세 시트(`.osd`): 휠·스와이프·↑↓로 다음/이전 항목(한 동작에 한 칸, 글이 위로 빠지고 아래에서 올라옴). 배경은 주요 수업들 팝업처럼 rgba(29,29,31,.48) + blur 20으로 뒤 장면이 비침. ⚠️ 열 때 `html { overflow: hidden }`을 쓰면 히어로 sticky가 풀려 뒤가 새까매짐 → 스크롤 잠금은 시트의 wheel/touchmove/키 preventDefault로.
+- 역량/태도 상세 시트(`.osd`): 휠·스와이프·↑↓로 다음/이전 항목(한 동작에 한 칸, 글이 위로 빠지고 아래에서 올라옴). 마지막 항목에서 한 번 더 내리면 닫힘. 배경은 주요 수업들 팝업처럼 rgba(29,29,31,.48) + blur 20으로 뒤 장면이 비침. ⚠️ 열 때 `html { overflow: hidden }`을 쓰면 히어로 sticky가 풀려 뒤가 새까매짐 → 스크롤 잠금은 시트의 wheel/touchmove/키 preventDefault로.
 - PHI OPERATING SYSTEM 로고를 어떤 화면에서도 화면 정중앙에(세로로 긴 화면에서 위로 치우치던 것, `osDy`만큼 이동).
 - 크레스트·엠블럼 아래에 COMPETENCY / PHI OS 제목을 붙여 같이 나타나게(Figma 8445:18405, 8445:18219), 목록은 NO.1부터. Figma는 Competency만 바뀌었고 Phi OS는 같은 방식으로 맞춤.
 

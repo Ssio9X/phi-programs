@@ -1642,7 +1642,9 @@ button.cgc:hover .th { opacity: .4; }
   const osdBody = osd.querySelector('.osd-body');
   let osdAnim = null;
   function stepOsdTo(k) {
-    const n = OS_GROUPS[osdG].items.length; k = Math.max(0, Math.min(n - 1, k));
+    const n = OS_GROUPS[osdG].items.length;
+    if (k >= n) { closeOsd(); return; } // 10/27: one more step down past the last item closes the sheet
+    k = Math.max(0, k);
     if (k === osdI) return;
     const dir = k > osdI ? 1 : -1;
     [...osdNav.querySelectorAll('button')].forEach((b, i) => b.setAttribute('aria-current', i === k ? 'true' : 'false'));
