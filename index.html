@@ -488,17 +488,18 @@ footer { position: sticky; bottom: 0; z-index: 0; background: #eee; padding: 0 0
 /* 주요 수업들 popup, dark like apple.com/kr/macbook-pro's dark modals: scrim rgba(29,29,31,.48) + blur 20, black panel with 28 corners,
    #f5f5f7 text and #86868b secondary, a 36 px #f5f5f7 close circle with a black cross */
 #m-course { background: rgba(29,29,31,.48); }
-#m-course .sheet { background: #000; border-radius: 28px; filter: none; scrollbar-color: #424245 transparent; }
-#m-course .sheet-body { scrollbar-color: #424245 transparent; }
+/* 10/27: light sheet (주요 수업들 is white now) — apple.com light modal colours; the dimmed backdrop and white arrows stay */
+#m-course .sheet { background: #fff; border-radius: 28px; filter: none; scrollbar-color: #d2d2d7 transparent; }
+#m-course .sheet-body { scrollbar-color: #d2d2d7 transparent; }
 #m-course .sheet-top { padding: 20px 20px 0; }
-#m-course .x { width: 36px; height: 36px; border-radius: 50%; background: #f5f5f7; transition: background .1s linear; }
-#m-course .x:hover { background: #fff; }
-#m-course .x::before, #m-course .x::after { width: 14px; height: 2px; border-radius: 1px; background: #000; }
-#m-course .sheet-in, #m-course .cp .g i, #m-course .cp .g p.af, #m-course .cp .g p.af b { color: #f5f5f7; }
-#m-course .cp .blk p { color: #d2d2d7; }
-#m-course .cp .ex small, #m-course .cp .g p, #m-course .cp .g p b { color: #86868b; }
-#m-course .blk { border-top-color: rgba(255,255,255,.24); }
-#m-course .cp .ex + .ex, #m-course .cp .g { border-top-color: rgba(255,255,255,.12); }
+#m-course .x { width: 36px; height: 36px; border-radius: 50%; background: #e8e8ed; transition: background .1s linear; }
+#m-course .x:hover { background: #dcdce1; }
+#m-course .x::before, #m-course .x::after { width: 14px; height: 2px; border-radius: 1px; background: #1d1d1f; }
+#m-course .sheet-in, #m-course .cp .g i, #m-course .cp .g p.af, #m-course .cp .g p.af b { color: #1d1d1f; }
+#m-course .cp .blk p { color: #424245; }
+#m-course .cp .ex small, #m-course .cp .g p, #m-course .cp .g p b { color: #6e6e73; }
+#m-course .blk { border-top-color: rgba(0,0,0,.16); }
+#m-course .cp .ex + .ex, #m-course .cp .g { border-top-color: rgba(0,0,0,.08); }
 /* course popup prev / next: the card-focus arrows (.kf) — translucent circles either side of the sheet, a 01 / 12 count under it.
    Below 1100 px there's no room beside the sheet, so the arrows join the count in a row under it */
 .mwrap { position: relative; width: min(1184px, 100%); display: flex; flex-direction: column; align-items: center; gap: 16px; }
