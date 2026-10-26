@@ -1831,6 +1831,7 @@ button.cgc:hover .th { opacity: .4; }
     const lA = kf(K.lg, [0, 1], p);
     phios.style.opacity = lA.toFixed(3);
     phios.style.visibility = lA <= .002 ? 'hidden' : '';
+    phios.style.transform = `translate3d(0, ${osDy.toFixed(1)}px, 0)`; // 10/27: always the middle of the screen, also on tall ones
   }
 
   function tick(now) {

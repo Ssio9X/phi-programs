@@ -114,6 +114,7 @@ Phi 1년제 프로그램 페이지를 Figma 파일 `SYr3Mjh6cOEh81jKnqmqCZ`("[1�
 
 ### 10/27
 - `d5a9bbd` 목록 강조 줄을 화면 중앙보다 10px 아래로.
+- PHI OPERATING SYSTEM 로고를 어떤 화면에서도 화면 정중앙에(세로로 긴 화면에서 위로 치우치던 것, `osDy`만큼 이동).
 - 크레스트·엠블럼 아래에 COMPETENCY / PHI OS 제목을 붙여 같이 나타나게(Figma 8445:18405, 8445:18219), 목록은 NO.1부터. Figma는 Competency만 바뀌었고 Phi OS는 같은 방식으로 맞춤.
 
 ### 10/26 (새벽)
