@@ -1597,7 +1597,8 @@ button.cgc:hover .th { opacity: .4; }
     OSL.forEach((o, i) => {
       const { a, L, dy } = st[o.g], base = o.g * 6, j = Math.min(Math.floor(L), 4), t = L - j;
       const F = OSL[base + j].c + (OSL[base + j + 1].c - OSL[base + j].c) * t;
-      const d = Math.abs(i - base - L), y = OS_FOCUS + osDy + (o.c - F) * OS_PACK + dy;
+      // + 10 screen px: centred exactly, the focused row read a little high (10/27)
+      const d = Math.abs(i - base - L), y = OS_FOCUS + osDy + 10 / S + (o.c - F) * OS_PACK + dy;
       // 10/26: the focused row stands out more than in Figma (.9 / .3 next to it) — neighbours smaller and dimmer
       const sc = kf([0, 1, 2, 3], [1, .82, .66, .5], d), op = kf([0, 1, 2], [1, .18, .08], d) * a;
       const on = op > .002 && y + o.h / 2 > -200 && y - o.h / 2 < 1280 + (vh / S - 1080);
